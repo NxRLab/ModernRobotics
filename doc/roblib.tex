@@ -1,0 +1,631 @@
+\documentclass[11pt]{article}
+
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{framed}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{ltablex}
+\usepackage{ifthen}
+\usepackage[linktoc=all,colorlinks=true,urlcolor=blue]{hyperref}
+\hypersetup{
+  colorlinks,
+  linkcolor=blue
+}
+
+\newcommand{\real}{\mathbb{R}}
+
+\newenvironment{function}[4]		%A new environment for functions 
+{
+\begin{shaded*}
+\noindent
+\verb~#1~		%The function's name.
+\end{shaded*}
+\vspace*{-5pt}
+\ifthenelse{\equal{\detokenize{#2}}{\detokenize{}}}
+{}                              % what to do if there is no description
+{\noindent
+Input:
+\begin{description}[leftmargin=1.5cm,labelindent=0.5cm,itemsep=-4pt,topsep=0pt]	
+#2
+\end{description}}
+\ifthenelse{\equal{\detokenize{#3}}{\detokenize{}}}
+{}                              % what to do if there is no description
+{\noindent 
+Output: 
+\begin{description}[leftmargin=1.5cm,labelindent=0.5cm,itemsep=-4pt,topsep=0pt]		%Output list.
+#3
+\end{description}}
+\ifthenelse{\equal{\detokenize{#4}}{\detokenize{}}}
+{}                              % what to do if there is no description
+{\vspace*{5pt} \noindent #4}    % otherwise give the description
+\vspace*{10pt}
+}{}
+
+
+\setlength{\oddsidemargin}{0cm}			%Page settings.
+\setlength{\evensidemargin}{3cm}
+\setlength{\marginparsep}{0.75cm}
+\setlength{\marginparwidth}{2.5cm}
+\setlength{\marginparpush}{1.0cm}
+\setlength{\textwidth}{16.5cm}
+\setlength{\textheight}{22.86cm}
+\setlength{\topmargin}{-1.27cm}
+
+\definecolor{shadecolor}{rgb}{0.9,0.9,0.9}
+
+\begin{document}
+
+\begin{center}			%Title.
+\Large
+{\bf Modern Robotics:  Mechanics, Planning, and Control} \\
+{\bf Code Library} \\
+\normalsize
+\vspace*{0.2in}
+Huan Weng and Kevin M. Lynch \\
+\today
+\end{center}
+
+\section*{Introduction}			
+
+This is the documentation for the code library accompanying \emph{Modern Robotics:  Mechanics, Planning, and Control}, by Kevin M. Lynch and Frank C. Park, Cambridge University Press, 2017.  The code is written for MATLAB, Mathematica, and Python, and originates from students' solutions to programming assignments in courses using material from the book.  The current version of the code is largely the work of Huan Weng, based on previous contributions from Mikhail Todes, Matthew Collins, Mojtaba Mozaffar, Chang Liu, and Wentao Chen.  
+
+The code is commented and mostly self-explanatory in conjunction with the book.  An example use is provided with each function.  The primary purpose of the software is to be easy to read and educational, reinforcing the concepts in the book.  The code is optimized neither for efficiency nor robustness (it does not perform error-checking on its inputs).  This is to keep the code as simple and unintimidating as possible.  Users are encouraged to use and modify the code however they wish; the process of using and modifying the code certainly aids in understanding the concepts in the book.  Bug reports or documentation errors are appreciated via the issue tracker at \url{https://github.com/NxRLab/ModernRobotics}.
+
+This document provides an overview of the available functions using MATLAB syntax.  Functions are organized according to the chapter in which they are introduced in the book.  Basic functions, such as functions to calculate the magnitude of a vector, normalize a vector, test if a value is near zero, and perform matrix operations such as multiplication and inverses, are not documented here.
+
+Notation that is used throughout this document is summarized below.
+
+\begin{tabularx}{\linewidth}{llp{4.5in}}
+\toprule
+{\bf Math} & {\bf Computer} & \\
+{\bf symbol} & {\bf variable} & {\bf Description} \\
+\midrule
+$R$ & {\tt R} & $3 \times 3$ rotation matrix in $SO(3)$. \\
+$\omega$ & {\tt omg} & $3$-vector angular velocity. \\
+$\hat{\omega}$ & {\tt omghat} & $3$-vector unit rotation axis or unit angular velocity. \\
+$\theta$ & {\tt theta} & Angle of rotation about an axis or distance traveled along a screw axis. \\
+$\hat{\omega} \theta$ & {\tt expc3} & $3$-vector of exponential coordinates for rotation. \\
+$[\omega], [\hat{\omega} \theta] $ & {\tt so3mat} & $3 \times 3$ skew-symmetric $so(3)$ representation of $\omega$ or $\hat{\omega} \theta$. \\
+$p$ & {\tt p} & $3$-vector for a position in space. \\
+$T$ & {\tt T} & $4 \times 4$ transformation matrix in $SE(3)$ corresponding to $(R,p)$. \\
+$[\operatorname{Ad}_T]$ & {\tt AdT} & $6 \times 6$ matrix adjoint representation of $T \in SE(3)$. \\
+$v$ & {\tt v} & $3$-vector linear velocity. \\
+$\mathcal{V}$ & {\tt V} & $6$-vector twist $(\omega, v)$. \\
+$\mathcal{S}$ & {\tt S} & A normalized $6$-vector screw axis $(\omega,v)$, where (a) $\|\omega\| = 1$ or (b) $\|\omega\| = 0$ and $\|v\| = 1$. \\
+$\mathcal{S}\theta$ & {\tt expc6} & $6$-vector of exponential coordinates for rigid-body motion. \\
+$[\mathcal{V}], [\mathcal{S} \theta]$ & {\tt se3mat} & $4 \times 4$ $se(3)$ representation of $\mathcal{V}$ or $\mathcal{S} \theta$. \\
+$M$ & {\tt M} & End-effector configuration in $SE(3)$ when manipulator is at its zero position. \\
+$\mathcal{B}_i$ & {\tt Blist} & $\mathcal{B}_i$ is the screw axis of the $i$th joint expressed in the end-effector frame when the manipulator is at the zero position.  {\tt Blist} is a list of all the joint screw axes for the manipulator, $i = 1, \ldots, n$. \\
+$\mathcal{S}_i$ & {\tt Slist} & $\mathcal{S}_i$ is the screw axis of the $i$th joint expressed in the space frame when the manipulator is at the zero position.  {\tt Slist} is a list of all the joint screw axes for the manipulator,  $i = 1, \ldots, n$. \\
+$J_b, J_s$ & {\tt Jb}, {\tt Js} & The $6 \times n$ manipulator Jacobian for a robot with $n$ joints, expressed in the end-effector frame ($J_b$) or the space frame ($J_s$). \\
+${\epsilon}_{\omega}$ & {\tt eomg} & A small positive tolerance on the end-effector orientation error when calculating numerical inverse kinematics. \\
+${\epsilon}_{\nu}$ & {\tt ev} & A small positive tolerance on the end-effector linear position error when calculating numerical inverse kinematics. \\
+$\theta_0$ & {\tt thetalist0} & A list of joint variables that serve as an initial guess for the inverse kinematics solution.\\
+$\theta_i$ & {\tt thetalist} & $\theta_i$ is the joint variable for joint $i$, and {\tt thetalist} is $\theta = (\theta_1, \ldots, \theta_n)$.\\
+& {\tt thetamat} & An $N \times n$ matrix where each row represents $\theta$ one timestep after the row preceding it in the matrix. \\
+$\dot{\theta}_i$ & {\tt dthetalist} & $\dot{\theta}_i$ is the rate of change of joint variable $i$, and {\tt dthetalist} is $\dot{\theta} = (\dot{\theta}_1, \ldots, \dot{\theta}_n)$. \\
+& {\tt dthetamat} & An $N \times n$ matrix where each row represents $\dot{\theta}$ one timestep after the row preceding it in the matrix. \\
+$\ddot{\theta}_i$ & {\tt ddthetalist} & $\ddot{\theta}_i$ is the acceleration of joint $i$, and {\tt ddthetalist} is $\ddot{\theta} = (\ddot{\theta}_1, \ldots, \ddot{\theta}_n)$. \\
+& {\tt dthetamat} & An $N \times n$ matrix where each row represents $\ddot{\theta}$ one timestep after the row preceding it in the matrix. \\
+$\mathfrak{g}$ & {\tt g} & $3$-vector for gravitational acceleration. \\
+$\tilde{\mathfrak{g}}$ & {\tt gtilde} & A possibly incorrect model for $\mathfrak{g}$ used by a controller. \\
+$M_{i-1,i} $ & {\tt Mlist} & $M_{i-1,i} \in SE(3)$ is the configuration of manipulator link $i$ relative to link $i-1$ when the manipulator is at its zero position.  The link frames are defined at the link centers of mass.  {\tt Mlist} is a list of all $M_{i-1,i}$ for $i = 1, \ldots, n+1$.  The frame $\{n+1\}$ is the end-effector frame, and it is fixed relative to the frame $\{n\}$ of the last link.  It simply offers the opportunity to define an end-effector frame other than at the center of mass of the last link. \\
+& {\tt Mtildelist} & A possibly incorrect model for {\tt Mlist} used by a controller. \\
+$\mathcal{F}_{\text{tip}}$ & {\tt Ftip} & $6$-vector wrench applied by the manipulator end-effector, expressed in the end-effector frame $\{n+1\}$. \\
+& {\tt Ftipmat} & An $N \times 6$ matrix where each row represents $\mathcal{F}_{\text{tip}}$ one timestep after the row preceding it in the matrix. \\
+$\mathcal{G}_i$ & {\tt Glist} & $\mathcal{G}_i$ is the $6\times 6$ spatial inertia matrix for link $i$ of the manipulator, and {\tt Glist} is a list of all $\mathcal{G}_i$ for $i = 1, \ldots, n$. \\
+& {\tt Gtildelist} & A possibly incorrect model for {\tt Glist} used by a controller. \\
+$\tau_i$ & {\tt taulist} & $\tau_i$ is the generalized force applied at joint $i$, and {\tt taulist} is the list of all joint forces/torques $\tau = (\tau_1, \ldots, \tau_n)$. \\
+& {\tt taumat} & An $N \times n$ matrix where each row represents $\tau$ one timesetep after the row preceding it in the matrix. \\
+$[\operatorname{ad}_{\mathcal{V}}]$ & {\tt adV} & $6 \times 6$ matrix adjoint representation of $\mathcal{V} \in se(3)$, used to calculate the Lie bracket of two twists, $[\operatorname{ad}_{\mathcal{V}_1}] \mathcal{V}_2$. \\
+$T_f$ & {\tt Tf} & The total time of a motion in seconds from rest to rest when calculating trajectories. \\
+$\Delta t$ & {\tt dt} & A timestep (e.g., between consecutive rows in a matrix representing a trajectory or force history). \\
+$t$ & {\tt t} & The current time. \\
+$\theta_{\text{start}}$ & {\tt thetastart} & An $n$-vector of initial joint variables with which to start a trajectory.\\
+$\theta_{\text{end}}$ & {\tt thetaend} & An $n$-vector of final joint variables with which to end a trajectory.\\
+$X_{\text{start}}$ & {\tt Xstart} & An initial end-effector configuration $X_{\text{start}} \in SE(3)$ with which to start a trajectory.\\
+$X_{\text{end}}$ & {\tt Xend} & A final end-effector configuration $X_{\text{end}} \in SE(3)$ with which to end a trajectory.\\
+$e_{\text{int}}$ & {\tt eint} & An $n$-vector of the time-integral of joint errors.\\
+$\theta_d$ & {\tt thetalistd} & An $n$-vector of reference joint variables $\theta_d$.\\
+& {\tt thetamatd} & An $N \times n$ matrix where each row represents $\theta_d$ one timestep after the row preceding it in the matrix. \\
+$\dot{\theta}_d$ & {\tt dthetalistd} & An $n$-vector of reference joint velocities $\dot{\theta}_d$.\\
+& {\tt dthetamatd} & An $N \times n$ matrix where each row represents $\dot{\theta}_d$ one timestep after the row preceding it in the matrix. \\
+$\ddot{\theta}_d$ & {\tt ddthetalistd} & An $n$-vector of reference joint accelerations $\ddot{\theta}_d$.\\
+& {\tt dthetamatd} & An $N \times n$ matrix where each row represents $\ddot{\theta}_d$ one timestep after the row preceding it in the matrix. \\
+$K_p$ & {\tt Kp} & A scalar feedback proportional gain.\\
+$K_i$ & {\tt Ki} & A scalar feedback integral gain.\\
+$K_d$ & {\tt Kd} & A scalar feedback derivative gain.\\
+& {\tt intRes} & The number of integration steps during each timestep $\Delta t$.  The value must be a positive integer.  Larger values result in slower simulations but less accumulation of integration error.  \\
+\bottomrule
+\end{tabularx}
+
+\section*{Chapter 3:  Rigid-Body Motions}		%Chapter 3	
+
+\begin{function}			%RotInv
+{invR = RotInv(R)}
+{\item \verb~R~: Rotation matrix.}
+{\item \verb~invR~: The inverse of {\tt R}.}
+{For efficiency, the inverse is calculated as the transpose rather than a matrix inverse.}
+\end{function}	
+
+\begin{function}			%VecToso3
+{so3mat = VecToso3(omg)}
+{\item \verb~omg~: A $3$-vector.}
+{\item \verb~so3mat~: The corresponding $3 \times 3$ skew-symmetric matrix in $so(3)$.}
+{}
+\end{function}
+
+\begin{function}			%so3ToVec
+{omg = so3ToVec(so3mat)}
+{\item \verb~so3mat~: A $3 \times 3$ skew-symmetric matrix (an element of $so(3)$).}
+{\item \verb~omg~: The corresponding $3$-vector.}
+{}
+\end{function}
+
+\begin{function}			%AxisAng3
+{[omghat,theta] = AxisAng3(expc3)}
+{\item \verb~expc3~: A $3$-vector of exponential coordinates for rotation $\hat{\omega}\theta$.}
+{
+\item \verb~omghat~: The corresponding unit rotation axis $\hat{\omega}$.  
+\item \verb~theta~: The corresponding rotation angle $\theta$.
+}
+{}
+\end{function}
+
+\begin{function}			%MatrixExp3
+{R = MatrixExp3(so3mat)}
+{\item \verb~so3mat~: An $so(3)$ representation of exponential coordinates for rotation, $[\hat{\omega} \theta]$.}
+{\item \verb~R~: The $R^\prime \in SO(3)$ that is achieved by rotating about $\hat{\omega}$ by $\theta$ from an initial orientation $R=I$.}
+{}
+\end{function}
+
+\begin{function}			%MatrixLog3
+{so3mat = MatrixLog3(R)}
+{\item \verb~R~: Rotation matrix.}
+{\item \verb~so3mat~: The corresponding $so(3)$ representation of exponential coordinates.}
+{}
+\end{function}
+
+\begin{function}			%RpToTrans
+{T = RpToTrans(R,p)}
+{
+\item \verb~R~: Rotation matrix.
+\item \verb~p~: A position $p \in \real^3$.
+}
+{\item \verb~T~: The corresponding homogeneous transformation matrix $T \in SE(3)$.}
+{}
+\end{function}
+
+\begin{function}			%TransToRp
+{[R,p] = TransToRp(T)}
+{\item \verb~T~: Transformation matrix.}
+{
+\item \verb~R~: The corresponding rotation matrix.
+\item \verb~p~: The corresponding position.
+}
+{}
+\end{function}
+
+\begin{function}			%TransInv
+{invT = TransInv(T)}
+{\item \verb~T~: Transformation matrix.}
+{\item \verb~invT~: Inverse of \verb~T~.}
+{Uses the structure of transformation matrices to avoid taking a matrix inverse, for efficiency.}
+\end{function}
+
+\begin{function}			%VecTose3
+{se3mat = VecTose3(V)}
+{\item \verb~V~: A $6$-vector (representing a twist, for example).}
+{\item \verb~se3mat~: The corresponding $4 \times 4$ $se(3)$ matrix.}
+{}
+\end{function}
+
+\begin{function}			%se3ToVec
+{V = se3ToVec(se3mat)}
+{\item \verb~se3mat~: A $4 \times 4$ $se(3)$ matrix.}
+{\item \verb~V~: The corresponding $6$-vector.}
+{}
+\end{function}
+
+\begin{function}			%Adjoint
+{AdT = Adjoint(T)}		
+{\item \verb~T~: Transformation matrix.}
+{\item \verb~AdT~: The corresponding $6 \times 6$ adjoint representation $[\operatorname{Ad}_T]$.}
+{}
+\end{function}
+
+\begin{function}			%ScrewToAxis
+{S = ScrewToAxis(q,s,h)}
+{
+\item \verb~q~: A point $q \in \real^3$ lying on the screw axis.
+\item \verb~s~: A unit vector $\hat{s} \in \real^3$ in the direction of the screw axis.
+\item \verb~h~: The pitch $h \in \real$ (linear velocity divided by angular velocity) of the screw axis.
+}
+{\item \verb~S~: The corresponding normalized screw axis ${\mathcal S} = (\omega,v)$.}
+{}
+\end{function}
+
+\begin{function}			%AxisAng6
+{[S,theta] = AxisAng6(expc6)}
+{\item \verb~expc6~: A $6$-vector of exponential coordinates for rigid-body motion, $\mathcal{S}\theta$.}
+{
+\item \verb~S~: The corresponding normalized screw axis $\mathcal{S}$.
+\item \verb~theta~: The distance traveled along/about $\mathcal{S}$.
+}
+{}
+\end{function}
+
+\begin{function}			%MatrixExp6
+{T = MatrixExp6(se3mat)}
+{\item \verb~se3mat~: An $se(3)$ representation of exponential coordinates for rigid-body motion, $[\mathcal{S}\theta]$.}
+{\item \verb~T~: The $T^\prime \in SE(3)$ that is achieved by traveling along/about the screw axis $\mathcal{S}$ a distance $\theta$ from an initial configuration $T=I$.}
+{}
+\end{function}
+
+\begin{function}			%MatrixLog6
+{se3mat = MatrixLog6(T)}
+{\item \verb~T~: Transformation matrix.}
+{\item \verb~se3mat~: The corresponding $se(3)$ representation of exponential coordinates.}
+{}
+\end{function}
+
+
+\section*{Chapter 4:  Forward Kinematics}		%Chapter 4
+
+\begin{function}			%FKinBody
+{T = FKinBody(M,Blist,thetalist)}
+{
+\item \verb~M~: The home configuration of the end-effector.
+\item \verb~Blist~: The joint screw axes in the end-effector frame when the manipulator is at the home position.
+\item \verb~thetalist~: A list of joint coordinate values.
+}
+{\item \verb~T~: The $T \in SE(3)$ representing the end-effector frame when the joints are at the specified coordinates.}
+{}
+\end{function}
+
+\begin{function}			%FKinSpace
+{T = FKinSpace(M,Slist,thetalist)}
+{
+\item \verb~M~: The home configuration of the end-effector.
+\item \verb~Slist~: The joint screw axes in the space frame when the manipulator is at the home position.
+\item \verb~thetalist~: A list of joint coordinate values.
+}
+{\item \verb~T~: The $T \in SE(3)$ representing the end-effector frame when the joints are at the specified coordinates.}
+{}
+\end{function}
+
+\section*{Chapter 5:  Velocity Kinematics and Statics}		%Chapter 5
+
+\begin{function}			%JacobianBody
+{Jb = JacobianBody(Blist,thetalist)}
+{
+\item \verb~Blist~: The joint screw axes in the end-effector frame when the manipulator is at the home position.
+\item \verb~thetalist~: A list of joint coordinate values.
+}
+{\item \verb~Jb~: The corresponding body Jacobian $J_b(\theta) \in \real^{6 \times n}$.}
+{}
+\end{function}
+
+\begin{function}			%JacobianSpace
+{Js = JacobianSpace(Slist,thetalist)}
+{
+\item \verb~Slist~: The joint screw axes in the space frame when the manipulator is at the home position.
+\item \verb~thetalist~: A list of joint coordinate values.
+}
+{\item \verb~Js~: The corresponding space Jacobian $J_s(\theta) \in \real^{6 \times n}$.}
+{}
+\end{function}
+
+\section*{Chapter 6:  Inverse Kinematics}		%Chapter 6
+
+\begin{function}			%IKinBody
+{[thetalist,success] = IKinBody(Blist,M,T,thetalist0,eomg,ev)}
+{
+\item \verb~Blist~: The joint screw axes in the end-effector frame when the manipulator is at the home position.
+\item \verb~M~: The home configuration of the end-effector.
+\item \verb~T~: The desired end-effector configuration $T_{sd}$.
+\item \verb~thetalist0~: An initial guess $\theta_0 \in \real^n$ that is ``close'' to satisfying $T(\theta_0) = T_{sd}$.
+\item \verb~eomg~: A small positive tolerance on the end-effector orientation error.  The returned joint variables must give an end-effector orientation error less than ${\epsilon}_{\omega}$.
+\item \verb~ev~: A small positive tolerance on the end-effector linear position error.  The returned joint variables must give an end-effector position error less than ${\epsilon}_{\nu}$.
+}
+{
+\item \verb~thetalist~:  Joint variables that achieve \verb~T~ within the specified tolerances.
+\item \verb~success~:  A logical value where \verb~TRUE~ means that the function found a solution and \verb~FALSE~ means that it ran through the set number of maximum iterations without finding a solution within the tolerances ${\epsilon}_{\omega}$ and ${\epsilon}_{\nu}$.
+}
+{The algorithm uses an iterative Newton-Raphson root-finding method starting from the initial guess {\tt thetalist0}.  The algorithm terminates when the stopping criteria are met or after a maximum number of iterations, whichever comes first. The maximum number of iterations has been hardcoded in as a variable in the function, which can be changed if desired. If the stopping criteria are not met, the function returns the last calculation of \verb~thetalist~ as well as a \verb~FALSE~ value for the success variable.}
+\end{function}
+
+\begin{function}			%IKinSpace
+{[thetalist,success] = IKinSpace(Slist,M,T,thetalist0,eomg,ev)}
+{}
+{}
+{Equivalent to \verb~IKinBody~, except the joint screw axes are specified in the space frame.}
+\end{function}
+
+
+\section*{Chapter 8:  Dynamics of Open Chains}		%Chapter 8
+
+This chapter is concerned with calculating and simulating the dynamics of a serial-chain manipulator with dynamics of the form
+\[
+\tau = M(\theta)\ddot{\theta} + c(\theta,\dot{\theta}) + g(\theta) + J^T(\theta) \mathcal{F}_{\text{tip}}.
+\]
+
+\begin{function}			%ad
+{adV = ad(V)}
+{\item \verb~V~: A $6$-vector (e.g., a twist).}
+{\item \verb~adV~: The corresponding $6 \times 6$ matrix $[\operatorname{ad}_{\mathcal{V}}]$.}
+{Used to calculate the Lie bracket $[\operatorname{ad}_{\mathcal{V}_1}]\mathcal{V}_2$.}
+\end{function}
+
+\begin{function}			%InverseDynamics
+{taulist = InverseDynamics(thetalist,dthetalist,ddthetalist,\\
+\hspace*{1in} g,Ftip,Mlist,Glist,Slist)}
+{
+\item \verb~thetalist~:  $n$-vector of joint variables $\theta$.
+\item \verb~dthetalist~: $n$-vector of joint velocities $\dot{\theta}$.
+\item \verb~ddthetalist~:  $n$-vector of joint accelerations $\ddot{\theta}$.
+\item \verb~g~:  Gravity vector $\mathfrak{g}$.
+\item \verb~Ftip~:  Wrench $\mathcal{F}_{\text{tip}}$ applied by the end-effector expressed in frame $\{n+1\}$.
+\item \verb~Mlist~:  List of link frames $\{i\}$ relative to $\{i-1\}$ at the home position.
+\item \verb~Glist~:  Spatial inertia matrices $\mathcal{G}_i$ of the links.
+\item \verb~Slist~:  Screw axes $\mathcal{S}_i$ of the joints in a space frame.
+}
+{\item \verb~taulist~: The $n$-vector $\tau$ of required joint forces/torques.}
+{This function uses forward-backward Newton-Euler iterations.}
+\end{function}
+
+\begin{function}			%MassMatrix
+{M = MassMatrix(thetalist,Mlist,Glist,Slist)}
+{
+\item \verb~thetalist~:  $n$-vector of joint variables $\theta$.
+\item \verb~Mlist~:  List of link frames $\{i\}$ relative to $\{i-1\}$ at the home position.
+\item \verb~Glist~:  Spatial inertia matrices $\mathcal{G}_i$ of the links.
+\item \verb~Slist~:  Screw axes $\mathcal{S}_i$ of the joints in a space frame.
+}
+{\item \verb~M~: The numerical inertia matrix $M(\theta)$ of an $n$-joint serial chain at the given configuration $\theta$.}
+{This function calls {\tt InverseDynamics} $n$ times, each time passing a $\ddot{\theta}$ vector with a single element equal to one and all other inputs set to zero.  Each call of {\tt InverseDynamics} generates a single column of the robot's mass matrix, and these columns are assembled to create the full mass matrix.}
+\end{function}
+
+\begin{function}			%VelQuadraticForces
+{c = VelQuadraticForces(thetalist,dthetalist,Mlist,Glist,Slist)}
+{
+\item \verb~thetalist~:  $n$-vector of joint variables $\theta$.
+\item \verb~dthetalist~: $n$-vector of joint velocities $\dot{\theta}$.
+\item \verb~Mlist~:  List of link frames $\{i\}$ relative to $\{i-1\}$ at the home position.
+\item \verb~Glist~:  Spatial inertia matrices $\mathcal{G}_i$ of the links.
+\item \verb~Slist~:  Screw axes $\mathcal{S}_i$ of the joints in a space frame.
+}
+{\item \verb~c~: The vector $c(\theta,\dot{\theta})$ of Coriolis and centripetal terms for a given $\theta$ and $\dot{\theta}$.}
+{This function calls {\tt InverseDynamics} with $\mathfrak{g}=0$, $\mathcal{F}_{\textrm{tip}} = 0$, and $\ddot{\theta} = 0$.}
+\end{function}
+
+\begin{function}			%GravityForces
+{grav = GravityForces(thetalist,g,Mlist,Glist,Slist)}
+{
+\item \verb~thetalist~:  $n$-vector of joint variables $\theta$.
+\item \verb~g~:  Gravity vector $\mathfrak{g}$.
+\item \verb~Mlist~:  List of link frames $\{i\}$ relative to $\{i-1\}$ at the home position.
+\item \verb~Glist~:  Spatial inertia matrices $\mathcal{G}_i$ of the links.
+\item \verb~Slist~:  Screw axes $\mathcal{S}_i$ of the joints in a space frame.
+}
+{\item \verb~grav~: The joint forces/torques required to balance gravity at $\theta$.}
+{This function calls \verb~InverseDynamics~ with $\dot{\theta} = \ddot{\theta} = 0$ and $\mathcal{F}_{\textrm{tip}} = 0$.}
+\end{function}
+
+\begin{function}			%EndEffectorForces
+{JTFtip = EndEffectorForces(thetalist,Ftip,Mlist,Glist,Slist)}
+{
+\item \verb~thetalist~:  $n$-vector of joint variables $\theta$.
+\item \verb~Ftip~:  Wrench $\mathcal{F}_{\text{tip}}$ applied by the end-effector expressed in frame $\{n+1\}$.
+\item \verb~Mlist~:  List of link frames $\{i\}$ relative to $\{i-1\}$ at the home position.
+\item \verb~Glist~:  Spatial inertia matrices $\mathcal{G}_i$ of the links.
+\item \verb~Slist~:  Screw axes $\mathcal{S}_i$ of the joints in a space frame.
+}
+{\item \verb~JTFtip~: The joint forces and torques $J^T(\theta) \mathcal{F}_{\text{tip}}$ required to create the end-effector force $\mathcal{F}_{\text{tip}}$.}
+{This function calls \verb~InverseDynamics~ with $\mathfrak{g}=0$ and $\dot{\theta} = \ddot{\theta} = 0$.}
+\end{function}
+
+\begin{function}			%ForwardDynamics
+{ddthetalist = ForwardDynamics(thetalist,dthetalist,taulist,\\
+\hspace*{1in} g,Ftip,Mlist,Glist,Slist)}
+{
+\item \verb~thetalist~:  $n$-vector of joint variables $\theta$.
+\item \verb~dthetalist~: $n$-vector of joint velocities $\dot{\theta}$.
+\item \verb~taulist~: The $n$-vector $\tau$ of required joint forces/torques.
+\item \verb~g~:  Gravity vector $\mathfrak{g}$.
+\item \verb~Ftip~:  Wrench $\mathcal{F}_{\text{tip}}$ applied by the end-effector expressed in frame $\{n+1\}$.
+\item \verb~Mlist~:  List of link frames $\{i\}$ relative to $\{i-1\}$ at the home position.
+\item \verb~Glist~:  Spatial inertia matrices $\mathcal{G}_i$ of the links.
+\item \verb~Slist~:  Screw axes $\mathcal{S}_i$ of the joints in a space frame.
+}
+{\item \verb~ddthetalist~:  The resulting joint accelerations $\ddot{\theta}$.}
+{This function computes $\ddot{\theta}$ by solving 
+\[
+M(\theta) \ddot{\theta} = \tau - c(\theta,\dot{\theta}) - g(\theta) - J^T(\theta) \mathcal{F}_{\textrm{tip}}.
+\]
+}
+\end{function}
+
+\begin{function}			%EulerStep
+{[thetalistNext,dthetalistNext] = EulerStep(thetalist,dthetalist,ddthetalist,dt)}
+{
+\item \verb~thetalist~:  $n$-vector of joint variables $\theta$.
+\item \verb~dthetalist~: $n$-vector of joint velocities $\dot{\theta}$.
+\item \verb~ddthetalist~:  $n$-vector of joint accelerations $\ddot{\theta}$.
+\item \verb~dt~: The timestep $\Delta t$.
+}
+{
+\item \verb~thetalistNext~: Vector of joint variables $\theta$ after $\Delta t$ from first-order Euler integration.
+\item \verb~dthetalistNext~: Vector of joint velocities $\dot{\theta}$ after $\Delta t$ from first-order Euler integration.
+}
+{
+}
+\end{function}
+
+\begin{function}			%InverseDynamicsTrajectory
+{taumat = InverseDynamicsTrajectory(thetamat,dthetamat,ddthetamat, \\
+\hspace*{1in} g,Ftipmat,Mlist,Glist,Slist)}
+{
+\item \verb~thetamat~: An $N \times n$ matrix of robot joint variables.  Each row is an $n$-vector of joint variables, and the $N$ rows correspond to $N$ time instants.  (The time instants can be thought of as starting at time $0$ and ending at time $T_f$, in increments $\Delta t = T_f/(N-1)$.)
+\item \verb~dthetamat~: An $N \times n$ matrix of robot joint velocities.
+\item \verb~ddthetamat~: An $N \times n$ matrix of robot joint accelerations.
+\item \verb~g~:  Gravity vector $\mathfrak{g}$.
+\item \verb~Ftipmat~: An $N \times 6$ matrix, where each row is a vector of the form $\mathcal{F}_{\textrm{tip}}(k \Delta t)$. (If there are no tip forces the user should input a zero and a zero matrix will be used).
+\item \verb~Mlist~:  List of link frames $\{i\}$ relative to $\{i-1\}$ at the home position.
+\item \verb~Glist~:  Spatial inertia matrices $\mathcal{G}_i$ of the links.
+\item \verb~Slist~:  Screw axes $\mathcal{S}_i$ of the joints in a space frame.
+}
+{\item \verb~taumat~: The $N \times n$ matrix of joint forces/torques for the specified trajectory, where each of the $N$ rows is the vector of joint forces/torques at each time step.}
+{This function uses \verb~InverseDynamics~ to calculate the joint forces/torques required to move the serial chain along the given trajectory.}
+\end{function}
+
+\begin{function}			%ForwardDynamicsTrajectory
+{[thetamat,dthetamat] = ForwardDynamicsTrajectory(thetalist,dthetalist,taumat, \\
+\hspace*{1in} g,Ftipmat,Mlist,Glist,Slist,dt,intRes)}
+{
+\item \verb~thetalist~: $n$-vector of initial joint variables.
+\item \verb~dthetalist~: $n$-vector of initial joint velocities.
+\item \verb~taumat~: An $N \times n$ matrix of joint forces/torques, where each row is the joint force/torque at any instant.  The time corresponding to row $k$ is $k\Delta t$, $k \in \{0, \ldots, N-1\}$, where $\Delta t$ is defined below.
+\item \verb~g~:  Gravity vector $\mathfrak{g}$.
+\item \verb~Ftipmat~: An $N \times 6$ matrix, where each row is a vector of the form $\mathcal{F}_{\textrm{tip}}(k \Delta t)$. (If there are no tip forces the user should input a zero and a zero matrix will be used).
+\item \verb~Mlist~:  List of link frames $\{i\}$ relative to $\{i-1\}$ at the home position.
+\item \verb~Glist~:  Spatial inertia matrices $\mathcal{G}_i$ of the links.
+\item \verb~Slist~:  Screw axes $\mathcal{S}_i$ of the joints in a space frame.
+\item \verb~dt~: The timestep $\Delta t$ between consecutive joint forces/torques.
+\item \verb~intRes~: This input must be an integer greater than or equal to 1.  {\tt intRes} is the number of Euler integration steps during each timestep $\Delta t$.  Larger values result in slower simulations but less accumulation of integration error.  }
+{
+\item \verb~thetamat~: The $N \times n$ matrix of robot joint variables resulting from the specified joint forces/torques.
+\item \verb~dthetamat~: The $N \times n$ matrix of robot joint velocities resulting from the specified joint forces/torques.
+}
+{This function simulates the motion of a serial chain given an open-loop history of joint forces/torques.  It calls a numerical integration procedure that uses \verb~ForwardDynamics~.}
+\end{function}
+
+
+\section*{Chapter 9: Trajectory Generation}			%Chapter 9
+
+\begin{function}			%CubicTimeScaling
+{s = CubicTimeScaling(Tf,t)}
+{
+\item \verb~Tf~: Total time of the motion $T_f$ in seconds from rest to rest.
+\item \verb~t~: The current time $t$ satisfying $0 \leq t \leq T_f$.
+}
+{\item \verb~s~: The path parameter $s(t)$ corresponding to a third-order polynomial motion that begins (at $s(0)=0$) and ends (at $s(T_f)=1$) at zero velocity.}
+{}
+\end{function}
+
+\begin{function}			%QuinticTimeScaling
+{s = QuinticTimeScaling(Tf,t)}
+{
+\item \verb~Tf~: Total time of the motion $T_f$ in seconds from rest to rest.
+\item \verb~t~: The current time $t$ satisfying $0 \leq t \leq T_f$.
+}
+{\item \verb~s~: The path parameter $s(t)$ corresponding to a fifth-order polynomial motion that begins (at $s(0)=0$) and ends (at $s(T_f)=1$) at zero velocity and zero acceleration.}
+{}
+\end{function}
+
+\begin{function}			%JointTrajectory
+{traj = JointTrajectory(thetastart,thetaend,Tf,N,method)}
+{
+\item \verb~thetastart~: The initial joint variables $\theta_{\text{start}} \in \real^n$.
+\item \verb~thetaend~: The final joint variables $\theta_{\text{end}}$.
+\item \verb~Tf~: Total time of the motion $T_f$ in seconds from rest to rest.
+\item \verb~N~: The number of points $N \geq 2$ in the discrete representation of the trajectory.
+\item \verb~method~: The time-scaling method, where 3 indicates cubic (third-order polynomial) time scaling and 5 indicates quintic (fifth-order polynomial) time scaling.
+}
+{\item \verb~traj~: A trajectory as an $N \times n$ matrix, where each row is an $n$-vector of joint variables at an instant in time.  The first row is $\theta_{\text{start}}$ and the $N$th row is $\theta_{\text{end}}$.  The elapsed time between each row is $T_f/(N-1)$. }
+{The returned trajectory is a straight-line motion in joint space.}
+\end{function}
+
+\begin{function}			%ScrewTrajectory
+{traj = ScrewTrajectory(Xstart,Xend,Tf,N,method)}
+{
+\item \verb~Xstart~: The initial end-effector configuration $X_{\text{start}} \in SE(3)$.
+\item \verb~Xend~: The final end-effector configuration $X_{\text{end}}$.
+\item \verb~Tf~: Total time of the motion $T_f$ in seconds from rest to rest.
+\item \verb~N~: The number of points $N \geq 2$ in the discrete representation of the trajectory.
+\item \verb~method~: The time-scaling method, where 3 indicates cubic (third-order polynomial) time scaling and 5 indicates quintic (fifth-order polynomial) time scaling.
+}
+{\item \verb~traj~: The discretized trajectory as a list of $N$ matrices in $SE(3)$ separated in time by $T_f/(N-1)$.  The first in the list is $X_{\text{start}}$ and the $N$th is $X_{\text{end}}$.}
+{This function calculates a trajectory corresponding to a screw motion about a constant screw axis.}
+\end{function}
+
+\begin{function}			%CartesianTrajectory
+{traj = CartesianTrajectory(Xstart,Xend,Tf,N,method)}
+{
+\item \verb~Xstart~: The initial end-effector configuration $X_{\text{start}} \in SE(3)$.
+\item \verb~Xend~: The final end-effector configuration $X_{\text{end}}$.
+\item \verb~Tf~: Total time of the motion $T_f$ in seconds from rest to rest.
+\item \verb~N~: The number of points $N \geq 2$ in the discrete representation of the trajectory.
+\item \verb~method~: The time-scaling method, where 3 indicates cubic (third-order polynomial) time scaling and 5 indicates quintic (fifth-order polynomial) time scaling.
+}
+{\item \verb~traj~: The discretized trajectory as a list of $N$ matrices in $SE(3)$ separated in time by $T_f/(N-1)$.  The first in the list is $X_{\text{start}}$ and the $N$th is $X_{\text{end}}$.}
+{Similar to {\tt ScrewTrajectory}, except the origin of the end-effector frame follows a straight line, decoupled from the rotational motion.}
+\end{function}
+
+
+\section*{Chapter 11:  Robot Control}			%Chapter 11
+
+The two functions in this chapter focus on the use of the computed torque controller
+\[
+\tau = \widehat{M}(\theta) \left(\ddot{\theta}_d + K_p \theta_e + K_i \int \theta_e(t) dt + K_d \dot{\theta}_e\right) + \widehat{h}(\theta,\dot{\theta})
+\]
+to control the motion of a serial chain in free space.  The term $\widehat{h}(\theta,\dot{\theta})$ comprises the model of centripetal, Coriolis, and gravitational forces, and the term $\widehat{M}(\theta)$ is the model of the robot's mass matrix.
+
+\begin{function}			%ComputedTorque
+{taulist = ComputedTorque(thetalist,dthetalist,eint,g,\\
+\hspace*{1in} Mlist,Glist,Slist,thetalistd,dthetalistd,ddthetalistd,Kp,Ki,Kd)}
+{
+\item \verb~thetalist~: $n$-vector of initial joint variables.
+\item \verb~dthetalist~: $n$-vector of initial joint velocities.
+\item \verb~eint~: An $n$-vector of the time-integral of joint errors.
+\item \verb~g~:  Gravity vector $\mathfrak{g}$.
+\item \verb~Mlist~:  List of link frames $\{i\}$ relative to $\{i-1\}$ at the home position.
+\item \verb~Glist~:  Spatial inertia matrices $\mathcal{G}_i$ of the links.
+\item \verb~Slist~:  Screw axes $\mathcal{S}_i$ of the joints in a space frame.
+\item \verb~thetalistd~: $n$-vector of reference joint variables $\theta_d$.
+\item \verb~dthetalistd~: $n$-vector of reference joint velocities $\dot{\theta}_d$.
+\item \verb~ddthetalistd~: $n$-vector of reference joint accelerations $\ddot{\theta}_d$.
+\item \verb~Kp~: The feedback proportional gain (identical for each joint).
+\item \verb~Ki~: The feedback integral gain (identical for each joint).
+\item \verb~Kd~: The feedback derivative gain (identical for each joint).
+}
+{\item \verb~taulist~: The vector of joint forces/torques computed by the computed torque controller at the current instant.}
+{}
+\end{function}
+
+\begin{function}			%SimulateControl
+{[taumat,thetamat] = SimulateControl(thetalist,dthetalist,g,Ftipmat,Mlist,Glist, \\
+\hspace*{1in} Slist,thetamatd,dthetamatd,ddthetamatd,gtilde,Mtildelist, \\
+\hspace*{1in} Gtildelist,Kp,Ki,Kd,dt,intRes)}
+{
+\item \verb~thetalist~: $n$-vector of initial joint variables.
+\item \verb~dthetalist~: $n$-vector of initial joint velocities. 
+\item \verb~g~:  Actual gravity vector $\mathfrak{g}$.
+\item \verb~Ftipmat~: An $N \times 6$ matrix, where each row is a vector of the form $\mathcal{F}_{\textrm{tip}}(k \Delta t)$. (If there are no tip forces the user should input a zero and a zero matrix will be used).
+\item \verb~Mlist~:  Actual list of link frames $\{i\}$ relative to $\{i-1\}$ at the home position.
+\item \verb~Glist~:  Actual spatial inertia matrices $\mathcal{G}_i$ of the links.
+\item \verb~Slist~:  Screw axes $\mathcal{S}_i$ of the joints in a space frame.
+\item \verb~thetamatd~: An $N \times n$ matrix of desired joint variables $\theta_d$ from the reference trajectory.  The first row is the initial desired joint configuration, and the $N$th row is the final desired joint configuration.  The time between each row is {\tt dt}, below.
+\item \verb~dthetamatd~: An $N \times n$ matrix of desired joint velocities $\dot{\theta}_d$.
+\item \verb~ddthetamatd~: An $N \times n$ matrix of desired joint accelerations $\ddot{\theta}_d$.
+\item \verb~gtilde~: The (possibly incorrect) model of the gravity vector.
+\item \verb~Mtildelist~: The (possibly incorrect) model of the link frame locations.
+\item \verb~Gtildelist~: The (possibly incorrect) model of the link spatial inertias.
+\item \verb~Kp~: The feedback proportional gain (identical for each joint).
+\item \verb~Ki~: The feedback integral gain (identical for each joint).
+\item \verb~Kd~: The feedback derivative gain (identical for each joint).
+\item \verb~dt~: The timestep $\Delta t$ between points on the reference trajectory.
+\item \verb~intRes~: This input must be an integer greater than or equal to 1.  {\tt intRes} is the number of Euler integration steps during each timestep $\Delta t$.  Larger values result in slower simulations but less accumulation of integration error. 
+}
+{
+\item \verb~taumat~: An $N \times n$ matrix of the controller's commanded joint forces/torques, where each row of $n$ forces/torques corresponds to a single time instant.
+\item \verb~thetamat~: An $N \times n$ matrix of actual joint variables, to be compared to \verb~thetamatd~.
+\item Plot: Plot of actual and desired joint variables.
+}
+{This function uses {\tt ComputedTorque}, {\tt ForwardDynamics}, and numerical integration to simulate the performance of a computed torque control law operating on a serial chain.  Disturbances come in the form of initial position and velocity errors; incorrect models of gravity, the locations of the link center of mass frames, and the link spatial inertias; and errors introduced by the numerical integration.}
+\end{function}
+
+
+\end{document}
