@@ -5,7 +5,7 @@ function invR = RotInv(R)
 % Returns the inverse (transpose).
 % Example Input:
 %{ 
-  clear;clc;
+  clear; clc;
   R = [0, 0, 1; 1, 0, 0; 0, 1, 0];
   invR = RotInv(R)
 %} 

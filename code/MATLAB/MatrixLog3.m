@@ -6,7 +6,7 @@ function so3mat = MatrixLog3(R)
 % coordinates.
 % Example Input:
 %{
-  clear;clc;
+  clear; clc;
   R = [[0, 0, 1]; [1, 0, 0]; [0, 1, 0]];
   so3mat = MatrixLog3(R)
 %} 
@@ -19,12 +19,12 @@ function so3mat = MatrixLog3(R)
 if NearZero(norm(R - eye(3)))
 	so3mat = zeros(3);
 elseif NearZero(trace(R) + 1)
-    if ~NearZero(1 + R(3,3))
-        omg = (1 / sqrt(2 * (1 + R(3,3)))) * [R(1,3); R(2,3); 1 + R(3,3)];
-    elseif ~NearZero(1 + R(2,2))
-        omg = (1 / sqrt(2 * (1 + R(2,2)))) * [R(1,2); 1 + R(2,2); R(3,2)];
+    if ~NearZero(1 + R(3, 3))
+        omg = (1 / sqrt(2 * (1 + R(3, 3)))) * [R(1, 3); R(2, 3); 1 + R(3, 3)];
+    elseif ~NearZero(1 + R(2, 2))
+        omg = (1 / sqrt(2 * (1 + R(2, 2)))) * [R(1, 2); 1 + R(2, 2); R(3, 2)];
     else
-        omg = (1 / sqrt(2 * (1 + R(1,1)))) * [1 + R(1,1); R(2,1); R(3,1)];
+        omg = (1 / sqrt(2 * (1 + R(1, 1)))) * [1 + R(1, 1); R(2, 1); R(3, 1)];
     end
     so3mat = VecToso3(pi * omg);
 else

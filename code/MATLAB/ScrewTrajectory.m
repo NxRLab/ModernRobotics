@@ -1,6 +1,6 @@
 %*** CHAPTER 9: TRAJECTORY GENERATION ***
 
-function traj = ScrewTrajectory(Xstart,Xend,Tf,N,method)
+function traj = ScrewTrajectory(Xstart, Xend, Tf, N, method)
 % Takes Xstart: The initial end-effector configuration,
 %       Xend: The final end-effector configuration,
 %       Tf: Total time of the motion in seconds from rest to rest,
@@ -16,13 +16,13 @@ function traj = ScrewTrajectory(Xstart,Xend,Tf,N,method)
 % about a space screw axis.
 % Example Input:
 %{
-  clear;clc;
+  clear; clc;
   Xstart = [[1 ,0, 0, 1]; [0, 1, 0, 0]; [0, 0, 1, 1]; [0, 0, 0, 1]];
   Xend = [[0, 0, 1, 0.1]; [1, 0, 0, 0]; [0, 1, 0, 4.1]; [0, 0, 0, 1]];
   Tf = 5;
   N = 4;
   method = 3;
-  traj = ScrewTrajectory(Xstart,Xend,Tf,N,method)
+  traj = ScrewTrajectory(Xstart, Xend, Tf, N, method)
 %}
 % Output:
 % traj =
@@ -47,12 +47,12 @@ function traj = ScrewTrajectory(Xstart,Xend,Tf,N,method)
 %         0         0         0    1.0000
 
 timegap = Tf / (N - 1);
-traj = cell(1,N);
-for i = 1:N
+traj = cell(1, N);
+for i = 1: N
     if method == 3
-        s = CubicTimeScaling(Tf,timegap * (i - 1));
+        s = CubicTimeScaling(Tf, timegap * (i - 1));
     else
-        s = QuinticTimeScaling(Tf,timegap * (i - 1));
+        s = QuinticTimeScaling(Tf, timegap * (i - 1));
     end
     traj{i} = Xstart * MatrixExp6(MatrixLog6(TransInv(Xstart) * Xend) * s);
 end

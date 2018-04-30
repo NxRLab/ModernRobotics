@@ -1,6 +1,6 @@
 %*** CHAPTER 4: FORWARD KINEMATICS ***
 
-function T = FKinSpace(M,Slist,thetalist)
+function T = FKinSpace(M, Slist, thetalist)
 % Takes M: the home configuration (position and orientation) of the 
 %          end-effector,
 %       Slist: The joint screw axes in the space frame when the manipulator
@@ -10,13 +10,13 @@ function T = FKinSpace(M,Slist,thetalist)
 % are at the specified coordinates (i.t.o Space Frame).
 % Example Inputs:
 %{
-  clear;clc;
+  clear; clc;
   M = [[-1, 0, 0, 0]; [0, 1, 0, 6]; [0, 0, -1, 2]; [0, 0, 0, 1]];
   Slist = [[0; 0;  1;  4; 0;    0], ...
            [0; 0;  0;  0; 1;    0], ...
            [0; 0; -1; -6; 0; -0.1]];
   thetalist =[pi / 2; 3; pi];
-  T = FKinSpace(M,Slist,thetalist)
+  T = FKinSpace(M, Slist, thetalist)
 %}
 % Output:
 % T =
@@ -26,7 +26,7 @@ function T = FKinSpace(M,Slist,thetalist)
 %         0         0         0    1.0000
 
 T = M;
-for i = size(thetalist):-1:1
-    T = MatrixExp6(VecTose3(Slist(:,i) * thetalist(i))) * T;
+for i = size(thetalist): -1: 1
+    T = MatrixExp6(VecTose3(Slist(:, i) * thetalist(i))) * T;
 end
 end

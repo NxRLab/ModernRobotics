@@ -5,7 +5,7 @@ function se3mat = VecTose3(V)
 % Returns the corresponding 4x4 se(3) matrix.
 % Example Input:
 %{
-  clear;clc;
+  clear; clc;
   V = [1; 2; 3; 4; 5; 6];
   se3mat = VecTose3(V)
 %} 
@@ -16,5 +16,5 @@ function se3mat = VecTose3(V)
 %    -2     1     0     6
 %     0     0     0     0 
 
-se3mat = [VecToso3(V(1:3)), V(4:6); 0, 0, 0, 0];
+se3mat = [VecToso3(V(1: 3)), V(4: 6); 0, 0, 0, 0];
 end

@@ -5,7 +5,7 @@ function AdT = Adjoint(T)
 % Returns the corresponding 6x6 adjoint representation [AdT].
 % Example Input:
 %{
-  clear;clc;
+  clear; clc;
   T = [[1, 0, 0, 0]; [0, 0, -1, 0]; [0, 1, 0, 3]; [0, 0, 0, 1]];
   AdT = Adjoint(T)
 %} 

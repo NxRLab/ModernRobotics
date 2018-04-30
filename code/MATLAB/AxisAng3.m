@@ -6,7 +6,7 @@ function [omghat, theta] = AxisAng3(expc3)
 % angle theta.
 % Example Input:
 %{
-  clear;clc;
+  clear; clc;
   expc3 = [1; 2; 3];
   [omghat, theta] = AxisAng3(expc3)  
 %}

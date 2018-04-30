@@ -1,6 +1,6 @@
 %*** CHAPTER 9: TRAJECTORY GENERATION ***
 
-function traj = CartesianTrajectory(Xstart,Xend,Tf,N,method)
+function traj = CartesianTrajectory(Xstart, Xend, Tf, N, method)
 % Takes Xstart: The initial end-effector configuration,
 %       Xend: The final end-effector configuration,
 %       Tf: Total time of the motion in seconds from rest to rest,
@@ -17,13 +17,13 @@ function traj = CartesianTrajectory(Xstart,Xend,Tf,N,method)
 % motion.
 % Example Input:
 %{ 
-  clear;clc;
+  clear; clc;
   Xstart = [[1, 0, 0, 1]; [0, 1, 0, 0]; [0, 0, 1, 1]; [0, 0, 0, 1]];
   Xend = [[0, 0, 1, 0.1]; [1, 0, 0, 0]; [0, 1, 0, 4.1]; [0, 0, 0, 1]];
   Tf = 5;
   N = 4;
   method = 5;
-  traj = CartesianTrajectory(Xstart,Xend,Tf,N,method)
+  traj = CartesianTrajectory(Xstart, Xend, Tf, N, method)
 %}
 % Output:
 % traj =
@@ -48,10 +48,10 @@ function traj = CartesianTrajectory(Xstart,Xend,Tf,N,method)
 %         0         0         0    1.0000
 
 timegap = Tf / (N - 1);
-traj = cell(1,N);
+traj = cell(1, N);
 [Rstart, pstart] = TransToRp(Xstart);
 [Rend, pend] = TransToRp(Xend);
-for i = 1:N
+for i = 1: N
     if method == 3
         s = CubicTimeScaling(Tf,timegap * (i - 1));
     else

@@ -6,7 +6,7 @@ function expmat = MatrixLog6(T)
 % coordinates.
 % Example Input:
 %{
-  clear;clc;
+  clear; clc;
   T = [[1, 0, 0, 0]; [0, 0, -1, 0]; [0, 1, 0, 3]; [0, 0, 0, 1]];
   expmat = MatrixLog6(T)
 %} 
@@ -19,7 +19,7 @@ function expmat = MatrixLog6(T)
 
 [R, p] = TransToRp(T);
 if NearZero(norm(R - eye(3)))
-    expmat = [zeros(3), T(1:3,4); 0, 0, 0, 0];
+    expmat = [zeros(3), T(1: 3, 4); 0, 0, 0, 0];
 else
     acosinput = (trace(R) - 1) / 2;
     if acosinput > 1

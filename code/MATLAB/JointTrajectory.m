@@ -1,6 +1,6 @@
 %*** CHAPTER 9: TRAJECTORY GENERATION ***
 
-function traj = JointTrajectory(thetastart,thetaend,Tf,N,method)
+function traj = JointTrajectory(thetastart, thetaend, Tf, N, method)
 % Takes thetastart: The initial joint variables,
 %       thetaend: The final joint variables,
 %       Tf: Total time of the motion in seconds from rest to rest,
@@ -16,13 +16,13 @@ function traj = JointTrajectory(thetastart,thetaend,Tf,N,method)
 % The returned trajectory is a straight-line motion in joint space.
 % Example Input:
 %{
-  clear;clc;
+  clear; clc;
   thetastart = [1; 0; 0; 1; 1; 0.2; 0; 1];
   thetaend = [1.2; 0.5; 0.6; 1.1; 2;2; 0.9; 1];
   Tf = 4;
   N = 6;
   method = 3;
-  traj = JointTrajectory(thetastart,thetaend,Tf,N,method)
+  traj = JointTrajectory(thetastart, thetaend, Tf, N, method)
 %}
 % Output:
 % traj =
@@ -34,14 +34,14 @@ function traj = JointTrajectory(thetastart,thetaend,Tf,N,method)
 %   1.2000   0.5000   0.6000   1.1000   2.0000   2.0000   0.9000   1.0000
 
 timegap = Tf / (N - 1);
-traj = zeros(size(thetastart,1),N);
-for i = 1:N
+traj = zeros(size(thetastart, 1), N);
+for i = 1: N
     if method == 3
-        s = CubicTimeScaling(Tf,timegap * (i - 1));
+        s = CubicTimeScaling(Tf, timegap * (i - 1));
     else
-        s = QuinticTimeScaling(Tf,timegap * (i - 1));
+        s = QuinticTimeScaling(Tf, timegap * (i - 1));
     end
-    traj(:,i) = thetastart + s * (thetaend - thetastart);
+    traj(:, i) = thetastart + s * (thetaend - thetastart);
 end
 traj = traj';
 end

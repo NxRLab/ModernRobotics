@@ -5,7 +5,7 @@ function so3mat = VecToso3(omg)
 % Returns the skew symmetric matrix in so(3).
 % Example Input:
 %{
-  clear;clc;
+  clear; clc;
   omg = [1; 2; 3];
   so3mat = VecToso3(omg)
 %}

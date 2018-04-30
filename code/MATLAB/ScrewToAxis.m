@@ -1,17 +1,17 @@
 %*** CHAPTER 3: RIGID-BODY MOTIONS ***
 
-function S = ScrewToAxis(q,s,h)
+function S = ScrewToAxis(q, s, h)
 % Takes q: a point lying on the screw axis,
 %       s: a unit vector in the direction of the screw axis, 
 %       h: the pitch of the screw axis.
 % Returns the corresponding normalized screw axis.
 % Example Input:
 %{
-  clear;clc;
+  clear; clc;
   q = [3; 0; 0];
   s = [0; 0; 1];
   h = 2;
-  S = ScrewToAxis(q,s,h)
+  S = ScrewToAxis(q, s, h)
 %} 
 % Output:
 % S =
@@ -22,5 +22,5 @@ function S = ScrewToAxis(q,s,h)
 %    -3
 %     2
 
-S = [s; cross(q,s) + h * s];
+S = [s; cross(q, s) + h * s];
 end

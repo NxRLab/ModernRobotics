@@ -1,8 +1,10 @@
 %*** CHAPTER 6: INVERSE KINEMATICS ***
 
-function [thetalist, success] = IKinSpace(Slist,M,T,thetalist0,eomg,ev)
+function [thetalist, success] ...
+         = IKinSpace(Slist, M, T, thetalist0, eomg, ev)
 % Takes Slist: The joint screw axes in the space frame when the manipulator
-%              is at the home position,
+%              is at the home position, in the format of a matrix with the
+%              screw axes as the columns,
 %       M: The home configuration of the end-effector,
 %       T: The desired end-effector configuration Tsd,
 %       thetalist0: An initial guess of joint angles that are close to 
@@ -25,7 +27,7 @@ function [thetalist, success] = IKinSpace(Slist,M,T,thetalist0,eomg,ev)
 % the start of the function, but can be changed if needed.  
 % Example Inputs:
 %{
-  clear;clc;
+  clear; clc;
   Slist = [[0; 0;  1;  4; 0;    0], ...
            [0; 0;  0;  0; 1;    0], ...
            [0; 0; -1; -6; 0; -0.1]];
@@ -34,7 +36,7 @@ function [thetalist, success] = IKinSpace(Slist,M,T,thetalist0,eomg,ev)
   thetalist0 = [1.5; 2.5; 3];
   eomg = 0.01;
   ev = 0.001;
-  [thetalist, success] = IKinSpace(Slist,M,T,thetalist0,eomg,ev)
+  [thetalist, success] = IKinSpace(Slist, M, T, thetalist0, eomg, ev)
 %}
 % Output:
 % thetalist =
@@ -47,15 +49,15 @@ function [thetalist, success] = IKinSpace(Slist,M,T,thetalist0,eomg,ev)
 thetalist = thetalist0;
 i = 0;
 maxiterations = 20;
-Tsb = FKinSpace(M,Slist,thetalist);
+Tsb = FKinSpace(M, Slist, thetalist);
 Vs = Adjoint(Tsb) * se3ToVec(MatrixLog6(TransInv(Tsb) * T));
-err = norm(Vs(1:3)) > eomg || norm(Vs(4:6)) > ev;
+err = norm(Vs(1: 3)) > eomg || norm(Vs(4: 6)) > ev;
 while err && i < maxiterations
-    thetalist = thetalist + pinv(JacobianSpace(Slist,thetalist)) * Vs;
+    thetalist = thetalist + pinv(JacobianSpace(Slist, thetalist)) * Vs;
     i = i + 1;
-    Tsb = FKinSpace(M,Slist,thetalist);
+    Tsb = FKinSpace(M, Slist, thetalist);
     Vs = Adjoint(Tsb) * se3ToVec(MatrixLog6(TransInv(Tsb) * T));
-    err = norm(Vs(1:3)) > eomg || norm(Vs(4:6)) > ev;
+    err = norm(Vs(1: 3)) > eomg || norm(Vs(4: 6)) > ev;
 end
 success = ~ err;
 end

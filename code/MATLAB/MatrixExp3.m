@@ -6,7 +6,7 @@ function  R = MatrixExp3(so3mat)
 % from an initial orientation R = I.
 % Example Input:
 %{
-  clear;clc;
+  clear; clc;
   so3mat = [[0, -3, 2]; [3, 0, -1]; [-2, 1, 0]];
   R = MatrixExp3(so3mat)  
 %} 

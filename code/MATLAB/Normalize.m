@@ -5,7 +5,7 @@ function norm_v = Normalize(V)
 % Scales it to a unit vector.
 % Example Input:
 %{
-  clear;clc;
+  clear; clc;
   V = [1; 2; 3];
   norm_v = Normalize(V)
 %}

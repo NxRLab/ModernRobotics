@@ -6,7 +6,7 @@ function  [R, p] = TransToRp(T)
 %         p: the corresponding position vector .
 % Example Input:
 %{
-  clear;clc;
+  clear; clc;
   T = [[1, 0, 0, 0]; [0, 0, -1, 0]; [0, 1, 0, 3]; [0, 0, 0, 1]];
   [R, p] = TransToRp(T)
 %}
@@ -20,6 +20,6 @@ function  [R, p] = TransToRp(T)
 %     0
 %     3
 
-R = T(1:3,1:3);
-p = T(1:3,4);
+R = T(1: 3, 1: 3);
+p = T(1: 3, 4);
 end

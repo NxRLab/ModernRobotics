@@ -5,7 +5,7 @@ function judge = NearZero(near)
 % Checks if the scalar is small enough to be neglected.
 % Example Input:
 %{ 
-  clear;clc;
+  clear; clc;
   near = -1e-7;
   judge = NearZero(near)
 %} 
@@ -14,3 +14,4 @@ function judge = NearZero(near)
 %     1
 
 judge = norm(near) < 1e-6;
+end

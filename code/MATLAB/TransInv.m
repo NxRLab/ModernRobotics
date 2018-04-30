@@ -7,7 +7,7 @@ function invT = TransInv(T)
 % inverse, for efficiency.
 % Example Input:
 %{
-  clear;clc;
+  clear; clc;
   T = [[1, 0, 0, 0]; [0, 0, -1, 0]; [0, 1, 0, 3]; [0, 0, 0, 1]];
   invT = TransInv(T)
 %}

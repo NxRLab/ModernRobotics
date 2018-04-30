@@ -1,8 +1,9 @@
 %*** CHAPTER 6: INVERSE KINEMATICS ***
 
-function [thetalist, success] = IKinBody(Blist,M,T,thetalist0,eomg,ev)
+function [thetalist, success] = IKinBody(Blist, M, T, thetalist0, eomg, ev)
 % Takes Blist: The joint screw axes in the end-effector frame when the
-%              manipulator is at the home position,
+%              manipulator is at the home position, in the format of a 
+%              matrix with the screw axes as the columns,
 %       M: The home configuration of the end-effector,
 %       T: The desired end-effector configuration Tsd,
 %       thetalist0: An initial guess of joint angles that are close to 
@@ -25,14 +26,14 @@ function [thetalist, success] = IKinBody(Blist,M,T,thetalist0,eomg,ev)
 % the start of the function, but can be changed if needed.  
 % Example Inputs:
 %{
-  clear;clc;
+  clear; clc;
   Blist = [[0; 0; -1; 2; 0; 0], [0; 0; 0; 0; 1; 0], [0; 0; 1; 0; 0; 0.1]];
   M = [[-1, 0, 0, 0]; [0, 1, 0, 6]; [0, 0, -1, 2]; [0, 0, 0, 1]];
   T = [[0, 1, 0, -5]; [1, 0, 0, 4]; [0, 0, -1, 1.6858]; [0, 0, 0, 1]];
   thetalist0 = [1.5; 2.5; 3];
   eomg = 0.01;
   ev = 0.001;
-  [thetalist, success] = IKinBody(Blist,M,T,thetalist0,eomg,ev)
+  [thetalist, success] = IKinBody(Blist, M, T, thetalist0, eomg, ev)
 %}
 % Output:
 % thetalist =
@@ -45,13 +46,13 @@ function [thetalist, success] = IKinBody(Blist,M,T,thetalist0,eomg,ev)
 thetalist = thetalist0;
 i = 0;
 maxiterations = 20;
-Vb = se3ToVec(MatrixLog6(TransInv(FKinBody(M,Blist,thetalist)) * T));
-err = norm(Vb(1:3)) > eomg || norm(Vb(4:6)) > ev;
+Vb = se3ToVec(MatrixLog6(TransInv(FKinBody(M, Blist, thetalist)) * T));
+err = norm(Vb(1: 3)) > eomg || norm(Vb(4: 6)) > ev;
 while err && i < maxiterations
-    thetalist = thetalist + pinv(JacobianBody(Blist,thetalist)) * Vb;
+    thetalist = thetalist + pinv(JacobianBody(Blist, thetalist)) * Vb;
     i = i + 1;
-    Vb = se3ToVec(MatrixLog6(TransInv(FKinBody(M,Blist,thetalist)) * T));
-    err = norm(Vb(1:3)) > eomg || norm(Vb(4:6)) > ev;
+    Vb = se3ToVec(MatrixLog6(TransInv(FKinBody(M, Blist, thetalist)) * T));
+    err = norm(Vb(1: 3)) > eomg || norm(Vb(4: 6)) > ev;
 end
 success = ~ err;
 end
