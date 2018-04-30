@@ -144,7 +144,7 @@ Output:
  [-1.20919958,  1.20919958,           0]]
     '''
     if NearZero(np.linalg.norm(R - np.eye(3))):
-        return np.zeros(3,3)
+        return np.zeros((3,3))
     elif NearZero(np.trace(R) + 1):
         if not NearZero(1 + R[2][2]):
             omg = (1.0 / sqrt(2 * (1 + R[2][2]))) \
