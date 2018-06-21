@@ -3,12 +3,12 @@
 Library of functions written to accompany the algorithms described in
 Modern Robotics: Mechanics, Planning, and Control.
 ***************************************************************************
-Author: Huan Weng, Mikhail Todes 
-Date: December 2016
+Author: Mikhail Todes, Huan Weng  
+Date: June 2018
 ***************************************************************************
 Language: Python
 Also available in: MATLAB, Mathematica
-Included libraries: numpy, math, matplotlib, random
+Included libraries: numpy, matplotlib
 ***************************************************************************
 '''
 
@@ -17,9 +17,7 @@ Included libraries: numpy, math, matplotlib, random
 '''
 
 import numpy as np
-from math import cos, acos, sin, tan, pi, sqrt
 import matplotlib.pyplot as plt
-import random
 
 '''
 *** BASIC HELPER FUNCTIONS ***
@@ -41,7 +39,7 @@ def Normalize(V):
 #Scales it to a unit vector.
     '''
 Example Input: 
-V = [1, 2, 3]
+V = np.array([1, 2, 3])
 Output:
 [0.2672612419124244, 0.5345224838248488, 0.8017837257372732]
     '''
@@ -56,9 +54,9 @@ def RotInv(R):
 #Returns the inverse (transpose).
     '''
 Example Input: 
-R = [[0, 0, 1],
-     [1, 0, 0],
-     [0, 1, 0]]
+R = np.array([[0, 0, 1],
+     	      [1, 0, 0],
+              [0, 1, 0]])
 Output:
 [[0, 1, 0], 
  [0, 0, 1],
@@ -71,28 +69,28 @@ def VecToso3(omg):
 #Returns the skew symmetric matrix in so3.
     '''
 Example Input: 
-omg = [1, 2, 3]
+omg = np.array([1, 2, 3])
 Output:
 [[ 0, -3,  2],
  [ 3,  0, -1],
  [-2,  1,  0]]
     '''
-    return [[0,      -omg[2],  omg[1]], 
-	    [omg[2],       0, -omg[0]], 
-	    [-omg[1], omg[0],       0]]
+    return np.array([[0,      -omg[2],  omg[1]], 
+	             [omg[2],       0, -omg[0]], 
+	             [-omg[1], omg[0],       0]])
 
 def so3ToVec(so3mat):
 #Takes a 3x3 skew-symmetric matrix (an element of so(3)).
 #Returns the corresponding vector (angular velocity).
     '''
 Example Input: 
-so3mat = [[ 0, -3,  2],
-          [ 3,  0, -1],
-          [-2,  1,  0]]
+so3mat = np.array([[ 0, -3,  2],
+          	   [ 3,  0, -1],
+                   [-2,  1,  0]])
 Output:
 [1, 2, 3]
     '''
-    return [so3mat[2][1], so3mat[0][2], so3mat[1][0]]
+    return np.array([so3mat[2][1], so3mat[0][2], so3mat[1][0]])
 
 def AxisAng3(expc3):
 #Takes A 3-vector of exponential coordinates for rotation.
@@ -100,9 +98,9 @@ def AxisAng3(expc3):
 #theta.
     '''
 Example Input: 
-expc3 = [1, 2, 3]
+expc3 = np.array([1, 2, 3])
 Output:
-([0.2672612419124244, 0.5345224838248488, 0.8017837257372732],
+(array([0.2672612419124244, 0.5345224838248488, 0.8017837257372732]),
  3.7416573867739413) 
     '''
     return (Normalize(expc3), np.linalg.norm(expc3))
@@ -113,9 +111,9 @@ def MatrixExp3(so3mat):
 #an initial orientation R = I.
     '''
 Example Input: 
-so3mat = [[ 0, -3,  2],
-	  [ 3,  0, -1],
-          [-2,  1,  0]]
+so3mat = np.array([[ 0, -3,  2],
+	           [ 3,  0, -1],
+                   [-2,  1,  0]])
 Output:
 [[-0.69492056,  0.71352099,  0.08929286],
  [-0.19200697, -0.30378504,  0.93319235],
@@ -135,45 +133,45 @@ def MatrixLog3(R):
 #Returns the corresponding so(3) representation of exponential coordinates.
     '''
 Example Input: 
-R = [[0, 0, 1],
-     [1, 0, 0],
-     [0, 1, 0]]
+R = np.array([[0, 0, 1],
+              [1, 0, 0],
+              [0, 1, 0]])
 Output:
 [[          0, -1.20919958,  1.20919958],
  [ 1.20919958,           0, -1.20919958],
  [-1.20919958,  1.20919958,           0]]
     '''
     if NearZero(np.linalg.norm(R - np.eye(3))):
-        return np.zeros(3, 3)
+        return np.zeros((3, 3))
     elif NearZero(np.trace(R) + 1):
         if not NearZero(1 + R[2][2]):
-            omg = (1.0 / sqrt(2 * (1 + R[2][2]))) \
+            omg = (1.0 / np.sqrt(2 * (1 + R[2][2]))) \
                   * np.array([R[0][2], R[1][2], 1 + R[2][2]])
         elif not NearZero(1 + R[1][1]): 
-            omg = (1.0 / sqrt(2 * (1 + R[1][1]))) \
+            omg = (1.0 / np.sqrt(2 * (1 + R[1][1]))) \
                   * np.array([R[0][1], 1 + R[1][1], R[2][1]])
         else:
-            omg = (1.0 / sqrt(2 * (1 + R[0][0]))) \
+            omg = (1.0 / np.sqrt(2 * (1 + R[0][0]))) \
                   * np.array([1 + R[0][0], R[1][0], R[2][0]])
-        return VecToso3(pi * omg)
+        return VecToso3(np.pi * omg)
     else:
         acosinput = (np.trace(R) - 1) / 2.0
         if acosinput > 1:
             acosinput = 1
         elif acosinput < -1:
             acosinput = -1
-        theta = acos(acosinput)
-        return theta / 2.0 / sin(theta) * (R - np.array(R).T)
+        theta = np.arccos(acosinput)
+        return theta / 2.0 / np.sin(theta) * (R - np.array(R).T)
 
-def RpToTrans (R, p):
+def RpToTrans(R, p):
 #Takes rotation matrix R and position p. 
 #Returns corresponding homogeneous transformation matrix T in SE(3).
     '''
 Example Input: 
-R = [[1, 0,  0], 
-     [0, 0, -1], 
-     [0, 1,  0]]
-p = [1, 2, 5]
+R = np.array([[1, 0,  0], 
+              [0, 0, -1], 
+              [0, 1,  0]])
+p = np.array([1, 2, 5])
 Output:
 [[1, 0,  0, 1],
  [0, 0, -1, 2],
@@ -182,26 +180,26 @@ Output:
     '''
     return np.r_[np.c_[R, p], [[0, 0, 0, 1]]]    
 
-def TransToRp (T):
+def TransToRp(T):
 #Takes transformation matrix T in SE(3). 
 #Returns R: The corresponding rotation matrix,
 #        p: The corresponding position vector.
     '''
 Example Input: 
-T = [[1, 0,  0, 0],
-     [0, 0, -1, 0],
-     [0, 1,  0, 3],
-     [0, 0,  0, 1]]
+T = np.array([[1, 0,  0, 0],
+              [0, 0, -1, 0],
+              [0, 1,  0, 3],
+              [0, 0,  0, 1]])
 Output:
-([[1, 0,  0], 
-  [0, 0, -1], 
-  [0, 1,  0]],  
-[0, 0, 3])
+(array([[1, 0,  0], 
+        [0, 0, -1], 
+        [0, 1,  0]]),  
+array([0, 0, 3]))
     '''
-    R = [[T[0][0], T[0][1], T[0][2]],
-         [T[1][0], T[1][1], T[1][2]],
-         [T[2][0], T[2][1], T[2][2]]]
-    return R, [T[0][3], T[1][3], T[2][3]]
+    R = np.array([[T[0][0], T[0][1], T[0][2]],
+                  [T[1][0], T[1][1], T[1][2]],
+                  [T[2][0], T[2][1], T[2][2]]])
+    return R, np.array([T[0][3], T[1][3], T[2][3]])
 
 def TransInv(T):
 #Takes a transformation matrix T. 
@@ -210,17 +208,17 @@ def TransInv(T):
 #inverse, for efficiency.
     '''
 Example Input: 
-T = [[1, 0,  0, 0],
-     [0, 0, -1, 0],
-     [0, 1,  0, 3],
-     [0, 0,  0, 1]]
+T = np.array([[1, 0,  0, 0],
+     	      [0, 0, -1, 0],
+              [0, 1,  0, 3],
+              [0, 0,  0, 1]])
 Output:
 [[1,  0, 0,  0],
  [0,  0, 1, -3],
  [0, -1, 0,  0],
  [0,  0, 0,  1]]
     '''
-    R,p = TransToRp(T)
+    R, p = TransToRp(T)
     Rt = np.array(R).T
     return np.r_[np.c_[Rt, -np.dot(Rt, p)], [[0, 0, 0, 1]]]
     
@@ -229,7 +227,7 @@ def VecTose3(V):
 #Returns the corresponding 4x4 se(3) matrix.
     '''
 Example Input: 
-V = [1, 2, 3, 4, 5, 6]
+V = np.array([1, 2, 3, 4, 5, 6])
 Output:
 [[ 0, -3,  2, 4], 
  [ 3,  0, -1, 5], 
@@ -244,10 +242,10 @@ def se3ToVec(se3mat):
 #Returns the corresponding 6-vector (representing spatial velocity).
     '''
 Example Input: 
-se3mat = [[ 0, -3,  2, 4], 
-          [ 3,  0, -1, 5], 
-          [-2,  1,  0, 6], 
-          [ 0,  0,  0, 0]]
+se3mat = np.array([[ 0, -3,  2, 4], 
+                   [ 3,  0, -1, 5], 
+                   [-2,  1,  0, 6], 
+                   [ 0,  0,  0, 0]])
 Output:
 [1, 2, 3, 4, 5, 6]
     '''
@@ -259,10 +257,10 @@ def Adjoint(T):
 #Returns the corresponding 6x6 adjoint representation [AdT].
     '''
 Example Input: 
-T = [[1, 0,  0, 0], 
-     [0, 0, -1, 0], 
-     [0, 1,  0, 3], 
-     [0, 0,  0, 1]]
+T = np.array([[1, 0,  0, 0], 
+              [0, 0, -1, 0], 
+              [0, 1,  0, 3], 
+              [0, 0,  0, 1]])
 Output:
 [[1, 0,  0, 0, 0,  0],
  [0, 0, -1, 0, 0,  0],
@@ -282,8 +280,8 @@ def ScrewToAxis(q, s, h):
 #Returns the corresponding normalized screw axis.
     '''
 Example Input: 
-q = [3, 0, 0]
-s = [0, 0, 1]
+q = np.array([3, 0, 0])
+s = np.array([0, 0, 1])
 h = 2
 Output:
 [0, 0, 1, 0, -3, 2]
@@ -296,7 +294,7 @@ def AxisAng6(expc6):
 #        theta: The distance traveled along/about S.
     '''
 Example Input: 
-expc6 = [1, 0, 0, 1, 2, 3]
+expc6 = np.array([1, 0, 0, 1, 2, 3])
 Output:
 ([1.0, 0.0, 0.0, 1.0, 2.0, 3.0], 
 1.0)
@@ -304,7 +302,7 @@ Output:
     theta = np.linalg.norm([expc6[0], expc6[1], expc6[2]])
     if NearZero(theta):
         theta = np.linalg.norm([expc6[3], expc6[4], expc6[5]])
-    return (expc6 / theta, theta)
+    return (np.array(expc6 / theta), theta)
 
 def MatrixExp6(se3mat):
 #Takes a se(3) representation of exponential coordinates.
@@ -312,10 +310,10 @@ def MatrixExp6(se3mat):
 #screw axis S for a distance theta from an initial configuration T = I.
     '''
 Example Input: 
-se3mat = [[0,                 0,                  0,                 0],
-          [0,                 0, -1.570796326794897, 2.356194490192345],
-          [0, 1.570796326794897,                  0, 2.356194490192345],
-          [0,                 0,                  0,                 0]]
+se3mat = np.array([[0,          0,           0,          0],
+          	   [0,          0, -1.57079632, 2.35619449],
+                   [0, 1.57079632,           0, 2.35619449],
+                   [0,          0,           0,          0]])
 Output:
 [[1.0, 0.0,  0.0, 0.0],
  [0.0, 0.0, -1.0, 0.0],
@@ -345,9 +343,12 @@ def MatrixLog6(T):
 #Returns the corresponding se(3) representation of exponential coordinates.
     '''
 Example Input: 
-T = [[1, 0, 0, 0], [0, 0, -1, 0], [0, 1, 0, 3], [0, 0, 0, 1]]
+T = np.array([[1, 0, 0, 0], [0, 0, -1, 0], [0, 1, 0, 3], [0, 0, 0, 1]])
 Output:
-[1.5707963267948966, 0.0, 0.0, 0.0, 2.3561944901923448, 2.3561944901923457]
+[[ 0.          0.          0.          0.        ]
+ [ 0.          0.         -1.57079633  2.35619449]
+ [ 0.          1.57079633  0.          2.35619449]
+ [ 0.          0.          0.          0.        ]]
     '''
     R, p = TransToRp(T)
     if NearZero(np.linalg.norm(R - np.eye(3))):
@@ -360,11 +361,11 @@ Output:
             acosinput = 1
         elif acosinput < -1:
             acosinput = -1		
-        theta = acos(acosinput)       
+        theta = np.arccos(acosinput)       
         omgmat = MatrixLog3(R) 
         return np.r_[np.c_[omgmat, 
                            np.dot(np.eye(3) - omgmat / 2.0 \
-                           + (1.0 / theta - 1.0 / tan(theta / 2.0) / 2) \
+                           + (1.0 / theta - 1.0 / np.tan(theta / 2.0) / 2) \
                              * np.dot(omgmat,omgmat) / theta,[T[0][3], 
                                                               T[1][3], 
                                                               T[2][3]])], 
@@ -385,20 +386,18 @@ def FKinBody(M, Blist, thetalist):
 #at the specified coordinates (i.t.o Body Frame).
     '''
 Example Input: 
-import numpy as np
-from math import pi
-M = [[-1, 0, 0, 0], [0, 1, 0, 6], [0, 0, -1, 2], [0, 0, 0, 1]]
+M = np.array([[-1, 0, 0, 0], [0, 1, 0, 6], [0, 0, -1, 2], [0, 0, 0, 1]])
 Blist = np.array([[0, 0, -1, 2, 0,   0],
                   [0, 0,  0, 0, 1,   0], 
                   [0, 0,  1, 0, 0, 0.1]]).T
-thetalist = [pi / 2.0, 3, pi]
+thetalist = np.array([np.pi / 2.0, 3, np.pi])
 Output:
 [[ -1.14423775e-17   1.00000000e+00   0.00000000e+00  -5.00000000e+00],
  [  1.00000000e+00   1.14423775e-17   0.00000000e+00   4.00000000e+00],
  [              0.               0.              -1.       1.68584073],
  [              0.               0.               0.               1.]]
     '''
-    T = M
+    T = np.array(M)
     for i in range(len(thetalist)):
         T = np.dot(T,MatrixExp6(VecTose3(np.array(Blist)[:, i] \
                                          * thetalist[i])))              
@@ -415,20 +414,18 @@ def FKinSpace(M, Slist, thetalist):
 #at the specified coordinates (i.t.o Space Frame).
     '''
 Example Input: 
-import numpy as np
-from math import pi
-M = [[-1, 0, 0, 0], [0, 1, 0, 6], [0, 0, -1, 2], [0, 0, 0, 1]]
+M = np.array([[-1, 0, 0, 0], [0, 1, 0, 6], [0, 0, -1, 2], [0, 0, 0, 1]])
 Slist = np.array([[0, 0,  1,  4, 0,    0],
                   [0, 0,  0,  0, 1,    0],
                   [0, 0, -1, -6, 0, -0.1]]).T
-thetalist = [pi / 2.0, 3, pi]
+thetalist = np.array([np.pi / 2.0, 3, np.pi])
 Output:
 [[ -1.14423775e-17   1.00000000e+00   0.00000000e+00  -5.00000000e+00],
  [  1.00000000e+00   1.14423775e-17   0.00000000e+00   4.00000000e+00],
  [              0.               0.              -1.       1.68584073],
  [              0.               0.               0.               1.]]
     '''
-    T = M
+    T = np.array(M)
     for i in range(len(thetalist)-1, -1, -1):
         T = np.dot(MatrixExp6(VecTose3(np.array(Slist)[:, i] \
                                        * thetalist[i])), T)
@@ -446,19 +443,18 @@ def JacobianBody(Blist, thetalist):
 #Returns the corresponding body Jacobian (6xn real numbers).
     '''
 Example Input: 
-import numpy as np
 Blist = np.array([[0, 0, 1,   0, 0.2, 0.2], 
                   [1, 0, 0,   2,   0,   3], 
                   [0, 1, 0,   0,   2,   1], 
                   [1, 0, 0, 0.2, 0.3, 0.4]]).T
-thetalist = [0.2, 1.1, 0.1, 1.2]
+thetalist = np.array([0.2, 1.1, 0.1, 1.2])
 Output:
-[[-0.04528405  0.99500417  0.          1.        ]
- [ 0.74359313  0.09304865  0.36235775  0.        ]
- [-0.66709716  0.03617541 -0.93203909  0.        ]
- [ 2.32586047  1.66809     0.56410831  0.2       ]
- [-1.44321167  2.94561275  1.43306521  0.3       ]
- [-2.06639565  1.82881722 -1.58868628  0.4       ]]
+[[-0.04528405  0.99500417  0.          1. ]
+ [ 0.74359313  0.09304865  0.36235775  0. ]
+ [-0.66709716  0.03617541 -0.93203909  0. ]
+ [ 2.32586047  1.66809     0.56410831  0.2]
+ [-1.44321167  2.94561275  1.43306521  0.3]
+ [-2.06639565  1.82881722 -1.58868628  0.4]]
     '''
     Jb = np.array(Blist).copy()
     T = np.eye(4)
@@ -476,12 +472,11 @@ def JacobianSpace(Slist, thetalist):
 #Returns the corresponding space Jacobian (6xn real numbers).
     '''
 Example Input: 
-import numpy as np
 Slist = np.array([[0, 0, 1,   0, 0.2, 0.2], 
                   [1, 0, 0,   2,   0,   3], 
                   [0, 1, 0,   0,   2,   1], 
                   [1, 0, 0, 0.2, 0.3, 0.4]]).T
-thetalist = [0.2, 1.1, 0.1, 1.2]
+thetalist = np.array([0.2, 1.1, 0.1, 1.2])
 Output:
 [[ 0.          0.98006658 -0.09011564  0.95749426]
  [ 0.          0.19866933  0.4445544   0.28487557]
@@ -528,18 +523,20 @@ def IKinBody(Blist, M, T, thetalist0, eomg, ev):
 #the start of the function, but can be changed if needed.  
     '''
 Example Input: 
-import numpy as np
 Blist = np.array([[0, 0, -1, 2, 0,   0],
                   [0, 0,  0, 0, 1,   0], 
                   [0, 0,  1, 0, 0, 0.1]]).T
-M = [[-1, 0, 0, 0], [0, 1, 0, 6], [0, 0, -1, 2], [0, 0, 0, 1]]
-T = [[0, 1, 0, -5], [1, 0, 0, 4], [0, 0, -1, 1.6858], [0, 0, 0, 1]]
-thetalist0 = [1.5, 2.5, 3]
+M = np.array([[-1, 0, 0, 0], [0, 1, 0, 6], [0, 0, -1, 2], [0, 0, 0, 1]])
+T = np.array([[0, 1,  0,     -5], 
+              [1, 0,  0,      4], 
+              [0, 0, -1, 1.6858], 
+              [0, 0,  0,      1]])
+thetalist0 = np.array([1.5, 2.5, 3])
 eomg = 0.01
 ev = 0.001
 Output:
 thetalist:
-[1.57073819, 2.999667, 3.14153913]
+array([1.57073819, 2.999667, 3.14153913])
 success:
 True
     '''
@@ -588,18 +585,20 @@ def IKinSpace(Slist, M, T, thetalist0, eomg, ev):
 #the start of the function, but can be changed if needed.  
     '''
 Example Input: 
-import numpy as np
 Slist = np.array([[0, 0,  1,  4, 0,    0],
                   [0, 0,  0,  0, 1,    0],
                   [0, 0, -1, -6, 0, -0.1]]).T
-M = [[-1, 0, 0, 0], [0, 1, 0, 6], [0, 0, -1, 2], [0, 0, 0, 1]]
-T = [[0, 1, 0, -5], [1, 0, 0, 4], [0, 0, -1, 1.6858], [0, 0, 0, 1]]
-thetalist0 = [1.5, 2.5, 3]
+M = np.array([[-1, 0, 0, 0], [0, 1, 0, 6], [0, 0, -1, 2], [0, 0, 0, 1]])
+T = np.array([[0, 1,  0,     -5], 
+              [1, 0,  0,      4], 
+              [0, 0, -1, 1.6858], 
+              [0, 0,  0,      1]])
+thetalist0 = np.array([1.5, 2.5, 3])
 eomg = 0.01
 ev = 0.001
 Output:
 thetalist:
-[1.57073785, 2.99966405, 3.14154125]
+array([1.57073785, 2.99966405, 3.14154125])
 success:
 True
     '''
@@ -633,7 +632,7 @@ def ad(V):
 #Used to calculate the Lie bracket [V1, V2] = [adV1]V2
     '''
 Example Input: 
-V = [1, 2, 3, 4, 5, 6]
+V = np.array([1, 2, 3, 4, 5, 6])
 Output:
 [[0, -3, 2, 0, 0, 0],
  [3, 0, -1, 0, 0, 0],
@@ -666,26 +665,37 @@ def InverseDynamics(thetalist, dthetalist, ddthetalist, g, Ftip, Mlist, \
 #          + g(thetalist) + Jtr(thetalist)Ftip
     '''
 Example Input (3 Link Robot):
-import numpy as np
-thetalist = [0.1, 0.1, 0.1]
-dthetalist = [0.1, 0.2, 0.3]
-ddthetalist = [2, 1.5, 1]
-g = [0, 0, -9.8]
-Ftip = [1, 1, 1, 1, 1, 1]
-M01 = [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0.089159], [0, 0, 0, 1]]
-M12 = [[0, 0, 1, 0.28], [0, 1, 0, 0.13585], [-1, 0, 0, 0],[0, 0, 0, 1]]
-M23 = [[1, 0, 0, 0], [0, 1, 0, -0.1197],[0, 0, 1, 0.395], [0, 0, 0, 1]]
-M34 = [[1, 0, 0, 0], [0, 1, 0, 0],[0, 0, 1, 0.14225], [0, 0, 0, 1]]
+thetalist = np.array([0.1, 0.1, 0.1])
+dthetalist = np.array([0.1, 0.2, 0.3])
+ddthetalist = np.array([2, 1.5, 1])
+g = np.array([0, 0, -9.8])
+Ftip = np.array([1, 1, 1, 1, 1, 1])
+M01 = np.array([[1, 0, 0,        0], 
+                [0, 1, 0,        0], 
+                [0, 0, 1, 0.089159], 
+                [0, 0, 0,        1]])
+M12 = np.array([[ 0, 0, 1,    0.28], 
+                [ 0, 1, 0, 0.13585], 
+                [-1, 0, 0,       0],
+                [ 0, 0, 0,       1]])
+M23 = np.array([[1, 0, 0,       0], 
+                [0, 1, 0, -0.1197],
+                [0, 0, 1,   0.395], 
+                [0, 0, 0,       1]])
+M34 = np.array([[1, 0, 0,       0], 
+                [0, 1, 0,       0],
+                [0, 0, 1, 0.14225], 
+                [0, 0, 0,       1]])
 G1 = np.diag([0.010267, 0.010267, 0.00666, 3.7, 3.7, 3.7])
 G2 = np.diag([0.22689, 0.22689, 0.0151074, 8.393, 8.393, 8.393])
 G3 = np.diag([0.0494433, 0.0494433, 0.004095, 2.275, 2.275, 2.275])
-Glist = [G1, G2, G3]
-Mlist = [M01, M12, M23, M34]
+Glist = np.array([G1, G2, G3])
+Mlist = np.array([M01, M12, M23, M34])
 Slist = np.array([[1, 0, 1,      0, 1,     0],
                   [0, 1, 0, -0.089, 0,     0],
                   [0, 1, 0, -0.089, 0, 0.425]]).T
 Output:
-[74.696161552874514, -33.067660158514578, -3.2305731379014242]
+[ 74.69616155 -33.06766016  -3.23057314]
     '''
     n = len(thetalist)
     Mi = np.eye(4)
@@ -696,7 +706,7 @@ Output:
     Vdi[:, 0] = np.r_[[0, 0, 0], -np.array(g)]
     AdTi[n] = Adjoint(TransInv(Mlist[n]))
     Fi = np.array(Ftip).copy()
-    taulist = [0] * n  
+    taulist = np.zeros(n)  
     for i in range(n):
         Mi = np.dot(Mi,Mlist[i])
         Ai[:, i] = np.dot(Adjoint(TransInv(Mi)), np.array(Slist)[:, i])
@@ -730,17 +740,28 @@ def MassMatrix(thetalist, Mlist, Glist, Slist):
 #are assembled to create the inertia matrix.
     '''
 Example Input (3 Link Robot):
-import numpy as np
-thetalist = [0.1, 0.1, 0.1]
-M01 = [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0.089159], [0, 0, 0, 1]]
-M12 = [[0, 0, 1, 0.28], [0, 1, 0, 0.13585], [-1, 0, 0, 0],[0, 0, 0, 1]]
-M23 = [[1, 0, 0, 0], [0, 1, 0, -0.1197],[0, 0, 1, 0.395], [0, 0, 0, 1]]
-M34 = [[1, 0, 0, 0], [0, 1, 0, 0],[0, 0, 1, 0.14225], [0, 0, 0, 1]]
+thetalist = np.array([0.1, 0.1, 0.1])
+M01 = np.array([[1, 0, 0,        0], 
+                [0, 1, 0,        0], 
+                [0, 0, 1, 0.089159], 
+                [0, 0, 0,        1]])
+M12 = np.array([[ 0, 0, 1,    0.28], 
+                [ 0, 1, 0, 0.13585], 
+                [-1, 0, 0,       0],
+                [ 0, 0, 0,       1]])
+M23 = np.array([[1, 0, 0,       0], 
+                [0, 1, 0, -0.1197],
+                [0, 0, 1,   0.395], 
+                [0, 0, 0,       1]])
+M34 = np.array([[1, 0, 0,       0], 
+                [0, 1, 0,       0],
+                [0, 0, 1, 0.14225], 
+                [0, 0, 0,       1]])
 G1 = np.diag([0.010267, 0.010267, 0.00666, 3.7, 3.7, 3.7])
 G2 = np.diag([0.22689, 0.22689, 0.0151074, 8.393, 8.393, 8.393])
 G3 = np.diag([0.0494433, 0.0494433, 0.004095, 2.275, 2.275, 2.275])
-Glist = [G1, G2, G3]
-Mlist = [M01, M12, M23, M34]
+Glist = np.array([G1, G2, G3])
+Mlist = np.array([M01, M12, M23, M34])
 Slist = np.array([[1, 0, 1,      0, 1,     0],
                   [0, 1, 0, -0.089, 0,     0],
                   [0, 1, 0, -0.089, 0, 0.425]]).T
@@ -772,23 +793,34 @@ def VelQuadraticForces(thetalist, dthetalist, Mlist, Glist, Slist):
 #ddthetalist = 0.
     '''
 Example Input (3 Link Robot):
-import numpy as np
-thetalist = [0.1, 0.1, 0.1]
-dthetalist = [0.1, 0.2, 0.3]
-M01 = [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0.089159], [0, 0, 0, 1]]
-M12 = [[0, 0, 1, 0.28], [0, 1, 0, 0.13585], [-1, 0, 0, 0],[0, 0, 0, 1]]
-M23 = [[1, 0, 0, 0], [0, 1, 0, -0.1197],[0, 0, 1, 0.395], [0, 0, 0, 1]]
-M34 = [[1, 0, 0, 0], [0, 1, 0, 0],[0, 0, 1, 0.14225], [0, 0, 0, 1]]
+thetalist = np.array([0.1, 0.1, 0.1])
+dthetalist = np.array([0.1, 0.2, 0.3])
+M01 = np.array([[1, 0, 0,        0], 
+                [0, 1, 0,        0], 
+                [0, 0, 1, 0.089159], 
+                [0, 0, 0,        1]])
+M12 = np.array([[ 0, 0, 1,    0.28], 
+                [ 0, 1, 0, 0.13585],
+                [-1, 0, 0,       0],
+                [ 0, 0, 0,       1]])
+M23 = np.array([[1, 0, 0,       0], 
+                [0, 1, 0, -0.1197],
+                [0, 0, 1,   0.395], 
+                [0, 0, 0,       1]])
+M34 = np.array([[1, 0, 0,       0], 
+                [0, 1, 0,       0],
+                [0, 0, 1, 0.14225], 
+                [0, 0, 0,       1]])
 G1 = np.diag([0.010267, 0.010267, 0.00666, 3.7, 3.7, 3.7])
 G2 = np.diag([0.22689, 0.22689, 0.0151074, 8.393, 8.393, 8.393])
 G3 = np.diag([0.0494433, 0.0494433, 0.004095, 2.275, 2.275, 2.275])
-Glist = [G1, G2, G3]
-Mlist = [M01, M12, M23, M34]
+Glist = np.array([G1, G2, G3])
+Mlist = np.array([M01, M12, M23, M34])
 Slist = np.array([[1, 0, 1,      0, 1,     0],
                   [0, 1, 0, -0.089, 0,     0],
                   [0, 1, 0, -0.089, 0, 0.425]]).T
 Output:
-[0.26453118054501235, -0.055051568289165499, -0.0068913200682489129]
+[ 0.26453118 -0.05505157 -0.00689132]
     '''
     return InverseDynamics(thetalist, dthetalist, [0] * len(thetalist), \
                            [0, 0, 0], [0, 0, 0, 0, 0, 0], Mlist, Glist, \
@@ -807,23 +839,34 @@ def GravityForces(thetalist, g, Mlist, Glist, Slist):
 #ddthetalist = 0.
     '''
 Example Inputs (3 Link Robot):
-import numpy as np
-thetalist = [0.1, 0.1, 0.1]
-g = [0, 0, -9.8]
-M01 = [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0.089159], [0, 0, 0, 1]]
-M12 = [[0, 0, 1, 0.28], [0, 1, 0, 0.13585], [-1, 0, 0, 0],[0, 0, 0, 1]]
-M23 = [[1, 0, 0, 0], [0, 1, 0, -0.1197],[0, 0, 1, 0.395], [0, 0, 0, 1]]
-M34 = [[1, 0, 0, 0], [0, 1, 0, 0],[0, 0, 1, 0.14225], [0, 0, 0, 1]]
+thetalist = np.array([0.1, 0.1, 0.1])
+g = np.array([0, 0, -9.8])
+M01 = np.array([[1, 0, 0,        0], 
+                [0, 1, 0,        0], 
+                [0, 0, 1, 0.089159], 
+                [0, 0, 0,        1]])
+M12 = np.array([[ 0, 0, 1,    0.28], 
+                [ 0, 1, 0, 0.13585],
+                [-1, 0, 0,       0],
+                [ 0, 0, 0,       1]])
+M23 = np.array([[1, 0, 0,       0], 
+                [0, 1, 0, -0.1197],
+                [0, 0, 1,   0.395], 
+                [0, 0, 0,       1]])
+M34 = np.array([[1, 0, 0,       0], 
+                [0, 1, 0,       0],
+                [0, 0, 1, 0.14225], 
+                [0, 0, 0,       1]])
 G1 = np.diag([0.010267, 0.010267, 0.00666, 3.7, 3.7, 3.7])
 G2 = np.diag([0.22689, 0.22689, 0.0151074, 8.393, 8.393, 8.393])
 G3 = np.diag([0.0494433, 0.0494433, 0.004095, 2.275, 2.275, 2.275])
-Glist = [G1, G2, G3]
-Mlist = [M01, M12, M23, M34]
+Glist = np.array([G1, G2, G3])
+Mlist = np.array([M01, M12, M23, M34])
 Slist = np.array([[1, 0, 1,      0, 1,     0],
                   [0, 1, 0, -0.089, 0,     0],
                   [0, 1, 0, -0.089, 0, 0.425]]).T
 Output:
-[28.403312618219829, -37.640948171770681, -5.4415891999683605]
+[ 28.40331262 -37.64094817  -5.4415892]
     '''
     n = len(thetalist)
     return InverseDynamics(thetalist, [0] * n, [0] * n, g, \
@@ -843,23 +886,34 @@ def EndEffectorForces(thetalist, Ftip, Mlist, Glist, Slist):
 #ddthetalist = 0.
     '''
 Example Input (3 Link Robot):
-import numpy as np
-thetalist = [0.1, 0.1, 0.1]
-Ftip = [1, 1, 1, 1, 1, 1]
-M01 = [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0.089159], [0, 0, 0, 1]]
-M12 = [[0, 0, 1, 0.28], [0, 1, 0, 0.13585], [-1, 0, 0, 0],[0, 0, 0, 1]]
-M23 = [[1, 0, 0, 0], [0, 1, 0, -0.1197],[0, 0, 1, 0.395], [0, 0, 0, 1]]
-M34 = [[1, 0, 0, 0], [0, 1, 0, 0],[0, 0, 1, 0.14225], [0, 0, 0, 1]]
+thetalist = np.array([0.1, 0.1, 0.1])
+Ftip = np.array([1, 1, 1, 1, 1, 1])
+M01 = np.array([[1, 0, 0,        0], 
+                [0, 1, 0,        0], 
+                [0, 0, 1, 0.089159], 
+                [0, 0, 0,        1]])
+M12 = np.array([[ 0, 0, 1,    0.28], 
+                [ 0, 1, 0, 0.13585],
+                [-1, 0, 0,       0],
+                [ 0, 0, 0,       1]])
+M23 = np.array([[1, 0, 0,       0], 
+                [0, 1, 0, -0.1197],
+                [0, 0, 1,   0.395], 
+                [0, 0, 0,       1]])
+M34 = np.array([[1, 0, 0,       0], 
+                [0, 1, 0,       0],
+                [0, 0, 1, 0.14225], 
+                [0, 0, 0,       1]])
 G1 = np.diag([0.010267, 0.010267, 0.00666, 3.7, 3.7, 3.7])
 G2 = np.diag([0.22689, 0.22689, 0.0151074, 8.393, 8.393, 8.393])
 G3 = np.diag([0.0494433, 0.0494433, 0.004095, 2.275, 2.275, 2.275])
-Glist = [G1, G2, G3]
-Mlist = [M01, M12, M23, M34]
+Glist = np.array([G1, G2, G3])
+Mlist = np.array([M01, M12, M23, M34])
 Slist = np.array([[1, 0, 1,      0, 1,     0],
                   [0, 1, 0, -0.089, 0,     0],
                   [0, 1, 0, -0.089, 0, 0.425]]).T
 Output:
-[1.4095460782639782, 1.8577149723180628, 1.392409]
+[ 1.40954608  1.85771497  1.392409]
     '''
     n = len(thetalist)
     return InverseDynamics(thetalist, [0] * n, [0] * n, [0, 0, 0], Ftip, \
@@ -883,21 +937,32 @@ def ForwardDynamics(thetalist, dthetalist, taulist, g, Ftip, Mlist, \
 #                              - g(thetalist) - Jtr(thetalist) * Ftip
     '''
 Example Input (3 Link Robot):
-import numpy as np
-thetalist = [0.1, 0.1, 0.1]
-dthetalist = [0.1, 0.2, 0.3]
-taulist = [0.5, 0.6, 0.7]
-g = [0, 0, -9.8]
-Ftip = [1, 1, 1, 1, 1, 1]
-M01 = [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0.089159], [0, 0, 0, 1]]
-M12 = [[0, 0, 1, 0.28], [0, 1, 0, 0.13585], [-1, 0, 0, 0],[0, 0, 0, 1]]
-M23 = [[1, 0, 0, 0], [0, 1, 0, -0.1197],[0, 0, 1, 0.395], [0, 0, 0, 1]]
-M34 = [[1, 0, 0, 0], [0, 1, 0, 0],[0, 0, 1, 0.14225], [0, 0, 0, 1]]
+thetalist = np.array([0.1, 0.1, 0.1])
+dthetalist = np.array([0.1, 0.2, 0.3])
+taulist = np.array([0.5, 0.6, 0.7])
+g = np.array([0, 0, -9.8])
+Ftip = np.array([1, 1, 1, 1, 1, 1])
+M01 = np.array([[1, 0, 0,        0], 
+                [0, 1, 0,        0], 
+                [0, 0, 1, 0.089159], 
+                [0, 0, 0,        1]])
+M12 = np.array([[ 0, 0, 1,    0.28], 
+                [ 0, 1, 0, 0.13585],
+                [-1, 0, 0,       0],
+                [ 0, 0, 0,       1]])
+M23 = np.array([[1, 0, 0,       0], 
+                [0, 1, 0, -0.1197],
+                [0, 0, 1,   0.395], 
+                [0, 0, 0,       1]])
+M34 = np.array([[1, 0, 0,       0], 
+                [0, 1, 0,       0],
+                [0, 0, 1, 0.14225], 
+                [0, 0, 0,       1]])
 G1 = np.diag([0.010267, 0.010267, 0.00666, 3.7, 3.7, 3.7])
 G2 = np.diag([0.22689, 0.22689, 0.0151074, 8.393, 8.393, 8.393])
 G3 = np.diag([0.0494433, 0.0494433, 0.004095, 2.275, 2.275, 2.275])
-Glist = [G1, G2, G3]
-Mlist = [M01, M12, M23, M34]
+Glist = np.array([G1, G2, G3])
+Mlist = np.array([M01, M12, M23, M34])
 Slist = np.array([[1, 0, 1,      0, 1,     0],
                   [0, 1, 0, -0.089, 0,     0],
                   [0, 1, 0, -0.089, 0, 0.425]]).T
@@ -924,15 +989,15 @@ def EulerStep(thetalist, dthetalist, ddthetalist, dt):
 #                        Euler integration.
     '''
 Example Inputs (3 Link Robot):
-thetalist = [0.1, 0.1, 0.1]
-dthetalist = [0.1, 0.2, 0.3]
-ddthetalist = [2, 1.5, 1]
+thetalist = np.array([0.1, 0.1, 0.1])
+dthetalist = np.array([0.1, 0.2, 0.3])
+ddthetalist = np.array([2, 1.5, 1])
 dt = 0.1
 Output:
 thetalistNext:
-[ 0.11,  0.12,  0.13]
+array([ 0.11,  0.12,  0.13])
 dthetalistNext:
-[ 0.3 ,  0.35,  0.4 ]
+array([ 0.3 ,  0.35,  0.4 ])
     '''
     return thetalist + dt * np.array(dthetalist), \
            dthetalist + dt * np.array(ddthetalist)
@@ -957,13 +1022,11 @@ def InverseDynamicsTrajectory(thetamat, dthetamat, ddthetamat, g, \
 #required to move the serial chain along the given trajectory.
     '''
 #Example Inputs (3 Link Robot):
-import numpy as np
-from math import pi
 from modern_robotics import JointTrajectory
 import matplotlib.pyplot as plt
 #Create a trajectory to follow using functions from Chapter 9
-thetastart =[0, 0, 0]
-thetaend = [pi / 2, pi / 2, pi / 2]
+thetastart =  np.array([0, 0, 0])
+thetaend =  np.array([np.pi / 2, np.pi / 2, np.pi / 2])
 Tf = 3
 N= 1000
 method = 5 
@@ -976,17 +1039,29 @@ for i in range(np.array(traj).shape[0] - 1):
     dthetamat[i + 1, :] = (thetamat[i + 1, :] - thetamat[i, :]) / dt
     ddthetamat[i + 1, :] = (dthetamat[i + 1, :] - dthetamat[i, :]) / dt
 #Initialise robot descripstion (Example with 3 links)
-g = [0, 0, -9.8]
+g =  np.array([0, 0, -9.8])
 Ftipmat = np.ones((N, 6))
-M01 = [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0.089159], [0, 0, 0, 1]]
-M12 = [[0, 0, 1, 0.28], [0, 1, 0, 0.13585], [-1, 0, 0, 0],[0, 0, 0, 1]]
-M23 = [[1, 0, 0, 0], [0, 1, 0, -0.1197],[0, 0, 1, 0.395], [0, 0, 0, 1]]
-M34 = [[1, 0, 0, 0], [0, 1, 0, 0],[0, 0, 1, 0.14225], [0, 0, 0, 1]]
+M01 = np.array([[1, 0, 0,        0], 
+                [0, 1, 0,        0], 
+                [0, 0, 1, 0.089159], 
+                [0, 0, 0,        1]])
+M12 = np.array([[ 0, 0, 1,    0.28], 
+                [ 0, 1, 0, 0.13585],
+                [-1, 0, 0,       0],
+                [ 0, 0, 0,       1]])
+M23 = np.array([[1, 0, 0,       0], 
+                [0, 1, 0, -0.1197],
+                [0, 0, 1,   0.395], 
+                [0, 0, 0,       1]])
+M34 = np.array([[1, 0, 0,       0], 
+                [0, 1, 0,       0],
+                [0, 0, 1, 0.14225], 
+                [0, 0, 0,       1]])
 G1 = np.diag([0.010267, 0.010267, 0.00666, 3.7, 3.7, 3.7])
 G2 = np.diag([0.22689, 0.22689, 0.0151074, 8.393, 8.393, 8.393])
 G3 = np.diag([0.0494433, 0.0494433, 0.004095, 2.275, 2.275, 2.275])
-Glist = [G1, G2, G3]
-Mlist = [M01, M12, M23, M34]
+Glist = np.array([G1, G2, G3])
+Mlist = np.array([M01, M12, M23, M34])
 Slist = np.array([[1, 0, 1,      0, 1,     0],
                   [0, 1, 0, -0.089, 0,     0],
                   [0, 1, 0, -0.089, 0, 0.425]]).T
@@ -1047,27 +1122,38 @@ def ForwardDynamicsTrajectory(thetalist, dthetalist, taumat, g, Ftipmat, \
 #It calls a numerical integration procedure that uses ForwardDynamics.
     '''
 #Example Inputs (3 Link Robot):
-import numpy as np
 import matplotlib.pyplot as plt
-thetalist = [0.1, 0.1, 0.1]
-dthetalist = [0.1, 0.2, 0.3]
-taumat = [[3.63, -6.58, -5.57], [3.74, -5.55,  -5.5], 
-          [4.31, -0.68, -5.19], [5.18,  5.63, -4.31],
-          [5.85,  8.17, -2.59], [5.78,  2.79,  -1.7], 
-          [4.99,  -5.3, -1.19], [4.08, -9.41,  0.07],
-          [3.56, -10.1,  0.97], [3.49, -9.41,  1.23]]
+thetalist = np.array([0.1, 0.1, 0.1])
+dthetalist = np.array([0.1, 0.2, 0.3])
+taumat = np.array([[3.63, -6.58, -5.57], [3.74, -5.55,  -5.5], 
+          	   [4.31, -0.68, -5.19], [5.18,  5.63, -4.31],
+                   [5.85,  8.17, -2.59], [5.78,  2.79,  -1.7], 
+                   [4.99,  -5.3, -1.19], [4.08, -9.41,  0.07],
+                   [3.56, -10.1,  0.97], [3.49, -9.41,  1.23]])
 #Initialise robot description (Example with 3 links)
-g = [0, 0, -9.8]
+g = np.array([0, 0, -9.8])
 Ftipmat = np.ones((np.array(taumat).shape[0], 6))
-M01 = [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0.089159], [0, 0, 0, 1]]
-M12 = [[0, 0, 1, 0.28], [0, 1, 0, 0.13585], [-1, 0, 0, 0],[0, 0, 0, 1]]
-M23 = [[1, 0, 0, 0], [0, 1, 0, -0.1197],[0, 0, 1, 0.395], [0, 0, 0, 1]]
-M34 = [[1, 0, 0, 0], [0, 1, 0, 0],[0, 0, 1, 0.14225], [0, 0, 0, 1]]
+M01 = np.array([[1, 0, 0,        0], 
+                [0, 1, 0,        0], 
+                [0, 0, 1, 0.089159], 
+                [0, 0, 0,        1]])
+M12 = np.array([[ 0, 0, 1,    0.28], 
+                [ 0, 1, 0, 0.13585],
+                [-1, 0, 0,       0],
+                [ 0, 0, 0,       1]])
+M23 = np.array([[1, 0, 0,       0], 
+                [0, 1, 0, -0.1197],
+                [0, 0, 1,   0.395], 
+                [0, 0, 0,       1]])
+M34 = np.array([[1, 0, 0,       0], 
+                [0, 1, 0,       0],
+                [0, 0, 1, 0.14225], 
+                [0, 0, 0,       1]])
 G1 = np.diag([0.010267, 0.010267, 0.00666, 3.7, 3.7, 3.7])
 G2 = np.diag([0.22689, 0.22689, 0.0151074, 8.393, 8.393, 8.393])
 G3 = np.diag([0.0494433, 0.0494433, 0.004095, 2.275, 2.275, 2.275])
-Glist = [G1, G2, G3]
-Mlist = [M01, M12, M23, M34]
+Glist = np.array([G1, G2, G3])
+Mlist = np.array([M01, M12, M23, M34])
 Slist = np.array([[1, 0, 1,      0, 1,     0],
                   [0, 1, 0, -0.089, 0,     0],
                   [0, 1, 0, -0.089, 0, 0.425]]).T
@@ -1168,8 +1254,8 @@ def JointTrajectory(thetastart, thetaend, Tf, N, method):
 #The returned trajectory is a straight-line motion in joint space.
     '''
 Example Input: 
-thetastart = [1, 0, 0, 1, 1, 0.2, 0,1]
-thetaend = [1.2, 0.5, 0.6, 1.1, 2, 2, 0.9, 1]
+thetastart = np.array([1, 0, 0, 1, 1, 0.2, 0,1])
+thetaend = np.array([1.2, 0.5, 0.6, 1.1, 2, 2, 0.9, 1])
 Tf = 4
 N = 6
 method = 3
@@ -1209,28 +1295,31 @@ def ScrewTrajectory(Xstart, Xend, Tf, N, method):
 #about a space screw axis.
     '''
 Example Input: 
-Xstart = [[1, 0, 0, 1], [0, 1, 0, 0], [0, 0, 1, 1], [0, 0, 0, 1]]
-Xend = [[0, 0, 1, 0.1], [1, 0, 0, 0], [0, 1, 0, 4.1], [0, 0, 0, 1]]
+Xstart = np.array([[1, 0, 0, 1], [0, 1, 0, 0], [0, 0, 1, 1], [0, 0, 0, 1]])
+Xend = np.array([[0, 0, 1, 0.1], 
+                 [1, 0, 0,   0], 
+                 [0, 1, 0, 4.1], 
+                 [0, 0, 0,   1]])
 Tf = 5
 N = 4
 method = 3
 Output:
-[[[ 1.     0.     0.     1.   ]
-  [ 0.     1.     0.     0.   ]
-  [ 0.     0.     1.     1.   ]
-  [ 0.     0.     0.     1.   ]]
- [[ 0.904 -0.25   0.346  0.441]
-  [ 0.346  0.904 -0.25   0.529]
-  [-0.25   0.346  0.904  1.601]
-  [ 0.     0.     0.     1.   ]]
- [[ 0.346 -0.25   0.904 -0.117]
-  [ 0.904  0.346 -0.25   0.473]
-  [-0.25   0.904  0.346  3.274]
-  [ 0.     0.     0.     1.   ]]
- [[-0.     0.     1.     0.1  ]
-  [ 1.    -0.     0.    -0.   ]
-  [ 0.     1.    -0.     4.1  ]
-  [ 0.     0.     0.     1.   ]]]
+[array([[ 1.     0.     0.     1.   ]
+        [ 0.     1.     0.     0.   ]
+        [ 0.     0.     1.     1.   ]
+        [ 0.     0.     0.     1.   ]]),
+ array([[ 0.904 -0.25   0.346  0.441]
+        [ 0.346  0.904 -0.25   0.529]
+        [-0.25   0.346  0.904  1.601]
+        [ 0.     0.     0.     1.   ]]),
+ array([[ 0.346 -0.25   0.904 -0.117]
+        [ 0.904  0.346 -0.25   0.473]
+        [-0.25   0.904  0.346  3.274]
+        [ 0.     0.     0.     1.   ]]),
+ array([[-0.     0.     1.     0.1  ]
+        [ 1.    -0.     0.    -0.   ]
+        [ 0.     1.    -0.     4.1  ]
+        [ 0.     0.     0.     1.   ]])]
     '''
     N = int(N)
     timegap = Tf / (N - 1.0)
@@ -1262,28 +1351,31 @@ def CartesianTrajectory(Xstart, Xend, Tf, N, method):
 #motion.
     '''
 Example Input: 
-Xstart = [[1, 0, 0, 1], [0, 1, 0, 0], [0, 0, 1, 1], [0, 0, 0, 1]]
-Xend = [[0, 0, 1, 0.1], [1, 0, 0, 0], [0, 1, 0, 4.1], [0, 0, 0, 1]]
+Xstart = np.array([[1, 0, 0, 1], [0, 1, 0, 0], [0, 0, 1, 1], [0, 0, 0, 1]])
+Xend = np.array([[0, 0, 1, 0.1], 
+                 [1, 0, 0,   0], 
+                 [0, 1, 0, 4.1], 
+                 [0, 0, 0,   1]])
 Tf = 5
 N = 4
 method = 5
 Output:
-[[[ 1.     0.     0.     1.   ]
-  [ 0.     1.     0.     0.   ]
-  [ 0.     0.     1.     1.   ]
-  [ 0.     0.     0.     1.   ]]
- [[ 0.937 -0.214  0.277  0.811]
-  [ 0.277  0.937 -0.214  0.   ]
-  [-0.214  0.277  0.937  1.651]
-  [ 0.     0.     0.     1.   ]]
- [[ 0.277 -0.214  0.937  0.289]
-  [ 0.937  0.277 -0.214  0.   ]
-  [-0.214  0.937  0.277  3.449]
-  [ 0.     0.     0.     1.   ]]
- [[-0.     0.     1.     0.1  ]
-  [ 1.    -0.     0.     0.   ]
-  [ 0.     1.    -0.     4.1  ]
-  [ 0.     0.     0.     1.   ]]]
+[array([[ 1.     0.     0.     1.   ]
+        [ 0.     1.     0.     0.   ]
+        [ 0.     0.     1.     1.   ]
+        [ 0.     0.     0.     1.   ]]),
+ array([[ 0.937 -0.214  0.277  0.811]
+        [ 0.277  0.937 -0.214  0.   ]
+        [-0.214  0.277  0.937  1.651]
+        [ 0.     0.     0.     1.   ]]),
+ array([[ 0.277 -0.214  0.937  0.289]
+        [ 0.937  0.277 -0.214  0.   ]
+        [-0.214  0.937  0.277  3.449]
+        [ 0.     0.     0.     1.   ]]),
+ array([[-0.     0.     1.     0.1  ]
+        [ 1.    -0.     0.     0.   ]
+        [ 0.     1.    -0.     4.1  ]
+        [ 0.     0.     0.     1.   ]])]
     '''
     N = int(N)
     timegap = Tf / (N - 1.0)
@@ -1327,26 +1419,37 @@ def ComputedTorque(thetalist, dthetalist, eint, g, Mlist, Glist, Slist, \
 #                 feedback linearizing controller at the current instant.
     '''
 Example Input: 
-import numpy as np
-thetalist = [0.1, 0.1, 0.1]
-dthetalist = [0.1, 0.2, 0.3]
-eint = [0.2, 0.2, 0.2]
-g = [0, 0, -9.8]
-M01 = [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0.089159], [0, 0, 0, 1]]
-M12 = [[0, 0, 1, 0.28], [0, 1, 0, 0.13585], [-1, 0, 0, 0],[0, 0, 0, 1]]
-M23 = [[1, 0, 0, 0], [0, 1, 0, -0.1197],[0, 0, 1, 0.395], [0, 0, 0, 1]]
-M34 = [[1, 0, 0, 0], [0, 1, 0, 0],[0, 0, 1, 0.14225], [0, 0, 0, 1]]
+thetalist = np.array([0.1, 0.1, 0.1])
+dthetalist = np.array([0.1, 0.2, 0.3])
+eint = np.array([0.2, 0.2, 0.2])
+g = np.array([0, 0, -9.8])
+M01 = np.array([[1, 0, 0,        0], 
+                [0, 1, 0,        0], 
+                [0, 0, 1, 0.089159], 
+                [0, 0, 0,        1]])
+M12 = np.array([[ 0, 0, 1,    0.28], 
+                [ 0, 1, 0, 0.13585],
+                [-1, 0, 0,       0],
+                [ 0, 0, 0,       1]])
+M23 = np.array([[1, 0, 0,       0], 
+                [0, 1, 0, -0.1197],
+                [0, 0, 1,   0.395], 
+                [0, 0, 0,       1]])
+M34 = np.array([[1, 0, 0,       0], 
+                [0, 1, 0,       0],
+                [0, 0, 1, 0.14225], 
+                [0, 0, 0,       1]])
 G1 = np.diag([0.010267, 0.010267, 0.00666, 3.7, 3.7, 3.7])
 G2 = np.diag([0.22689, 0.22689, 0.0151074, 8.393, 8.393, 8.393])
 G3 = np.diag([0.0494433, 0.0494433, 0.004095, 2.275, 2.275, 2.275])
-Glist = [G1, G2, G3]
-Mlist = [M01, M12, M23, M34]
+Glist = np.array([G1, G2, G3])
+Mlist = np.array([M01, M12, M23, M34])
 Slist = np.array([[1, 0, 1,      0, 1,     0],
                   [0, 1, 0, -0.089, 0,     0],
                   [0, 1, 0, -0.089, 0, 0.425]]).T
-thetalistd = [1.0, 1.0, 1.0]
-dthetalistd = [2, 1.2, 2]
-ddthetalistd = [0.1, 0.1, 0.1]
+thetalistd = np.array([1.0, 1.0, 1.0])
+dthetalistd = np.array([2, 1.2, 2])
+ddthetalistd = np.array([0.1, 0.1, 0.1])
 Kp = 1.3
 Ki = 1.2
 Kd = 1.1
@@ -1399,28 +1502,38 @@ def SimulateControl(thetalist, dthetalist, g, Ftipmat, Mlist, Glist, \
 #using matplotlib and random libraries.
     '''
 #Example Input: 
-from math import pi
-import numpy as np
 from modern_robotics import JointTrajectory
-thetalist = [0.1, 0.1, 0.1]
-dthetalist = [0.1, 0.2, 0.3]
+thetalist = np.array([0.1, 0.1, 0.1])
+dthetalist = np.array([0.1, 0.2, 0.3])
 #Initialise robot description (Example with 3 links)
-g = [0, 0, -9.8]
-M01 = [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0.089159], [0, 0, 0, 1]]
-M12 = [[0, 0, 1, 0.28], [0, 1, 0, 0.13585], [-1, 0, 0, 0],[0, 0, 0, 1]]
-M23 = [[1, 0, 0, 0], [0, 1, 0, -0.1197],[0, 0, 1, 0.395], [0, 0, 0, 1]]
-M34 = [[1, 0, 0, 0], [0, 1, 0, 0],[0, 0, 1, 0.14225], [0, 0, 0, 1]]
+g = np.array([0, 0, -9.8])
+M01 = np.array([[1, 0, 0,        0], 
+                [0, 1, 0,        0], 
+                [0, 0, 1, 0.089159], 
+                [0, 0, 0,        1]])
+M12 = np.array([[ 0, 0, 1,    0.28], 
+                [ 0, 1, 0, 0.13585],
+                [-1, 0, 0,       0],
+                [ 0, 0, 0,       1]])
+M23 = np.array([[1, 0, 0,       0], 
+                [0, 1, 0, -0.1197],
+                [0, 0, 1,   0.395], 
+                [0, 0, 0,       1]])
+M34 = np.array([[1, 0, 0,       0], 
+                [0, 1, 0,       0],
+                [0, 0, 1, 0.14225], 
+                [0, 0, 0,       1]])
 G1 = np.diag([0.010267, 0.010267, 0.00666, 3.7, 3.7, 3.7])
 G2 = np.diag([0.22689, 0.22689, 0.0151074, 8.393, 8.393, 8.393])
 G3 = np.diag([0.0494433, 0.0494433, 0.004095, 2.275, 2.275, 2.275])
-Glist = [G1, G2, G3]
-Mlist = [M01, M12, M23, M34]
+Glist = np.array([G1, G2, G3])
+Mlist = np.array([M01, M12, M23, M34])
 Slist = np.array([[1, 0, 1,      0, 1,     0],
                   [0, 1, 0, -0.089, 0,     0],
                   [0, 1, 0, -0.089, 0, 0.425]]).T
 dt = 0.01
 #Create a trajectory to follow
-thetaend = [pi / 2, pi, 1.5 * pi]
+thetaend = np.array([np.pi / 2, np.pi, 1.5 * np.pi])
 Tf = 1
 N = 1.0 * Tf / dt
 method = 5
@@ -1433,16 +1546,28 @@ for i in range(np.array(traj).shape[0] - 1):
     dthetamatd[i + 1, :] = (thetamatd[i + 1, :] - thetamatd[i, :]) / dt
     ddthetamatd[i + 1, :] = (dthetamatd[i + 1, :] - dthetamatd[i, :]) / dt
 #Possibly wrong robot description (Example with 3 links)
-gtilde = [0.8, 0.2, -8.8]
-Mhat01 = [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0.1], [0, 0, 0, 1]]
-Mhat12 = [[0, 0, 1, 0.3], [0, 1, 0, 0.2], [-1, 0, 0, 0],[0, 0, 0, 1]]
-Mhat23 = [[1, 0, 0, 0], [0, 1, 0, -0.2],[0, 0, 1, 0.4], [0, 0, 0, 1]]
-Mhat34 = [[1, 0, 0, 0], [0, 1, 0, 0],[0, 0, 1, 0.2], [0, 0, 0, 1]]
+gtilde = np.array([0.8, 0.2, -8.8])
+Mhat01 = np.array([[1, 0, 0,   0], 
+                   [0, 1, 0,   0], 
+                   [0, 0, 1, 0.1], 
+                   [0, 0, 0,   1]])
+Mhat12 = np.array([[ 0, 0, 1, 0.3], 
+                   [ 0, 1, 0, 0.2], 
+                   [-1, 0, 0,   0],
+                   [ 0, 0, 0,   1]])
+Mhat23 = np.array([[1, 0, 0,    0], 
+                   [0, 1, 0, -0.2],
+                   [0, 0, 1,  0.4], 
+                   [0, 0, 0,    1]])
+Mhat34 = np.array([[1, 0, 0,   0], 
+                   [0, 1, 0,   0],
+                   [0, 0, 1, 0.2],
+                   [0, 0, 0,   1]])
 Ghat1 = np.diag([0.1, 0.1, 0.1, 4, 4, 4])
 Ghat2 = np.diag([0.3, 0.3, 0.1, 9, 9, 9])
 Ghat3 = np.diag([0.1, 0.1, 0.1, 3, 3, 3])
-Gtildelist = [Ghat1, Ghat2, Ghat3]
-Mtildelist = [Mhat01, Mhat12, Mhat23, Mhat34]
+Gtildelist = np.array([Ghat1, Ghat2, Ghat3])
+Mtildelist = np.array([Mhat01, Mhat12, Mhat23, Mhat34])
 Ftipmat = np.ones((np.array(traj).shape[0], 6))
 Kp = 20
 Ki = 10
@@ -1485,8 +1610,8 @@ taumat,thetamat \
     timestamp = np.linspace(0, Tf, N)
     #timestampd = np.linspace(0,Tf,(N/intRes))
     for i in range(links):
-        col = [random.uniform(0, 1), random.uniform(0, 1),
-               random.uniform(0, 1)]
+        col = [np.random.uniform(0, 1), np.random.uniform(0, 1),
+               np.random.uniform(0, 1)]
         plt.plot(timestamp, thetamat[i, :], "-", color=col, \
                  label = ("ActualTheta" + str(i + 1)))
         plt.plot(timestamp, thetamatd[i, :], ".", color=col, \
