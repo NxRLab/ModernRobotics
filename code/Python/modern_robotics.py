@@ -370,7 +370,161 @@ Output:
                                                               T[1][3], 
                                                               T[2][3]])], 
                      [[0, 0, 0, 0]]]
+                     
+                     
+def ProjectToSO3 (R):
+    """Returns a projection of R into SO3
+    
+    Projects a matrix R to the closest matrix in SO3
+    using singular-value decomposition (see
+    http://hades.mech.northwestern.edu/index.php/Modern_Robotics_Linear_Algebra_Review).
+    
+    Example Input: 
+    R = np.array([[ 0.675,  0.150,  0.720],
+                  [ 0.370,  0.771, -0.511],
+                  [-0.630,  0.619,  0.472]])
+    Output:
+        np.array([[ 0.67901136,  0.14894516,  0.71885945],
+                  [ 0.37320708,  0.77319584, -0.51272279],
+                  [-0.63218672,  0.61642804,  0.46942137]])
+        
+    :param R: A matrix near SO3 to project to SO3
+    :returns: The closest matrix to R that is in SO3
+    """
+    U,s,Vh = np.linalg.svd(R)
+        
+    result = np.dot(U,Vh)
+    
+    if np.linalg.det(result) < 0:
+        result[:,np.argmin(s)] = -result[:,np.argmin(s)]
+    
+    return result
+    
+    
+def ProjectToSE3 (T):
+    """Returns a projection of T into SE3
 
+    Projects a matrix T to the closest matrix
+    in SE3 using singular-value decomposition (see
+    http://hades.mech.northwestern.edu/index.php/Modern_Robotics_Linear_Algebra_Review).
+
+    Example Input: 
+    T = np.array([[ 0.675,  0.150,  0.720,  1.2],
+                  [ 0.370,  0.771, -0.511,  5.4],
+                  [-0.630,  0.619,  0.472,  3.6],
+                  [ 0.003,  0.002,  0.010,  0.9]])
+    Output:
+        np.array([[ 0.67901136,  0.14894516,  0.71885945,  1.2 ],
+                  [ 0.37320708,  0.77319584, -0.51272279,  5.4 ],
+                  [-0.63218672,  0.61642804,  0.46942137,  3.6 ],
+                  [ 0.        ,  0.        ,  0.        ,  1.  ]])
+                  
+    :param T: A 4x4 matrix to project to SE3
+    :returns: The closest matrix to T that is in SE3
+    """
+    
+    a=np.array(T)
+    
+    R = ProjectToSO3(a[:3,:3])
+    
+    return mr.RpToTrans(R,a[:3,3])
+    
+def DistanceToSO3 (R):
+    """Returns a quantity describing the distance of R from the SO3 manifold
+    
+    Computes the distance from R to the SO3 manifold using the following method:
+    
+    If det(R) <= 0, return a large number. If det(R) > 0, return norm(R^T.R - I).
+    
+    Example Input: 
+        np.array([[ 1.0,  0.0,   0.0  ],
+                  [ 0.0,  0.1,  -0.95 ],
+                  [ 0.0,  1.0,   0.1  ]])
+    Output:
+        0.08835
+        
+    :param R: A 3x3 matrix
+    :returns: A quantity describing the distance of R from the SO3 manifold
+    """
+    if np.linalg.det(R) > 0:
+        return np.linalg.norm(np.dot(np.transpose(R),np.array(R)) - np.identity(3))
+    else:
+        return 1000000000.
+    
+def DistanceToSE3 (T):
+    """Returns a quantity describing the distance of T from the SE3 manifold
+    
+    Computes the distance from T to the SO3 manifold using the following method:
+    
+        Compute the determinant of R, the top 3x3 submatrix of T. If det(R) <= 0, return a large number.
+        If det(R) > 0, replace the top 3x3 submatrix of T with R^T.R, and set the first three entries of
+        the fourth column of T to zero. Then return norm(T - I).
+    
+    Example Input: 
+        np.array([[ 1.0,  0.0,   0.0,   1.2 ],
+                  [ 0.0,  0.1,  -0.95,  1.5 ],
+                  [ 0.0,  1.0,   0.1,  -0.9 ],
+                  [ 0.0,  0.0,   0.1,   0.98 ]])
+    Output:
+        0.134931
+        
+    :param R: A 4x4 matrix
+    :returns: A quantity describing the distance of R from the SO3 manifold
+    """
+    T = np.array(T)
+    if np.linalg.det(T[:3,:3]) > 0:
+        A = np.vstack([np.c_[np.dot(np.transpose(T[:3,:3]),T[:3,:3]),np.zeros((3,1))] , T[3,:]])
+        return np.linalg.norm(A - np.identity(4))
+        
+    else:
+        return 1000000000.
+    
+def TestIfSO3 (R):
+    """Returns true if R is close to or on the manifold SO3
+    
+    Computes the distance d from R to the SO3 manifold using the following method:
+    
+    If det(R) <= 0, d = a large number. If det(R) > 0, d = norm(R^T.R - I).
+    
+    if d is close to zero, return true. Otherwise, return false
+    
+    Example Input: 
+        np.array([[ 1.0,  0.0,   0.0  ],
+                  [ 0.0,  0.1,  -0.95 ],
+                  [ 0.0,  1.0,   0.1  ]])
+    Output:
+        False
+        
+    :param R: A 3x3 matrix
+    :returns: True if R is very close to or in SO3, false otherwise
+    """
+    return NearZero(DistanceToSO3(R))
+    
+        
+def TestIfSE3 (T):
+    """Returns true if T is close to or on the manifold SE3
+    
+    Computes the distance d from T to the SE3 manifold using the following method:
+    
+        Compute the determinant of R, the top 3x3 submatrix of T. If det(R) <= 0, d = a large number.
+        If det(R) > 0, replace the top 3x3 submatrix of T with R^T.R, and set the first three entries of
+        the fourth column of T to zero. Then d = norm(T - I).
+    
+    If d is close to zero, return true. Otherwise, return false.
+    
+    Example Input: 
+        np.array([[ 1.0,  0.0,   0.0,   1.2 ],
+                  [ 0.0,  0.1,  -0.95,  1.5 ],
+                  [ 0.0,  1.0,   0.1,  -0.9 ],
+                  [ 0.0,  0.0,   0.1,   0.98 ]])
+    Output:
+        False
+        
+    :param R: A 3x3 matrix
+    :returns: True if R is very close to or in SE3, false otherwise
+    """
+    return NearZero(DistanceToSE3(T))
+    
 '''
 *** CHAPTER 4: FORWARD KINEMATICS ***
 '''
