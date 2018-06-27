@@ -1,8 +1,10 @@
-%*** BASIC HELPER FUNCTIONS ***
+%*** CHAPTER 3: RIGID-BODY MOTIONS ***
 
 function R = ProjectToSO3(mat)
 % Takes mat: A matrix near SO(3) to project to SO(3).
-% Returns R representing the closest rotation matrix that is in SO(3)
+% Returns R representing the closest rotation matrix that is in SO(3).
+% This function uses singular-value decomposition and is only compatible 
+% with matrices close to SO(3).
 % Example Inputs:
 %{
   clear; clc;
