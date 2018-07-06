@@ -3,7 +3,7 @@
 Library of functions written to accompany the algorithms described in
 Modern Robotics: Mechanics, Planning, and Control.
 ***************************************************************************
-Author: Mikhail Todes, Huan Weng  
+Author: Mikhail Todes, Huan Weng, Bill Hunt
 Date: June 2018
 ***************************************************************************
 Language: Python
@@ -24,25 +24,33 @@ import matplotlib.pyplot as plt
 '''
 
 def NearZero(z):
-#Takes a scalar.
-#Checks if the scalar is small enough to be neglected.
-    '''
-Example Input:
-z = -1e-7
-Output:
-True
-    '''
+    """Determines whether a scalar is small enough to be treated as zero
+    
+    Takes a scalar; checks if the scalar is small enough to be neglected.
+    
+    Example Input:
+        z = -1e-7
+    Output:
+        True
+        
+    :param z: A scalar input to check
+    :returns: True if z is close to zero, false otherwise
+    """
     return abs(z) < 1e-6
    
 def Normalize(V):
-#Takes a vector.
-#Scales it to a unit vector.
-    '''
-Example Input: 
-V = np.array([1, 2, 3])
-Output:
-[0.2672612419124244, 0.5345224838248488, 0.8017837257372732]
-    '''
+    """Normalizes a vector
+    
+    Accepts a vector; returns the unit vector pointing in the same direction as the input.
+    
+    Example Input: 
+        V = np.array([1, 2, 3])
+    Output:
+        np.array([0.2672612419124244, 0.5345224838248488, 0.8017837257372732])
+    
+    :param z: A vector
+    :returns: A unit vector pointing in the same direction as z
+    """
     return V / np.linalg.norm(V)
 
 '''
@@ -50,75 +58,97 @@ Output:
 '''
 
 def RotInv(R):
-#Takes a 3x3 rotation matrix.
-#Returns the inverse (transpose).
-    '''
-Example Input: 
-R = np.array([[0, 0, 1],
-     	      [1, 0, 0],
-              [0, 1, 0]])
-Output:
-[[0, 1, 0], 
- [0, 0, 1],
- [1, 0, 0]]
-    '''
+    """Inverts a rotation matrix
+    
+    Accepts a rotation matrix; returns the inverse of that matrix.
+    
+    Example Input: 
+        R = np.array([[0, 0, 1],
+                      [1, 0, 0],
+                      [0, 1, 0]])
+    Output:
+        [[0, 1, 0], 
+         [0, 0, 1],
+         [1, 0, 0]]
+    
+    :param R: A rotation matrix
+    :returns: The inverse of R
+    """
     return np.array(R).T
 
 def VecToso3(omg):
-#Takes a 3-vector (angular velocity).
-#Returns the skew symmetric matrix in so3.
-    '''
-Example Input: 
-omg = np.array([1, 2, 3])
-Output:
-[[ 0, -3,  2],
- [ 3,  0, -1],
- [-2,  1,  0]]
-    '''
+    """Converts a 3-vector to an so3 representation
+    
+    Takes a 3-vector (angular velocity).
+    Returns the skew symmetric matrix in so3.
+    
+    Example Input: 
+        omg = np.array([1, 2, 3])
+    Output:
+        [[ 0, -3,  2],
+         [ 3,  0, -1],
+         [-2,  1,  0]]
+         
+    :param omg: A 3-vector
+    :returns: The skew symmetric representation of omg
+    """
     return np.array([[0,      -omg[2],  omg[1]], 
 	             [omg[2],       0, -omg[0]], 
 	             [-omg[1], omg[0],       0]])
 
 def so3ToVec(so3mat):
-#Takes a 3x3 skew-symmetric matrix (an element of so(3)).
-#Returns the corresponding vector (angular velocity).
-    '''
-Example Input: 
-so3mat = np.array([[ 0, -3,  2],
-          	   [ 3,  0, -1],
-                   [-2,  1,  0]])
-Output:
-[1, 2, 3]
-    '''
+    """Converts an so3 representation to a 3-vector
+            
+    Takes a 3x3 skew-symmetric matrix (an element of so(3)).
+    Returns the corresponding vector (angular velocity).
+    
+    Example Input: 
+        so3mat = np.array([[ 0, -3,  2],
+                           [ 3,  0, -1],
+                           [-2,  1,  0]])
+    Output:
+        [1, 2, 3]
+        
+    :param so3mat: A 3x3 skew-symmetric matrix
+    :returns: The 3-vector corresponding to so3mat
+    """
     return np.array([so3mat[2][1], so3mat[0][2], so3mat[1][0]])
 
 def AxisAng3(expc3):
-#Takes A 3-vector of exponential coordinates for rotation.
-#Returns unit rotation axis omghat and the corresponding rotation angle
-#theta.
-    '''
-Example Input: 
-expc3 = np.array([1, 2, 3])
-Output:
-(array([0.2672612419124244, 0.5345224838248488, 0.8017837257372732]),
- 3.7416573867739413) 
-    '''
+    """Converts a 3-vector of exponential coordinates for rotation into axis-angle form
+    
+    Takes A 3-vector of exponential coordinates for rotation.
+    Returns unit rotation axis omghat and the corresponding rotation angle theta.
+    
+    Example Input: 
+        expc3 = np.array([1, 2, 3])
+    Output:
+        (array([0.2672612419124244, 0.5345224838248488, 0.8017837257372732]), 3.7416573867739413)
+        
+    :param expc3: A 3-vector of exponential coordinates for rotation
+    :returns: A unit rotation axis and a rotation angle
+    """
     return (Normalize(expc3), np.linalg.norm(expc3))
 
 def MatrixExp3(so3mat):
-#Takes a so(3) representation of exponential coordinates.
-#Returns R in SO(3) that is achieved by rotating about omghat by theta from
-#an initial orientation R = I.
-    '''
-Example Input: 
-so3mat = np.array([[ 0, -3,  2],
-	           [ 3,  0, -1],
-                   [-2,  1,  0]])
-Output:
-[[-0.69492056,  0.71352099,  0.08929286],
- [-0.19200697, -0.30378504,  0.93319235],
- [ 0.69297817,  0.6313497 ,  0.34810748]]
-    '''
+    """Computes the matrix exponential of a matrix in so3
+    
+    Takes a so(3) representation of exponential coordinates.
+    Returns R in SO(3) that is achieved by rotating about omghat by theta from
+    an initial orientation R = I.
+    
+    Example Input:
+        so3mat = np.array([[ 0, -3,  2],
+                           [ 3,  0, -1],
+                           [-2,  1,  0]])
+    Output:
+        [[-0.69492056,  0.71352099,  0.08929286],
+         [-0.19200697, -0.30378504,  0.93319235],
+         [ 0.69297817,  0.6313497 ,  0.34810748]]
+         
+    :param so3mat: A 3x3 skew-symmetric matrix
+    :returns: The matrix exponential of so3mat
+    """
     omgtheta = so3ToVec(so3mat)
     if NearZero(np.linalg.norm(omgtheta)):
         return np.eye(3)
@@ -129,18 +159,23 @@ Output:
                + (1 - np.cos(theta)) * np.dot(omgmat, omgmat)
 
 def MatrixLog3(R):
-#Takes R (rotation matrix).
-#Returns the corresponding so(3) representation of exponential coordinates.
-    '''
-Example Input: 
-R = np.array([[0, 0, 1],
-              [1, 0, 0],
-              [0, 1, 0]])
-Output:
-[[          0, -1.20919958,  1.20919958],
- [ 1.20919958,           0, -1.20919958],
- [-1.20919958,  1.20919958,           0]]
-    '''
+    """Computes the matrix logarithm of a rotation matrix
+    
+    Takes R (rotation matrix).
+    Returns the corresponding so(3) representation of exponential coordinates.
+    
+    Example Input: 
+        R = np.array([[0, 0, 1],
+                      [1, 0, 0],
+                      [0, 1, 0]])
+    Output:
+        [[          0, -1.20919958,  1.20919958],
+         [ 1.20919958,           0, -1.20919958],
+         [-1.20919958,  1.20919958,           0]]
+    
+    :param R: A 3x3 rotation matrix
+    :returns: The matrix logarithm of R
+    """
     if NearZero(np.linalg.norm(R - np.eye(3))):
         return np.zeros((3, 3))
     elif NearZero(np.trace(R) + 1):
@@ -164,38 +199,49 @@ Output:
         return theta / 2.0 / np.sin(theta) * (R - np.array(R).T)
 
 def RpToTrans(R, p):
-#Takes rotation matrix R and position p. 
-#Returns corresponding homogeneous transformation matrix T in SE(3).
-    '''
-Example Input: 
-R = np.array([[1, 0,  0], 
-              [0, 0, -1], 
-              [0, 1,  0]])
-p = np.array([1, 2, 5])
-Output:
-[[1, 0,  0, 1],
- [0, 0, -1, 2],
- [0, 1,  0, 5],
- [0, 0,  0, 1]]
-    '''
+    """Converts a rotation matrix and a position vector into homogeneous tranformation matrix
+    
+    Takes rotation matrix R and position p. 
+    Returns corresponding homogeneous transformation matrix T in SE(3).
+        
+    Example Input: 
+        R = np.array([[1, 0,  0], 
+                      [0, 0, -1], 
+                      [0, 1,  0]])
+        p = np.array([1, 2, 5])
+    Output:
+        [[1, 0,  0, 1],
+         [0, 0, -1, 2],
+         [0, 1,  0, 5],
+         [0, 0,  0, 1]]
+         
+    :param R: A 3x3 rotation matrix
+    :param p: A 3-vector
+    :returns: A homogeneous transformation matrix corresponding to the inputs
+    """
     return np.r_[np.c_[R, p], [[0, 0, 0, 1]]]    
 
 def TransToRp(T):
-#Takes transformation matrix T in SE(3). 
-#Returns R: The corresponding rotation matrix,
-#        p: The corresponding position vector.
-    '''
-Example Input: 
-T = np.array([[1, 0,  0, 0],
-              [0, 0, -1, 0],
-              [0, 1,  0, 3],
-              [0, 0,  0, 1]])
-Output:
-(array([[1, 0,  0], 
-        [0, 0, -1], 
-        [0, 1,  0]]),  
-array([0, 0, 3]))
-    '''
+    """Converts a homogeneous transformation matrix into a rotation matrix and position vector
+
+    Takes transformation matrix T in SE(3). 
+    Returns R: The corresponding rotation matrix,
+            p: The corresponding position vector.
+            
+    Example Input: 
+        T = np.array([[1, 0,  0, 0],
+                      [0, 0, -1, 0],
+                      [0, 1,  0, 3],
+                      [0, 0,  0, 1]])
+    Output:
+        (array([[1, 0,  0], 
+                [0, 0, -1], 
+                [0, 1,  0]]),  
+         array([0, 0, 3]))
+             
+    :param T: A homogeneous transformation matrix
+    :returns: A rotation matrix and a position vector, corresponding to the input
+    """
     R = np.array([[T[0][0], T[0][1], T[0][2]],
                   [T[1][0], T[1][1], T[1][2]],
                   [T[2][0], T[2][1], T[2][2]]])
