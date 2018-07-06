@@ -248,103 +248,134 @@ def TransToRp(T):
     return R, np.array([T[0][3], T[1][3], T[2][3]])
 
 def TransInv(T):
-#Takes a transformation matrix T. 
-#Returns its inverse.
-#Uses the structure of transformation matrices to avoid taking a matrix
-#inverse, for efficiency.
-    '''
-Example Input: 
-T = np.array([[1, 0,  0, 0],
-     	      [0, 0, -1, 0],
-              [0, 1,  0, 3],
-              [0, 0,  0, 1]])
-Output:
-[[1,  0, 0,  0],
- [0,  0, 1, -3],
- [0, -1, 0,  0],
- [0,  0, 0,  1]]
-    '''
+    """Inverts a homogeneous transformation matrix
+        
+    Takes a homogeneous transformation matrix T. 
+    Returns its inverse.
+    Uses the structure of transformation matrices to avoid taking a matrix
+    inverse, for efficiency.
+    
+    Example input:
+        T = np.array([[1, 0,  0, 0],
+                      [0, 0, -1, 0],
+                      [0, 1,  0, 3],
+                      [0, 0,  0, 1]])
+    Output:
+        [[1,  0, 0,  0],
+         [0,  0, 1, -3],
+         [0, -1, 0,  0],
+         [0,  0, 0,  1]]
+    
+    :param T: A homogeneous transformation matrix
+    :returns: The inverse of T
+    """
     R, p = TransToRp(T)
     Rt = np.array(R).T
     return np.r_[np.c_[Rt, -np.dot(Rt, p)], [[0, 0, 0, 1]]]
     
 def VecTose3(V):
-#Takes a 6-vector (representing a spatial velocity). 
-#Returns the corresponding 4x4 se(3) matrix.
-    '''
-Example Input: 
-V = np.array([1, 2, 3, 4, 5, 6])
-Output:
-[[ 0, -3,  2, 4], 
- [ 3,  0, -1, 5], 
- [-2,  1,  0, 6], 
- [ 0,  0,  0, 0]]
-    '''
+    """Converts a spatial velocity vector into a 4x4 matrix in se3
+    
+    Takes a 6-vector (representing a spatial velocity). 
+    Returns the corresponding 4x4 se(3) matrix.
+    
+    Example Input: 
+        V = np.array([1, 2, 3, 4, 5, 6])
+    Output:
+        [[ 0, -3,  2, 4], 
+         [ 3,  0, -1, 5], 
+         [-2,  1,  0, 6], 
+         [ 0,  0,  0, 0]]
+         
+    :param V: A 6-vector representing a spatial velocity
+    :returns: The 4x4 se3 representation of V
+    """
     return np.r_[np.c_[VecToso3([V[0], V[1], V[2]]), [V[3], V[4], V[5]]],
                  np.zeros((1, 4))]
 
 def se3ToVec(se3mat):
-#Takes se3mat a 4x4 se(3) matrix.
-#Returns the corresponding 6-vector (representing spatial velocity).
-    '''
-Example Input: 
-se3mat = np.array([[ 0, -3,  2, 4], 
-                   [ 3,  0, -1, 5], 
-                   [-2,  1,  0, 6], 
-                   [ 0,  0,  0, 0]])
-Output:
-[1, 2, 3, 4, 5, 6]
-    '''
+    """ Converts an se3 matrix into a spatial velocity vector
+    
+    Takes se3mat a 4x4 se(3) matrix.
+    Returns the corresponding 6-vector (representing spatial velocity).
+    
+    Example Input: 
+        se3mat = np.array([[ 0, -3,  2, 4], 
+                           [ 3,  0, -1, 5], 
+                           [-2,  1,  0, 6], 
+                           [ 0,  0,  0, 0]])
+    Output:
+        [1, 2, 3, 4, 5, 6]
+        
+    :param se3mat: A 4x4 matrix in se3
+    :returns: The spatial velocity 6-vector corresponding to se3mat
+    """
     return np.r_[[se3mat[2][1], se3mat[0][2], se3mat[1][0]],
                  [se3mat[0][3], se3mat[1][3], se3mat[2][3]]]
 
 def Adjoint(T):
-#Takes T a transformation matrix SE(3).
-#Returns the corresponding 6x6 adjoint representation [AdT].
-    '''
-Example Input: 
-T = np.array([[1, 0,  0, 0], 
-              [0, 0, -1, 0], 
-              [0, 1,  0, 3], 
-              [0, 0,  0, 1]])
-Output:
-[[1, 0,  0, 0, 0,  0],
- [0, 0, -1, 0, 0,  0],
- [0, 1,  0, 0, 0,  0],
- [0, 0,  3, 1, 0,  0],
- [3, 0,  0, 0, 0, -1],
- [0, 0,  0, 0, 1,  0]]
-    '''
+    """Computes the adjoint representation of a homogeneous transformation matrix
+    
+    Takes T, a homogeneous transformation matrix in SE(3).
+    Returns the corresponding 6x6 adjoint representation [AdT].
+    
+    Example Input: 
+        T = np.array([[1, 0,  0, 0], 
+                      [0, 0, -1, 0], 
+                      [0, 1,  0, 3], 
+                      [0, 0,  0, 1]])
+    Output:
+        [[1, 0,  0, 0, 0,  0],
+         [0, 0, -1, 0, 0,  0],
+         [0, 1,  0, 0, 0,  0],
+         [0, 0,  3, 1, 0,  0],
+         [3, 0,  0, 0, 0, -1],
+         [0, 0,  0, 0, 1,  0]]
+         
+    :param T: A homogeneous transformation matrix
+    :returns: The 6x6 adjoint representation of T
+    """
     R, p = TransToRp(T)
     return np.r_[np.c_[R, np.zeros((3, 3))],
                  np.c_[np.dot(VecToso3(p), R), R]]
 
 def ScrewToAxis(q, s, h):
-#Takes q: A point lying on the screw axis, 
-#      s: A unit vector in the direction of the screw axis,
-#      h: The pitch of the screw axis.
-#Returns the corresponding normalized screw axis.
-    '''
-Example Input: 
-q = np.array([3, 0, 0])
-s = np.array([0, 0, 1])
-h = 2
-Output:
-[0, 0, 1, 0, -3, 2]
-    '''
+    """Takes a parametric description of a scre axis and converts it to a normalized screw axis
+    
+    Takes q: A point lying on the screw axis, 
+          s: A unit vector in the direction of the screw axis,
+          h: The pitch of the screw axis.
+    Returns the corresponding normalized screw axis.
+        
+    Example Input: 
+        q = np.array([3, 0, 0])
+        s = np.array([0, 0, 1])
+        h = 2
+    Output:
+        [0, 0, 1, 0, -3, 2]
+    
+    :param q: A point lying on the screw axis
+    :param s: A unit vector in the direction of the screw axis
+    :param h: The pitch of the screw axis
+    :returns: A normalized screw axis described by the inputs
+    """
     return np.r_[s, np.cross(q, s) + np.dot(h, s)]
 
 def AxisAng6(expc6):
-#Takes a 6-vector of exponential coordinates for rigid-body motion S*theta.
-#Returns S: The corresponding normalized screw axis,
-#        theta: The distance traveled along/about S.
-    '''
-Example Input: 
-expc6 = np.array([1, 0, 0, 1, 2, 3])
-Output:
-([1.0, 0.0, 0.0, 1.0, 2.0, 3.0], 
-1.0)
-    '''
+    """Converts a 6-vector of exponenation coordinates into screw axis-angle form
+        
+    Takes a 6-vector of exponential coordinates for rigid-body motion S*theta.
+    Returns S: The corresponding normalized screw axis,
+            theta: The distance traveled along/about S.
+            
+    Example Input: 
+        expc6 = np.array([1, 0, 0, 1, 2, 3])
+    Output:
+        ([1.0, 0.0, 0.0, 1.0, 2.0, 3.0], 1.0)
+        
+    :param expc6: A 6-vector of exponential corrdinates for rigid-body motion
+    :returns: A normalized screw axis, and the distance theta travelled along that axis, corresponding to the input
+    """
     theta = np.linalg.norm([expc6[0], expc6[1], expc6[2]])
     if NearZero(theta):
         theta = np.linalg.norm([expc6[3], expc6[4], expc6[5]])
