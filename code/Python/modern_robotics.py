@@ -382,21 +382,27 @@ def AxisAng6(expc6):
     return (np.array(expc6 / theta), theta)
 
 def MatrixExp6(se3mat):
-#Takes a se(3) representation of exponential coordinates.
-#Returns a T matrix SE(3) that is achieved by traveling along/about the
-#screw axis S for a distance theta from an initial configuration T = I.
-    '''
-Example Input: 
-se3mat = np.array([[0,          0,           0,          0],
-          	   [0,          0, -1.57079632, 2.35619449],
-                   [0, 1.57079632,           0, 2.35619449],
-                   [0,          0,           0,          0]])
-Output:
-[[1.0, 0.0,  0.0, 0.0],
- [0.0, 0.0, -1.0, 0.0],
- [0.0, 1.0,  0.0, 3.0],
- [  0,   0,    0,   1]]
-    '''  
+    """Computes the matrix exponential of an se3 representation of exponential coordinates
+    
+    Takes a se(3) representation of exponential coordinates.
+    Returns a T matrix SE(3) that is achieved by traveling along/about the
+    screw axis S for a distance theta from an initial configuration T = I.
+    
+    Example Input: 
+        se3mat = np.array([[0,          0,           0,          0],
+                           [0,          0, -1.57079632, 2.35619449],
+                           [0, 1.57079632,           0, 2.35619449],
+                           [0,          0,           0,          0]])
+    Output:
+        [[1.0, 0.0,  0.0, 0.0],
+         [0.0, 0.0, -1.0, 0.0],
+         [0.0, 1.0,  0.0, 3.0],
+         [  0,   0,    0,   1]]
+         
+    
+    :param se3mat: A matrix in se3
+    :returns: The matrix exponential of se3mat
+    """
     omgtheta = so3ToVec(np.array(se3mat)[0: 3: 1, 0: 3: 1])
     if NearZero(np.linalg.norm(omgtheta)):
         return np.r_[np.c_[np.eye(3),
@@ -416,17 +422,22 @@ Output:
                      [[0, 0, 0, 1]]]
 
 def MatrixLog6(T):
-#Takes a transformation matrix T in SE(3).
-#Returns the corresponding se(3) representation of exponential coordinates.
-    '''
-Example Input: 
-T = np.array([[1, 0, 0, 0], [0, 0, -1, 0], [0, 1, 0, 3], [0, 0, 0, 1]])
-Output:
-[[ 0.          0.          0.          0.        ]
- [ 0.          0.         -1.57079633  2.35619449]
- [ 0.          1.57079633  0.          2.35619449]
- [ 0.          0.          0.          0.        ]]
-    '''
+    """Computes the matrix logarithm of a homogeneous transformation matrix
+
+    Takes a transformation matrix T in SE(3).
+    Returns the corresponding se(3) representation of exponential coordinates.
+
+    Example Input: 
+        T = np.array([[1, 0, 0, 0], [0, 0, -1, 0], [0, 1, 0, 3], [0, 0, 0, 1]])
+    Output:
+        [[ 0.          0.          0.          0.        ]
+         [ 0.          0.         -1.57079633  2.35619449]
+         [ 0.          1.57079633  0.          2.35619449]
+         [ 0.          0.          0.          0.        ]]
+         
+    :param R: A matrix in SE3
+    :returns: The matrix logarithm of R
+    """
     R, p = TransToRp(T)
     if NearZero(np.linalg.norm(R - np.eye(3))):
         return np.r_[np.c_[np.zeros((3, 3)),
@@ -607,27 +618,34 @@ def TestIfSE3 (T):
 '''
 
 def FKinBody(M, Blist, thetalist):
-#Takes M: The home configuration (position and orientation) of the 
-#         end-effector,
-#      Blist: The joint screw axes in the end-effector frame when the 
-#             manipulator is at the home position, in the format of a
-#             matrix with axes as the columns,
-#      thetalist: A list of joint coordinates.
-#Returns T IN SE(3) representing the end-effector frame when the joints are
-#at the specified coordinates (i.t.o Body Frame).
-    '''
-Example Input: 
-M = np.array([[-1, 0, 0, 0], [0, 1, 0, 6], [0, 0, -1, 2], [0, 0, 0, 1]])
-Blist = np.array([[0, 0, -1, 2, 0,   0],
-                  [0, 0,  0, 0, 1,   0], 
-                  [0, 0,  1, 0, 0, 0.1]]).T
-thetalist = np.array([np.pi / 2.0, 3, np.pi])
-Output:
-[[ -1.14423775e-17   1.00000000e+00   0.00000000e+00  -5.00000000e+00],
- [  1.00000000e+00   1.14423775e-17   0.00000000e+00   4.00000000e+00],
- [              0.               0.              -1.       1.68584073],
- [              0.               0.               0.               1.]]
-    '''
+    """Computes forward kinematics in the body frame for an open chain robot
+    
+    Takes the home configuration (position and orientation) of the end-effector,
+    the joint screw axes in the end-effector frame when the manipulator is at the home position,
+    and a list of joint values.
+    Returns T in SE(3) representing the end-effector frame when the joints are
+    at the specified coordinates (i.t.o Body Frame).
+    
+    Example Input: 
+        M = np.array([[-1, 0, 0, 0], [0, 1, 0, 6], [0, 0, -1, 2], [0, 0, 0, 1]])
+        Blist = np.array([[0, 0, -1, 2, 0,   0],
+                          [0, 0,  0, 0, 1,   0], 
+                          [0, 0,  1, 0, 0, 0.1]]).T
+        thetalist = np.array([np.pi / 2.0, 3, np.pi])
+    Output:
+        [[ -1.14423775e-17   1.00000000e+00   0.00000000e+00  -5.00000000e+00],
+         [  1.00000000e+00   1.14423775e-17   0.00000000e+00   4.00000000e+00],
+         [              0.               0.              -1.       1.68584073],
+         [              0.               0.               0.               1.]]
+         
+    :param M: The home configuration (position and orientation) of the end-effector
+    :param Blist: The joint screw axes in the end-effector frame when the manipulator
+                  is at the home position, in the format of a matrix with axes as the columns
+    :param thetalist: A list of joint coordinates
+    
+    "returns: A homogeneous transformation matrix representing the end-effector frame
+              when the joints are at the specified coordinates (i.t.o Body Frame)
+    """
     T = np.array(M)
     for i in range(len(thetalist)):
         T = np.dot(T,MatrixExp6(VecTose3(np.array(Blist)[:, i] \
@@ -635,27 +653,34 @@ Output:
     return T
 
 def FKinSpace(M, Slist, thetalist):
-#Takes M: the home configuration (position and orientation) of the 
-#         end-effector,
-#      Slist: The joint screw axes in the space frame when the manipulator
-#             is at the home position, in the format of a matrix with axes
-#             as the columns,
-#      thetalist: A list of joint coordinates.
-#Returns T in SE(3) representing the end-effector frame when the joints are
-#at the specified coordinates (i.t.o Space Frame).
-    '''
-Example Input: 
-M = np.array([[-1, 0, 0, 0], [0, 1, 0, 6], [0, 0, -1, 2], [0, 0, 0, 1]])
-Slist = np.array([[0, 0,  1,  4, 0,    0],
-                  [0, 0,  0,  0, 1,    0],
-                  [0, 0, -1, -6, 0, -0.1]]).T
-thetalist = np.array([np.pi / 2.0, 3, np.pi])
-Output:
-[[ -1.14423775e-17   1.00000000e+00   0.00000000e+00  -5.00000000e+00],
- [  1.00000000e+00   1.14423775e-17   0.00000000e+00   4.00000000e+00],
- [              0.               0.              -1.       1.68584073],
- [              0.               0.               0.               1.]]
-    '''
+    """Computes forward kinematics in the space frame for an open chain robot
+    
+    Takes the home configuration (position and orientation) of the end-effector,
+    the joint screw axes in the space frame when the manipulator is at the home position,
+    and a list of joint values.
+    Returns T in SE(3) representing the end-effector frame when the joints are
+    at the specified coordinates (i.t.o Space Frame).
+    
+    Example Input: 
+        M = np.array([[-1, 0, 0, 0], [0, 1, 0, 6], [0, 0, -1, 2], [0, 0, 0, 1]])
+        Slist = np.array([[0, 0,  1,  4, 0,    0],
+                          [0, 0,  0,  0, 1,    0],
+                          [0, 0, -1, -6, 0, -0.1]]).T
+        thetalist = np.array([np.pi / 2.0, 3, np.pi])
+    Output:
+        [[ -1.14423775e-17   1.00000000e+00   0.00000000e+00  -5.00000000e+00],
+         [  1.00000000e+00   1.14423775e-17   0.00000000e+00   4.00000000e+00],
+         [              0.               0.              -1.       1.68584073],
+         [              0.               0.               0.               1.]]
+    
+    :param M: The home configuration (position and orientation) of the end-effector
+    :param Slist: The joint screw axes in the space frame when the manipulator is at
+                  the home position, in the format of a matrix with axes as the columns
+    :param thetalist: A list of joint coordinates
+    
+    :returns: A homogeneous transformation matrix representing the end-effector frame
+              when the joints are at the specified coordinates (i.t.o Space Frame).
+    """
     T = np.array(M)
     for i in range(len(thetalist)-1, -1, -1):
         T = np.dot(MatrixExp6(VecTose3(np.array(Slist)[:, i] \
@@ -667,26 +692,32 @@ Output:
 '''
 
 def JacobianBody(Blist, thetalist):
-#Takes Blist: The joint screw axes in the end-effector frame when the
-#             manipulator is at the home position, in the format of a
-#             matrix with axes as the columns,
-#      thetalist: A list of joint coordinates. 
-#Returns the corresponding body Jacobian (6xn real numbers).
-    '''
-Example Input: 
-Blist = np.array([[0, 0, 1,   0, 0.2, 0.2], 
-                  [1, 0, 0,   2,   0,   3], 
-                  [0, 1, 0,   0,   2,   1], 
-                  [1, 0, 0, 0.2, 0.3, 0.4]]).T
-thetalist = np.array([0.2, 1.1, 0.1, 1.2])
-Output:
-[[-0.04528405  0.99500417  0.          1. ]
- [ 0.74359313  0.09304865  0.36235775  0. ]
- [-0.66709716  0.03617541 -0.93203909  0. ]
- [ 2.32586047  1.66809     0.56410831  0.2]
- [-1.44321167  2.94561275  1.43306521  0.3]
- [-2.06639565  1.82881722 -1.58868628  0.4]]
-    '''
+    """Computes the body Jacobian for an open chain robot
+    
+    Takes the joint screw axes in the end-effector frame when the
+    manipulator is at the home position, and a list of joint value.
+    Returns the corresponding body Jacobian (6xn real numbers).
+    
+    Example Input: 
+        Blist = np.array([[0, 0, 1,   0, 0.2, 0.2], 
+                          [1, 0, 0,   2,   0,   3], 
+                          [0, 1, 0,   0,   2,   1], 
+                          [1, 0, 0, 0.2, 0.3, 0.4]]).T
+        thetalist = np.array([0.2, 1.1, 0.1, 1.2])
+    Output:
+        [[-0.04528405  0.99500417  0.          1. ]
+         [ 0.74359313  0.09304865  0.36235775  0. ]
+         [-0.66709716  0.03617541 -0.93203909  0. ]
+         [ 2.32586047  1.66809     0.56410831  0.2]
+         [-1.44321167  2.94561275  1.43306521  0.3]
+         [-2.06639565  1.82881722 -1.58868628  0.4]]
+         
+    :param Blist: The joint screw axes in the end-effector frame when the manipulator
+                  is at the home position, in the format of a matrix with axes as the columns
+    :param thetalist: A list of joint coordinates
+    
+    :returns: The body Jacobian corresponding to the inputs (6xn real numbers)
+    """
     Jb = np.array(Blist).copy()
     T = np.eye(4)
     for i in range(len(thetalist) - 2, -1, -1):
@@ -696,26 +727,32 @@ Output:
     return Jb
 
 def JacobianSpace(Slist, thetalist):
-#Takes Slist: The joint screw axes in the space frame when the manipulator
-#             is at the home position, in the format of a matrix with axes
-#             as the columns,
-#      thetalist: A list of joint coordinates.
-#Returns the corresponding space Jacobian (6xn real numbers).
-    '''
-Example Input: 
-Slist = np.array([[0, 0, 1,   0, 0.2, 0.2], 
-                  [1, 0, 0,   2,   0,   3], 
-                  [0, 1, 0,   0,   2,   1], 
-                  [1, 0, 0, 0.2, 0.3, 0.4]]).T
-thetalist = np.array([0.2, 1.1, 0.1, 1.2])
-Output:
-[[ 0.          0.98006658 -0.09011564  0.95749426]
- [ 0.          0.19866933  0.4445544   0.28487557]
- [ 1.          0.          0.89120736 -0.04528405]
- [ 0.          1.95218638 -2.21635216 -0.51161537]
- [ 0.2         0.43654132 -2.43712573  2.77535713]
- [ 0.2         2.96026613  3.23573065  2.22512443]]
-    '''
+    """Computes the space Jacobian for an open chain robot
+    
+    Takes the joint screw axes in the space frame when the manipulator
+    is at the home position, and a list of joint values.
+    Returns the corresponding space Jacobian (6xn real numbers).
+    
+    Example Input: 
+        Slist = np.array([[0, 0, 1,   0, 0.2, 0.2], 
+                          [1, 0, 0,   2,   0,   3], 
+                          [0, 1, 0,   0,   2,   1], 
+                          [1, 0, 0, 0.2, 0.3, 0.4]]).T
+        
+    Output:
+        [[ 0.          0.98006658 -0.09011564  0.95749426]
+         [ 0.          0.19866933  0.4445544   0.28487557]
+         [ 1.          0.          0.89120736 -0.04528405]
+         [ 0.          1.95218638 -2.21635216 -0.51161537]
+         [ 0.2         0.43654132 -2.43712573  2.77535713]
+         [ 0.2         2.96026613  3.23573065  2.22512443]]
+         
+    :param Slist: The joint screw axes in the space frame when the manipulator
+                  is at the home position, in the format of a matrix with axes as the columns
+    :param thetalist: A list of joint coordinates
+    
+    :returns: The space Jacobian corresponding to the inputs (6xn real numbers)
+    """
     Js = np.array(Slist).copy()
     T = np.eye(4)
     for i in range(1, len(thetalist)):
