@@ -1,14 +1,13 @@
-%*** CHAPTER 3: RIGID-BODY MOTIONS ***
-
 function omg = so3ToVec(so3mat)
+% *** CHAPTER 3: RIGID-BODY MOTIONS ***
 % Takes a 3x3 skew-symmetric matrix (an element of so(3)).
 % Returns the corresponding 3-vector (angular velocity).
 % Example Input: 
-%{
-  clear; clc;
-  so3mat = [[0, -3, 2]; [3, 0, -1]; [-2, 1, 0]];
-  omg = so3ToVec(so3mat)  
-%}
+% 
+% clear; clc;
+% so3mat = [[0, -3, 2]; [3, 0, -1]; [-2, 1, 0]];
+% omg = so3ToVec(so3mat)  
+% 
 % Output:
 % omg =
 %     1

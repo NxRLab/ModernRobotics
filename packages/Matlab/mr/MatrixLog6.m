@@ -1,15 +1,14 @@
-%*** CHAPTER 3: RIGID-BODY MOTIONS ***
-
 function expmat = MatrixLog6(T)
+% *** CHAPTER 3: RIGID-BODY MOTIONS ***
 % Takes a transformation matrix T in SE(3).
 % Returns the corresponding se(3) representation of exponential 
 % coordinates.
 % Example Input:
-%{
-  clear; clc;
-  T = [[1, 0, 0, 0]; [0, 0, -1, 0]; [0, 1, 0, 3]; [0, 0, 0, 1]];
-  expmat = MatrixLog6(T)
-%} 
+% 
+% clear; clc;
+% T = [[1, 0, 0, 0]; [0, 0, -1, 0]; [0, 1, 0, 3]; [0, 0, 0, 1]];
+% expmat = MatrixLog6(T)
+% 
 % Output:
 % expc6 =
 %         0         0         0         0

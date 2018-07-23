@@ -1,7 +1,5 @@
-%*** CHAPTER 6: INVERSE KINEMATICS ***
-
 function [thetalist, success] ...
-         = IKinSpace(Slist, M, T, thetalist0, eomg, ev)
+% *** CHAPTER 6: INVERSE KINEMATICS ***
 % Takes Slist: The joint screw axes in the space frame when the manipulator
 %              is at the home position, in the format of a matrix with the
 %              screw axes as the columns,
@@ -26,18 +24,18 @@ function [thetalist, success] ...
 % been hardcoded in as a variable called maxiterations. It is set to 20 at 
 % the start of the function, but can be changed if needed.  
 % Example Inputs:
-%{
-  clear; clc;
-  Slist = [[0; 0;  1;  4; 0;    0], ...
-           [0; 0;  0;  0; 1;    0], ...
-           [0; 0; -1; -6; 0; -0.1]];
-  M = [[-1, 0, 0, 0]; [0, 1, 0, 6]; [0, 0, -1, 2]; [0, 0, 0, 1]];
-  T = [[0, 1, 0, -5]; [1, 0, 0, 4]; [0, 0, -1, 1.6858]; [0, 0, 0, 1]];
-  thetalist0 = [1.5; 2.5; 3];
-  eomg = 0.01;
-  ev = 0.001;
-  [thetalist, success] = IKinSpace(Slist, M, T, thetalist0, eomg, ev)
-%}
+% 
+% clear; clc;
+% Slist = [[0; 0;  1;  4; 0;    0], ...
+%        [0; 0;  0;  0; 1;    0], ...
+%        [0; 0; -1; -6; 0; -0.1]];
+% M = [[-1, 0, 0, 0]; [0, 1, 0, 6]; [0, 0, -1, 2]; [0, 0, 0, 1]];
+% T = [[0, 1, 0, -5]; [1, 0, 0, 4]; [0, 0, -1, 1.6858]; [0, 0, 0, 1]];
+% thetalist0 = [1.5; 2.5; 3];
+% eomg = 0.01;
+% ev = 0.001;
+% [thetalist, success] = IKinSpace(Slist, M, T, thetalist0, eomg, ev)
+% 
 % Output:
 % thetalist =
 %    1.5707

@@ -418,6 +418,7 @@ def ProjectToSO3(mat):
     Projects a matrix mat to the closest matrix in SO(3) using singular-value
     decomposition (see
     http://hades.mech.northwestern.edu/index.php/Modern_Robotics_Linear_Algebra_Review).
+    This function is only appropriate for matrices close to SO(3).
     
     Example Input: 
     mat = np.array([[ 0.675,  0.150,  0.720],
@@ -431,6 +432,7 @@ def ProjectToSO3(mat):
     U, s, Vh = np.linalg.svd(mat)      
     R = np.dot(U, Vh)  
     if np.linalg.det(R) < 0:
+    # In this case the result may be far from mat.
         R[:, s[2, 2]] = -R[:, s[2, 2]] 
     return R
     
@@ -442,6 +444,7 @@ def ProjectToSE3(mat):
     Projects a matrix mat to the closest matrix in SE(3) using singular-value
     decomposition (see
     http://hades.mech.northwestern.edu/index.php/Modern_Robotics_Linear_Algebra_Review).
+    This function is only appropriate for matrices close to SE(3).
 
     Example Input: 
     mat = np.array([[ 0.675,  0.150,  0.720,  1.2],
@@ -458,8 +461,8 @@ def ProjectToSE3(mat):
     return RpToTrans(ProjectToSO3(mat[:3, :3]), mat[:3, 3])
     
 def DistanceToSO3(mat):
-    """Returns a quantity describing the distance of mat from the SO(3) 
-    manifold
+    """Returns the Frobenius norm to describe the distance of mat from the
+    SO(3) manifold
 
     :param mat: A 3x3 matrix
     :return: A quantity describing the distance of mat from the SO(3)
@@ -482,18 +485,18 @@ def DistanceToSO3(mat):
         return 1e+9
     
 def DistanceToSE3(mat):
-    """Returns a quantity describing the distance of mat from the SE(3) 
-    manifold
+    """Returns the Frobenius norm to describe the distance of mat from the
+    SE(3) manifold
 
     :param mat: A 4x4 matrix
     :return: A quantity describing the distance of mat from the SE(3)
               manifold   
     Computes the distance from mat to the SE(3) manifold using the following 
     method:
-    Compute the determinant of the top 3x3 submatrix of mat. 
-    If det(mat) <= 0, return a large number.
-    If det(mat) > 0, replace the top 3x3 submatrix of mat with mat^T.mat, and
-    set the first three entries of the fourth column of mat to zero. Then 
+    Compute the determinant of matR, the top 3x3 submatrix of mat. 
+    If det(matR) <= 0, return a large number.
+    If det(matR) > 0, replace the top 3x3 submatrix of mat with matR^T.matR,
+    and set the first three entries of the fourth column of mat to zero. Then 
     return norm(mat - I).
     
     Example Input: 
@@ -530,7 +533,7 @@ def TestIfSO3(mat):
     Output:
         False
     """
-    return NearZero(DistanceToSO3(mat))
+    return abs(DistanceToSO3(mat)) < 1e-3
           
 def TestIfSE3(mat):
     """Returns true if mat is close to or on the manifold SE(3)
@@ -554,7 +557,7 @@ def TestIfSE3(mat):
     Output:
         False        
     """
-    return NearZero(DistanceToSE3(mat))
+    return abs(DistanceToSE3(mat)) < 1e-3
     
 '''
 *** CHAPTER 4: FORWARD KINEMATICS ***

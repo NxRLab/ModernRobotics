@@ -1,15 +1,14 @@
-%*** CHAPTER 3: RIGID-BODY MOTIONS ***
-
 function so3mat = MatrixLog3(R)
+% *** CHAPTER 3: RIGID-BODY MOTIONS ***
 % Takes R (rotation matrix).
 % Returns the corresponding so(3) representation of exponential 
 % coordinates.
 % Example Input:
-%{
-  clear; clc;
-  R = [[0, 0, 1]; [1, 0, 0]; [0, 1, 0]];
-  so3mat = MatrixLog3(R)
-%} 
+% 
+% clear; clc;
+% R = [[0, 0, 1]; [1, 0, 0]; [0, 1, 0]];
+% so3mat = MatrixLog3(R)
+% 
 % Output:
 % angvmat =
 %         0   -1.2092    1.2092

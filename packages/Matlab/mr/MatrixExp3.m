@@ -1,15 +1,14 @@
-%*** CHAPTER 3: RIGID-BODY MOTIONS ***
-
 function  R = MatrixExp3(so3mat)
+% *** CHAPTER 3: RIGID-BODY MOTIONS ***
 % Takes a 3x3 so(3) representation of exponential coordinates.
 % Returns R in SO(3) that is achieved by rotating about omghat by theta 
 % from an initial orientation R = I.
 % Example Input:
-%{
-  clear; clc;
-  so3mat = [[0, -3, 2]; [3, 0, -1]; [-2, 1, 0]];
-  R = MatrixExp3(so3mat)  
-%} 
+% 
+% clear; clc;
+% so3mat = [[0, -3, 2]; [3, 0, -1]; [-2, 1, 0]];
+% R = MatrixExp3(so3mat)  
+% 
 % Output:
 % R =
 %   -0.6949    0.7135    0.0893

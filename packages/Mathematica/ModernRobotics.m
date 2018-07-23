@@ -255,9 +255,104 @@ Returns the corresponding se(3) representation of exponential coordinates.
 
 Example:
 	Input: 
-		se3mat = MatrixLog6[{{1,0,0,0},{0,0,-1,0},{0,1,0,3},{0,0,0,1}}]//N
+		se3mat = MatrixLog6[{{1,0,0,0},{0,0,-1,0},{0,1,0,3},{0,0,0,1}}]
 	Output: 
-	{{0,0,0,0},{0,0,-1.5708,2.35619},{0,1.5708,0,2.35619},{0,0,0,0}}"
+		{{0,0,0,0},{0,0,-1.5708,2.35619},{0,1.5708,0,2.35619},{0,0,0,0}}"
+
+
+ProjectToSO3::usage=
+"ProjectToSO3[mat]:
+Takes a matrix near SO(3) to project to SO(3).
+Returns the closest rotation matrix that is in SO(3).
+This function uses singular-value decomposition (see
+http://hades.mech.northwestern.edu/index.php/Modern_Robotics_Linear_Algebra_Review)
+and is only appropriate for matrices close to SO(3).
+
+Example:
+	Input: 
+		R = ProjectToSO3[{{0.675,0.150,0.720},{0.370,0.771,-0.511},
+						  {-0.630,0.619,0.472}}]//N
+	Output: 
+		{{0.679011,0.148945,0.718859},{0.373207,0.773196,-0.512723}, 
+		 {-0.632187,0.616428,0.469421}}"
+
+
+ProjectToSE3::usage=
+"ProjectToSE3[mat]:
+Takes a matrix near SE(3) to project to SE(3).
+Returns the closest rotation matrix that is in SE(3).
+This function uses singular-value decomposition (see
+http://hades.mech.northwestern.edu/index.php/Modern_Robotics_Linear_Algebra_Review)
+and is only appropriate for matrices close to SE(3).
+
+Example:
+	Input: 
+		T = ProjectToSE3[{{0.675,0.150,0.720,1.2},
+						  {0.370,0.771,-0.511,5.4},
+						  {-0.630,0.619,0.472,3.6},
+						  {0.003,0.002,0.010,0.9}}]
+	Output: 
+		{{0.679011,0.148945,0.718859,1.2},{0.373207,0.773196,-0.512723,5.4},
+		 {-0.632187,0.616428,0.469421,3.6},{0,0,0,1}}"
+
+
+DistanceToSO3::usage=
+"DistanceToSO3[mat]:
+Takes mat as a 3x3 matrix.
+Returns the Frobenius norm to describe the distance of mat from the SO(3) 
+manifold.
+Computes the distance from mat to the SO(3) manifold using the following 
+method: If det(mat) <= 0, return a large number. If det(mat) > 0, return 
+norm(mat'.mat - I).
+
+Example:
+	Input: 
+		d = DistanceToSO3[{{1.0,0.0,0.0},{0.0,0.1,-0.95},{0.0,1.0,0.1}}]
+	Output: 
+		0.088353"
+
+
+DistanceToSE3::usage=
+"DistanceToSE3[mat]:
+Takes mat as a 4x4 matrix.
+Returns the Frobenius norm to describe the distance of mat from the SE(3) 
+manifold.
+Computes the determinant of matR, the top 3x3 submatrix of mat. If 
+det (matR) <= 0, return a large number. If det (mat) > 0, replace the top 3x3
+submatrix of mat with matR'.matR, and set the first three entries of the 
+fourth column of mat to zero. Then return norm (mat - I).
+
+Example :
+	Input: 
+		d = DistanceToSE3[{{1.0,0.0,0.0,1.2},{0.0,0.1,-0.95,1.5},
+						   {0.0,1.0,0.1,-0.9},{0.0,0.0,0.1,0.98}}]
+	Output: 
+		0.134931"
+
+
+TestIfSO3::usage=
+"TestIfSO3[mat]:
+Takes mat as a 3x3 matrix.
+Check if mat is close to or on the manifold SO(3).
+
+Example:
+	Input: 
+		judge = TestIfSO3[{{1.0,0.0,0.0},{0.0,0.1,-0.95},{0.0,1.0,0.1}}]
+	Output: 
+		False"
+
+
+TestIfSE3::usage=
+"TestIfSE3[mat]:
+Takes mat as a 4X4 matrix.
+Check if mat is close to or on the manifold SE(3).
+
+Example:
+	Input: 
+		judge = TestIfSE3[{{1.0,0.0,0.0,1.2},{0.0,0.1,-0.95,1.5},
+						   {0.0,1.0,0.1,-0.9},{0.0,0.0,0.1,0.98}}]
+	Output: 
+		False"
 
 
 (* ::Subsection::Closed:: *)
@@ -1308,6 +1403,51 @@ MatrixLog6[T_]:=Module[
 ]
 
 
+ProjectToSO3[mat_]:=Module[
+	{R,u,w,v}, 
+	{u,w,v}=SingularValueDecomposition[mat]; 
+	R=u.v\[Transpose];
+	(*In the case below, the result may be far from mat.*)
+	If[
+		Det[R] < 0, 
+		Return[ArrayFlatten[{{R[[;;,1;;2]],{-R[[;;,3]]}\[Transpose]}}]],
+		Return[R]
+	]
+]
+
+
+ProjectToSE3[mat_]:=RpToTrans[ProjectToSO3[mat[[1;;3,1;;3]]],
+							  {mat[[1;;3,4]]}\[Transpose]]
+
+
+DistanceToSO3[mat_]:=If[
+	Det[mat]>0, 
+	Return[Norm[mat\[Transpose].mat-IdentityMatrix[3],"Frobenius"]], 
+	Return[10^9]
+]
+
+
+DistanceToSE3[mat_]:=Module[
+	{R,p}, 
+	{R,p}=TransToRp[mat]; 
+	If[
+		Det[R] > 0, 
+		Return[Norm[
+			Join[Join[R\[Transpose].R,{{0,0,0}}\[Transpose],2],{mat[[4,;;]]}]-
+			IdentityMatrix[4],
+			"Frobenius"
+		]], 
+		Return[10^9]
+	]
+]
+
+
+TestIfSO3[mat_]:=Abs[DistanceToSO3[mat]]<10^-3
+
+
+TestIfSE3[mat_]:=Abs[DistanceToSE3[mat]]<10^-3
+
+
 (* ::Subsection::Closed:: *)
 (*CHAPTER 4: FORWARD KINEMATICS*)
 
@@ -1676,7 +1816,9 @@ End[];
 Protect["NearZero"];
 Protect["RotInv","VecToso3","so3ToVec","AxisAng3","MatrixExp3","MatrixLog3",
 		"RpToTrans","TransToRp","TransInv","VecTose3","se3ToVec","Adjoint",
-		"ScrewToAxis","AxisAng6","MatrixExp6","MatrixLog6"];
+		"ScrewToAxis","AxisAng6","MatrixExp6","MatrixLog6","ProjectToSO3",
+		"ProjectToSE3","ProjectToSE3","DistanceToSE3","TestIfSO3",
+		"TestIfSE3"];
 Protect["FKinBody","FKinSpace"];
 Protect["JacobianBody","JacobianSpace"];
 Protect["IKinBody","IKinSpace"];

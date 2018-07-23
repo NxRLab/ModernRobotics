@@ -1,6 +1,5 @@
-%*** CHAPTER 9: TRAJECTORY GENERATION ***
-
 function traj = JointTrajectory(thetastart, thetaend, Tf, N, method)
+% *** CHAPTER 9: TRAJECTORY GENERATION ***
 % Takes thetastart: The initial joint variables,
 %       thetaend: The final joint variables,
 %       Tf: Total time of the motion in seconds from rest to rest,
@@ -15,15 +14,15 @@ function traj = JointTrajectory(thetastart, thetaend, Tf, N, method)
 %               elapsed time between each row is Tf/(N - 1).
 % The returned trajectory is a straight-line motion in joint space.
 % Example Input:
-%{
-  clear; clc;
-  thetastart = [1; 0; 0; 1; 1; 0.2; 0; 1];
-  thetaend = [1.2; 0.5; 0.6; 1.1; 2;2; 0.9; 1];
-  Tf = 4;
-  N = 6;
-  method = 3;
-  traj = JointTrajectory(thetastart, thetaend, Tf, N, method)
-%}
+% 
+% clear; clc;
+% thetastart = [1; 0; 0; 1; 1; 0.2; 0; 1];
+% thetaend = [1.2; 0.5; 0.6; 1.1; 2;2; 0.9; 1];
+% Tf = 4;
+% N = 6;
+% method = 3;
+% traj = JointTrajectory(thetastart, thetaend, Tf, N, method)
+% 
 % Output:
 % traj =
 %   1.0000        0        0   1.0000   1.0000   0.2000        0   1.0000

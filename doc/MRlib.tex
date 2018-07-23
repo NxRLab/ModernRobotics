@@ -15,6 +15,7 @@
 }
 
 \newcommand{\real}{\mathbb{R}}
+\newcommand{\trans}{{\rm T}}
 
 \newenvironment{function}[4]		%A new environment for functions 
 {
@@ -62,18 +63,20 @@ Output:
 {\bf Modern Robotics:  Mechanics, Planning, and Control} \\
 {\bf Code Library} \\
 \normalsize
+Version 1.0.0\\
 \vspace*{0.2in}
 Huan Weng and Kevin M. Lynch \\
-\today
+July 6, 2018 \\
+(beta version:  January 14, 2017)
 \end{center}
 
 \section*{Introduction}			
 
-This is the documentation for the code library accompanying \emph{Modern Robotics:  Mechanics, Planning, and Control}, by Kevin M. Lynch and Frank C. Park, Cambridge University Press, 2017.  The code is written for MATLAB, Mathematica, and Python, and originates from students' solutions to programming assignments in courses using material from the book.  The current version of the code is largely the work of Huan Weng, based on previous contributions from Mikhail Todes, Matthew Collins, Mojtaba Mozaffar, Chang Liu, and Wentao Chen.  
+This is the documentation for the code library accompanying \emph{Modern Robotics:  Mechanics, Planning, and Control}, by Kevin M. Lynch and Frank C. Park, Cambridge University Press, 2017, \url{http://modernrobotics.org}.  The code is written for MATLAB, Mathematica, and Python, and originates from students' solutions to programming assignments in courses using material from the book.  The current version of the code is largely the work of Huan Weng, based on contributions from Bill Hunt, Jarvis Schultz, Mikhail Todes, Matthew Collins, Mojtaba Mozaffar, Chang Liu, and Wentao Chen.  
 
 The code is commented and mostly self-explanatory in conjunction with the book.  An example use is provided with each function.  The primary purpose of the software is to be easy to read and educational, reinforcing the concepts in the book.  The code is optimized neither for efficiency nor robustness (it does not perform error-checking on its inputs).  This is to keep the code as simple and unintimidating as possible.  Users are encouraged to use and modify the code however they wish; the process of using and modifying the code certainly aids in understanding the concepts in the book.  Bug reports or documentation errors are appreciated via the issue tracker at \url{https://github.com/NxRLab/ModernRobotics}.
 
-This document provides an overview of the available functions using MATLAB syntax.  Functions are organized according to the chapter in which they are introduced in the book.  Basic functions, such as functions to calculate the magnitude of a vector, normalize a vector, test if a value is near zero, and perform matrix operations such as multiplication and inverses, are not documented here.
+This document provides an overview of the available functions using MATLAB syntax.  Functions are organized according to the relevant chapter in the book.  Basic functions, such as functions to calculate the magnitude of a vector, normalize a vector, test if a value is near zero, and perform matrix operations such as multiplication and inverses, are not documented here.
 
 Notation that is used throughout this document is summarized below.
 
@@ -181,10 +184,31 @@ $K_d$ & {\tt Kd} & A scalar feedback derivative gain.\\
 {}
 \end{function}
 
-\begin{function}			%MatrixLog3
+\begin{function}			%MatrixLog3 
 {so3mat = MatrixLog3(R)}
 {\item \verb~R~: Rotation matrix.}
 {\item \verb~so3mat~: The corresponding $so(3)$ representation of exponential coordinates.}
+{}
+\end{function}
+
+\begin{function}			%DistanceToSO3
+{d = DistanceToSO3(A)}
+{\item \verb~A~: A $3 \times 3$ matrix $A$.}
+{\item \verb~d~: A measure of the distance from $A$ to $SO(3)$, the space of rotation matrices.  If ${\rm det}(A)>0$ (the determinant of $A$ should be $1$ if $A \in SO(3)$), this distance is calculated as $\|A^\trans A -I\|_F$, where $\| \cdot \|_F$ is the Frobenius norm of a matrix, the square root of the sum of the squares of the absolute values of the elements of the matrix.  If the determinant is not positive, a large value is returned. }
+{}
+\end{function}
+
+\begin{function}			%TestIfSO3
+{val = TestIfSO3(A)}
+{\item \verb~A~: A $3 \times 3$ matrix $A$.}
+{\item \verb~val~:  $1$ if $A$ is a rotation matrix (an element of $SO(3)$) and $0$ otherwise.  This function calls \verb~DistanceToSO3(A)~ and tests if the returned distance is smaller than a small value (which you should feel free to change to suit your purposes).}
+{}
+\end{function}
+
+\begin{function}			%ProjectToSO3
+{R = ProjectToSO3(A)}
+{\item \verb~A~: A $3 \times 3$ matrix $A$.}
+{\item \verb~R~:  The closest rotation matrix (element of $SO(3)$) to $A$.  This function is only appropriate for matrices $A$ that are ``close'' to $SO(3)$.  For example, $A$ could be the result of a long series of multiplications of rotation matrices, which has caused the result to drift slightly away from satisfying the conditions of $SO(3)$ (${\rm det}(A) = 1, A^\trans A = I$) due to roundoff errors.}
 {}
 \end{function}
 
@@ -271,6 +295,26 @@ $K_d$ & {\tt Kd} & A scalar feedback derivative gain.\\
 {}
 \end{function}
 
+\begin{function}			%DistanceToSE3
+{d = DistanceToSE3(A)}
+{\item \verb~A~: A $4 \times 4$ matrix $A$.}
+{\item \verb~d~: A measure of the distance from $A$ to $SE(3)$, the space of transformation matrices.  Let $B$ be the top $3 \times 3$ submatrix of $A$, i.e., the portion of $A$ expected to represent a rotation matrix.  If ${\rm det}(B)>0$ (the determinant of $B$ should be $1$ if $B \in SO(3)$), the distance is calculated as $\|A^{\prime\trans} A^\prime -I\|_F$, where $A^\prime$ is equivalent to $A$ except the elements $a^\prime_{14}$, $a^\prime_{24}$, and $a^\prime_{34}$ are zero.  The Frobenius norm $\| \cdot \|_F$ of a matrix is the the square root of the sum of the squares of the absolute values of the elements of the matrix.  If the determinant of $B$ is not positive, a large value is returned. }
+{}
+\end{function}
+
+\begin{function}			%TestIfSE3
+{val = TestIfSE3(A)}
+{\item \verb~A~: A $4 \times 4$ matrix $A$.}
+{\item \verb~val~:  $1$ if $A$ is a transformation matrix (an element of $SE(3)$) and $0$ otherwise.  This function calls \verb~DistanceToSE3(A)~ and tests if the returned distance is smaller than a small value (which you should feel free to change to suit your purposes).}
+{}
+\end{function}
+
+\begin{function}			%ProjectToSE3
+{T = ProjectToSE3(A)}
+{\item \verb~A~: A $4 \times 4$ matrix $A$.}
+{\item \verb~T~:  The closest transformation matrix (element of $SE(3)$) to $A$.  This function is only appropriate for matrices $A$ that are ``close'' to $SE(3)$.  For example, $A$ could be the result of a long series of multiplications of transformation matrices, which has caused the result to drift slightly away from satisfying the conditions of $SE(3)$ (top left $3\times 3$ submatrix is in $SO(3)$ and the bottom row is $[0 \; 0\; 0 \; 1]$) due to roundoff errors.}
+{}
+\end{function}
 
 \section*{Chapter 4:  Forward Kinematics}		%Chapter 4
 
@@ -349,7 +393,7 @@ $K_d$ & {\tt Kd} & A scalar feedback derivative gain.\\
 
 This chapter is concerned with calculating and simulating the dynamics of a serial-chain manipulator with dynamics of the form
 \[
-\tau = M(\theta)\ddot{\theta} + c(\theta,\dot{\theta}) + g(\theta) + J^T(\theta) \mathcal{F}_{\text{tip}}.
+\tau = M(\theta)\ddot{\theta} + c(\theta,\dot{\theta}) + g(\theta) + J^\trans(\theta) \mathcal{F}_{\text{tip}}.
 \]
 
 \begin{function}			%ad
@@ -423,7 +467,7 @@ This chapter is concerned with calculating and simulating the dynamics of a seri
 \item \verb~Glist~:  Spatial inertia matrices $\mathcal{G}_i$ of the links.
 \item \verb~Slist~:  Screw axes $\mathcal{S}_i$ of the joints in a space frame.
 }
-{\item \verb~JTFtip~: The joint forces and torques $J^T(\theta) \mathcal{F}_{\text{tip}}$ required to create the end-effector force $\mathcal{F}_{\text{tip}}$.}
+{\item \verb~JTFtip~: The joint forces and torques $J^\trans(\theta) \mathcal{F}_{\text{tip}}$ required to create the end-effector force $\mathcal{F}_{\text{tip}}$.}
 {This function calls \verb~InverseDynamics~ with $\mathfrak{g}=0$ and $\dot{\theta} = \ddot{\theta} = 0$.}
 \end{function}
 
@@ -443,7 +487,7 @@ This chapter is concerned with calculating and simulating the dynamics of a seri
 {\item \verb~ddthetalist~:  The resulting joint accelerations $\ddot{\theta}$.}
 {This function computes $\ddot{\theta}$ by solving 
 \[
-M(\theta) \ddot{\theta} = \tau - c(\theta,\dot{\theta}) - g(\theta) - J^T(\theta) \mathcal{F}_{\textrm{tip}}.
+M(\theta) \ddot{\theta} = \tau - c(\theta,\dot{\theta}) - g(\theta) - J^\trans(\theta) \mathcal{F}_{\textrm{tip}}.
 \]
 }
 \end{function}

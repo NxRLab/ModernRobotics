@@ -1,6 +1,5 @@
-%*** CHAPTER 4: FORWARD KINEMATICS ***
-
 function T = FKinBody(M, Blist, thetalist)
+% *** CHAPTER 4: FORWARD KINEMATICS ***
 % Takes M: the home configuration (position and orientation) of the
 %          end-effector,
 %       Blist: The joint screw axes in the end-effector frame when the 
@@ -9,13 +8,13 @@ function T = FKinBody(M, Blist, thetalist)
 % Returns T in SE(3) representing the end-effector frame when the joints 
 % are at the specified coordinates (i.t.o Body Frame).
 % Example Inputs:
-%{
-  clear; clc;
-  M = [[-1, 0, 0, 0]; [0, 1, 0, 6]; [0, 0, -1, 2]; [0, 0, 0, 1]];
-  Blist = [[0; 0; -1; 2; 0; 0], [0; 0; 0; 0; 1; 0], [0; 0; 1; 0; 0; 0.1]];
-  thetalist = [pi / 2; 3; pi];
-  T = FKinBody(M, Blist, thetalist)
-%}
+% 
+% clear; clc;
+% M = [[-1, 0, 0, 0]; [0, 1, 0, 6]; [0, 0, -1, 2]; [0, 0, 0, 1]];
+% Blist = [[0; 0; -1; 2; 0; 0], [0; 0; 0; 0; 1; 0], [0; 0; 1; 0; 0; 0.1]];
+% thetalist = [pi / 2; 3; pi];
+% T = FKinBody(M, Blist, thetalist)
+% 
 % Output:
 % T =
 %   -0.0000    1.0000         0   -5.0000

@@ -1,6 +1,5 @@
-%*** CHAPTER 9: TRAJECTORY GENERATION ***
-
 function traj = CartesianTrajectory(Xstart, Xend, Tf, N, method)
+% *** CHAPTER 9: TRAJECTORY GENERATION ***
 % Takes Xstart: The initial end-effector configuration,
 %       Xend: The final end-effector configuration,
 %       Tf: Total time of the motion in seconds from rest to rest,
@@ -16,15 +15,15 @@ function traj = CartesianTrajectory(Xstart, Xend, Tf, N, method)
 % end-effector frame follows a straight line, decoupled from the rotational
 % motion.
 % Example Input:
-%{ 
-  clear; clc;
-  Xstart = [[1, 0, 0, 1]; [0, 1, 0, 0]; [0, 0, 1, 1]; [0, 0, 0, 1]];
-  Xend = [[0, 0, 1, 0.1]; [1, 0, 0, 0]; [0, 1, 0, 4.1]; [0, 0, 0, 1]];
-  Tf = 5;
-  N = 4;
-  method = 5;
-  traj = CartesianTrajectory(Xstart, Xend, Tf, N, method)
-%}
+% 
+% clear; clc;
+% Xstart = [[1, 0, 0, 1]; [0, 1, 0, 0]; [0, 0, 1, 1]; [0, 0, 0, 1]];
+% Xend = [[0, 0, 1, 0.1]; [1, 0, 0, 0]; [0, 1, 0, 4.1]; [0, 0, 0, 1]];
+% Tf = 5;
+% N = 4;
+% method = 5;
+% traj = CartesianTrajectory(Xstart, Xend, Tf, N, method)
+% 
 % Output:
 % traj =
 %    1.0000         0         0    1.0000

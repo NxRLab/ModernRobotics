@@ -1,10 +1,9 @@
-%*** CHAPTER 11: ROBOT CONTROL ***
-
 function [taumat, thetamat] ...
          = SimulateControl(thetalist, dthetalist, g, Ftipmat, Mlist, ...
                            Glist, Slist, thetamatd, dthetamatd, ...
                            ddthetamatd, gtilde, Mtildelist, Gtildelist, ...
                            Kp, Ki, Kd, dt, intRes)
+% *** CHAPTER 11: ROBOT CONTROL ***                       
 % Takes thetalist: n-vector of initial joint variables,
 %       dthetalist: n-vector of initial joint velocities,
 %       g: Actual gravity vector g,
@@ -39,60 +38,60 @@ function [taumat, thetamat] ...
 %         thetamat: An Nxn matrix of actual joint angles.
 % The end of this function plots all the actual and desired joint angles.
 % Example Usage
-%{
-  clc; clear;
-  thetalist = [0.1; 0.1; 0.1];
-  dthetalist = [0.1; 0.2; 0.3];
-  %Initialize robot description (Example with 3 links)
-  g = [0; 0; -9.8];
-  M01 = [[1, 0, 0, 0]; [0, 1, 0, 0]; [0, 0, 1, 0.089159]; [0, 0, 0, 1]];
-  M12 = [[0, 0, 1, 0.28]; [0, 1, 0, 0.13585]; [-1, 0 ,0, 0]; [0, 0, 0, 1]];
-  M23 = [[1, 0, 0, 0]; [0, 1, 0, -0.1197]; [0, 0, 1, 0.395]; [0, 0, 0, 1]];
-  M34 = [[1, 0, 0, 0]; [0, 1, 0, 0]; [0, 0, 1, 0.14225]; [0, 0, 0, 1]];
-  G1 = diag([0.010267, 0.010267, 0.00666, 3.7, 3.7, 3.7]);
-  G2 = diag([0.22689, 0.22689, 0.0151074, 8.393, 8.393, 8.393]);
-  G3 = diag([0.0494433, 0.0494433, 0.004095, 2.275, 2.275, 2.275]);
-  Glist = cat(3, G1, G2, G3);
-  Mlist = cat(3, M01, M12, M23, M34); 
-  Slist = [[1; 0; 1;      0; 1;     0], ...
-           [0; 1; 0; -0.089; 0;     0], ...
-           [0; 1; 0; -0.089; 0; 0.425]];
-  dt = 0.01;
-  %Create a trajectory to follow
-  thetaend =[pi / 2; pi; 1.5 * pi];
-  Tf = 1;
-  N = Tf / dt;
-  method = 5;
-  thetamatd = JointTrajectory(thetalist, thetaend, Tf, N, method);
-  dthetamatd = zeros(N, 3);
-  ddthetamatd = zeros(N, 3);
-  dt = Tf / (N - 1);
-  for i = 1: N - 1
-      dthetamatd(i + 1, :) = (thetamatd(i + 1, :) - thetamatd(i, :)) / dt;
-      ddthetamatd(i + 1, :) = (dthetamatd(i + 1, :) ...
-                              - dthetamatd(i, :)) / dt;
-  end
-  %Possibly wrong robot description (Example with 3 links)
-  gtilde = [0.8; 0.2; -8.8];
-  Mhat01 = [[1, 0, 0, 0]; [0, 1, 0, 0]; [0, 0, 1, 0.1]; [0, 0, 0, 1]];
-  Mhat12 = [[0, 0, 1, 0.3]; [0, 1, 0, 0.2]; [-1, 0 ,0, 0]; [0, 0, 0, 1]];
-  Mhat23 = [[1, 0, 0, 0]; [0, 1, 0, -0.2]; [0, 0, 1, 0.4]; [0, 0, 0, 1]];
-  Mhat34 = [[1, 0, 0, 0]; [0, 1, 0, 0]; [0, 0, 1, 0.2]; [0, 0, 0, 1]];
-  Ghat1 = diag([0.1, 0.1, 0.1, 4, 4, 4]);
-  Ghat2 = diag([0.3, 0.3, 0.1, 9, 9, 9]);
-  Ghat3 = diag([0.1, 0.1, 0.1, 3, 3, 3]);
-  Gtildelist = cat(3, Ghat1, Ghat2, Ghat3);
-  Mtildelist = cat(4, Mhat01, Mhat12, Mhat23, Mhat34); 
-  Ftipmat = ones(N, 6);
-  Kp = 20;
-  Ki = 10;
-  Kd = 18;
-  intRes = 8;
-  [taumat, thetamat] ...
-  = SimulateControl(thetalist, dthetalist, g, Ftipmat, Mlist, Glist, ...
-                    Slist, thetamatd, dthetamatd, ddthetamatd, gtilde, ...
-                    Mtildelist, Gtildelist, Kp, Ki, Kd, dt, intRes);
-%}
+% 
+% clc; clear;
+% thetalist = [0.1; 0.1; 0.1];
+% dthetalist = [0.1; 0.2; 0.3];
+% %Initialize robot description (Example with 3 links)
+% g = [0; 0; -9.8];
+% M01 = [[1, 0, 0, 0]; [0, 1, 0, 0]; [0, 0, 1, 0.089159]; [0, 0, 0, 1]];
+% M12 = [[0, 0, 1, 0.28]; [0, 1, 0, 0.13585]; [-1, 0 ,0, 0]; [0, 0, 0, 1]];
+% M23 = [[1, 0, 0, 0]; [0, 1, 0, -0.1197]; [0, 0, 1, 0.395]; [0, 0, 0, 1]];
+% M34 = [[1, 0, 0, 0]; [0, 1, 0, 0]; [0, 0, 1, 0.14225]; [0, 0, 0, 1]];
+% G1 = diag([0.010267, 0.010267, 0.00666, 3.7, 3.7, 3.7]);
+% G2 = diag([0.22689, 0.22689, 0.0151074, 8.393, 8.393, 8.393]);
+% G3 = diag([0.0494433, 0.0494433, 0.004095, 2.275, 2.275, 2.275]);
+% Glist = cat(3, G1, G2, G3);
+% Mlist = cat(3, M01, M12, M23, M34); 
+% Slist = [[1; 0; 1;      0; 1;     0], ...
+%        [0; 1; 0; -0.089; 0;     0], ...
+%        [0; 1; 0; -0.089; 0; 0.425]];
+% dt = 0.01;
+% %Create a trajectory to follow
+% thetaend =[pi / 2; pi; 1.5 * pi];
+% Tf = 1;
+% N = Tf / dt;
+% method = 5;
+% thetamatd = JointTrajectory(thetalist, thetaend, Tf, N, method);
+% dthetamatd = zeros(N, 3);
+% ddthetamatd = zeros(N, 3);
+% dt = Tf / (N - 1);
+% for i = 1: N - 1
+%   dthetamatd(i + 1, :) = (thetamatd(i + 1, :) - thetamatd(i, :)) / dt;
+%   ddthetamatd(i + 1, :) = (dthetamatd(i + 1, :) ...
+%                           - dthetamatd(i, :)) / dt;
+% end
+% %Possibly wrong robot description (Example with 3 links)
+% gtilde = [0.8; 0.2; -8.8];
+% Mhat01 = [[1, 0, 0, 0]; [0, 1, 0, 0]; [0, 0, 1, 0.1]; [0, 0, 0, 1]];
+% Mhat12 = [[0, 0, 1, 0.3]; [0, 1, 0, 0.2]; [-1, 0 ,0, 0]; [0, 0, 0, 1]];
+% Mhat23 = [[1, 0, 0, 0]; [0, 1, 0, -0.2]; [0, 0, 1, 0.4]; [0, 0, 0, 1]];
+% Mhat34 = [[1, 0, 0, 0]; [0, 1, 0, 0]; [0, 0, 1, 0.2]; [0, 0, 0, 1]];
+% Ghat1 = diag([0.1, 0.1, 0.1, 4, 4, 4]);
+% Ghat2 = diag([0.3, 0.3, 0.1, 9, 9, 9]);
+% Ghat3 = diag([0.1, 0.1, 0.1, 3, 3, 3]);
+% Gtildelist = cat(3, Ghat1, Ghat2, Ghat3);
+% Mtildelist = cat(4, Mhat01, Mhat12, Mhat23, Mhat34); 
+% Ftipmat = ones(N, 6);
+% Kp = 20;
+% Ki = 10;
+% Kd = 18;
+% intRes = 8;
+% [taumat, thetamat] ...
+% = SimulateControl(thetalist, dthetalist, g, Ftipmat, Mlist, Glist, ...
+%                 Slist, thetamatd, dthetamatd, ddthetamatd, gtilde, ...
+%                 Mtildelist, Gtildelist, Kp, Ki, Kd, dt, intRes);
+% 
 
 Ftipmat = Ftipmat';
 thetamatd = thetamatd';
