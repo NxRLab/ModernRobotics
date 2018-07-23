@@ -6,7 +6,7 @@
 
 
 (* ::Text:: *)
-(* :Name: modernrobotics` *)
+(* :Name: ModernRobotics` *)
 (* :Book: Modern Robotics: Mechanics, Planning, and Control *)
 (* :Author: Huan Weng, Jarvis Schultz, Mikhail Todes*)
 (* :Contact: huanweng@u.northwestern.edu*)
@@ -16,7 +16,7 @@
 (* Tested in Mathematica 11.3 *)
 
 
-BeginPackage["modernrobotics`"];
+BeginPackage["ModernRobotics`"];
 
 
 (* ::Section::Closed:: *)
