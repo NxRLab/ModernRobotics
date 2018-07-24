@@ -18,6 +18,7 @@ Optional library: matplotlib
 *** IMPORTS ***
 '''
 
+import numpy as np
 import matplotlib.pyplot as plt
 
 '''
@@ -1301,16 +1302,20 @@ def InverseDynamicsTrajectory(thetamat, dthetamat, ddthetamat, g, \
 	Tau2 = taumat[:, 1]
 	Tau3 = taumat[:, 2]
 	timestamp = np.linspace(0, Tf, N)
-	import matplotlib.pyplot as plt
-	plt.plot(timestamp, Tau1, label = "Tau1")
-	plt.plot(timestamp, Tau2, label = "Tau2")
-	plt.plot(timestamp, Tau3, label = "Tau3")
-	plt.ylim (-40, 120)
-	plt.legend(loc = 'lower right')
-	plt.xlabel("Time")
-	plt.ylabel("Torque")
-	plt.title("Plot of Torque Trajectories")
-	plt.show()
+	try:
+	    import matplotlib.pyplot as plt
+	except:
+	    print 'The result will not be plotted due to a lack of package matplotlib'
+	else:
+	    plt.plot(timestamp, Tau1, label = "Tau1")
+	    plt.plot(timestamp, Tau2, label = "Tau2")
+	    plt.plot(timestamp, Tau3, label = "Tau3")
+	    plt.ylim (-40, 120)
+    	    plt.legend(loc = 'lower right')
+	    plt.xlabel("Time")
+	    plt.ylabel("Torque")
+	    plt.title("Plot of Torque Trajectories")
+	    plt.show()		
     """
     thetamat = np.array(thetamat).T
     dthetamat = np.array(dthetamat).T
@@ -1355,7 +1360,6 @@ def ForwardDynamicsTrajectory(thetalist, dthetalist, taumat, g, Ftipmat, \
     
     Example Inputs (3 Link Robot):
 	import modern_robotics as mr
-	import matplotlib.pyplot as plt
 	thetalist = np.array([0.1, 0.1, 0.1])
 	dthetalist = np.array([0.1, 0.2, 0.3])
 	taumat = np.array([[3.63, -6.58, -5.57], [3.74, -5.55,  -5.5], 
@@ -1406,18 +1410,23 @@ def ForwardDynamicsTrajectory(thetalist, dthetalist, taumat, g, Ftipmat, \
 	N = np.array(taumat).shape[0]
 	Tf = np.array(taumat).shape[0] * dt
 	timestamp = np.linspace(0, Tf, N)
-	plt.plot(timestamp, theta1, label = "Theta1")
-	plt.plot(timestamp, theta2, label = "Theta2")
-	plt.plot(timestamp, theta3, label = "Theta3")
-	plt.plot(timestamp, dtheta1, label = "DTheta1")
-	plt.plot(timestamp, dtheta2, label = "DTheta2")
-	plt.plot(timestamp, dtheta3, label = "DTheta3")
-	plt.ylim (-12, 10)
-	plt.legend(loc = 'lower right')
-	plt.xlabel("Time")
-	plt.ylabel("Joint Angles/Velocities")
-	plt.title("Plot of Joint Angles and Joint Velocities")
-	plt.show()
+	try:
+	    import matplotlib.pyplot as plt
+	except:
+	    print 'The result will not be plotted due to a lack of package matplotlib'
+	else:
+	    plt.plot(timestamp, theta1, label = "Theta1")
+	    plt.plot(timestamp, theta2, label = "Theta2")
+	    plt.plot(timestamp, theta3, label = "Theta3")
+	    plt.plot(timestamp, dtheta1, label = "DTheta1")
+	    plt.plot(timestamp, dtheta2, label = "DTheta2")
+	    plt.plot(timestamp, dtheta3, label = "DTheta3")
+	    plt.ylim (-12, 10)
+	    plt.legend(loc = 'lower right')
+	    plt.xlabel("Time")
+	    plt.ylabel("Joint Angles/Velocities")
+	    plt.title("Plot of Joint Angles and Joint Velocities")
+	    plt.show()
     """
     taumat = np.array(taumat).T
     Ftipmat = np.array(Ftipmat).T
@@ -1859,25 +1868,29 @@ def SimulateControl(thetalist, dthetalist, g, Ftipmat, Mlist, Glist, \
                         1.0 * dt / intRes)
         taumat[:, i] = taulist
         thetamat[:, i] = thetacurrent
-        eint = np.add(eint, dt * np.subtract(thetamatd[:, i], thetacurrent))
+        eint = np.add(eint, dt * np.subtract(thetamatd[:, i], thetacurrent))   
     #Output using matplotlib to plot
-    links  = np.array(thetamat).shape[0]
-    N = np.array(thetamat).shape[1]
-    Tf = N * dt
-    timestamp = np.linspace(0, Tf, N)
-    #timestampd = np.linspace(0,Tf,(N/intRes))
-    for i in range(links):
-        col = [np.random.uniform(0, 1), np.random.uniform(0, 1),
-               np.random.uniform(0, 1)]
-        plt.plot(timestamp, thetamat[i, :], "-", color=col, \
-                 label = ("ActualTheta" + str(i + 1)))
-        plt.plot(timestamp, thetamatd[i, :], ".", color=col, \
-                 label = ("DesiredTheta" + str(i + 1)))
-    plt.legend(loc = 'upper left')
-    plt.xlabel("Time")
-    plt.ylabel("Joint Angles")
-    plt.title("Plot of Actual and Desired Joint Angles")
-    plt.show()
+    try:
+	import matplotlib.pyplot as plt
+    except:
+	print 'The result will not be plotted due to a lack of package matplotlib'
+    else:
+	links  = np.array(thetamat).shape[0]
+	N = np.array(thetamat).shape[1]
+	Tf = N * dt
+	timestamp = np.linspace(0, Tf, N)
+	for i in range(links):
+	    col = [np.random.uniform(0, 1), np.random.uniform(0, 1),
+	           np.random.uniform(0, 1)]
+	    plt.plot(timestamp, thetamat[i, :], "-", color=col, \
+		     label = ("ActualTheta" + str(i + 1)))
+	    plt.plot(timestamp, thetamatd[i, :], ".", color=col, \
+		     label = ("DesiredTheta" + str(i + 1)))
+	plt.legend(loc = 'upper left')
+	plt.xlabel("Time")
+	plt.ylabel("Joint Angles")
+	plt.title("Plot of Actual and Desired Joint Angles")
+	plt.show()
     taumat = np.array(taumat).T
-    thetamat = np.array(thetamat).T    
+    thetamat = np.array(thetamat).T 
     return (taumat, thetamat)

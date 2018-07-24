@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name = "modern_robotics",
-    version = "1.0.0",
+    version = "__version__",
     author = "Huan Weng, Mikhail Todes, Jarvis Schultz, Bill Hunt",
     author_email = "huanweng@u.northwestern.edu",
     description = ("Modern Robotics: Mechanics, Planning, and Control: Code Library"),
@@ -16,8 +16,7 @@ setup(
         "License :: OSI Approved :: BSD License",
     ],
     install_requires=[
-        'numpy',
-        'scipy',
+        'numpy'
     ],
     platforms='Linux, Mac, Windows',
 )
