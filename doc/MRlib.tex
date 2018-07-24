@@ -192,23 +192,23 @@ $K_d$ & {\tt Kd} & A scalar feedback derivative gain.\\
 \end{function}
 
 \begin{function}			%DistanceToSO3
-{d = DistanceToSO3(A)}
-{\item \verb~A~: A $3 \times 3$ matrix $A$.}
-{\item \verb~d~: A measure of the distance from $A$ to $SO(3)$, the space of rotation matrices.  If ${\rm det}(A)>0$ (the determinant of $A$ should be $1$ if $A \in SO(3)$), this distance is calculated as $\|A^\trans A -I\|_F$, where $\| \cdot \|_F$ is the Frobenius norm of a matrix, the square root of the sum of the squares of the absolute values of the elements of the matrix.  If the determinant is not positive, a large value is returned. }
+{d = DistanceToSO3(mat)}
+{\item \verb~mat~: A $3 \times 3$ matrix $mat$.}
+{\item \verb~d~: A measure of the distance from $mat$ to $SO(3)$, the space of rotation matrices.  If ${\rm det}(mat)>0$ (the determinant of $mat$ should be $1$ if $mat \in SO(3)$), this distance is calculated as $\|mat^\trans mat -I\|_F$, where $\| \cdot \|_F$ is the Frobenius norm of a matrix, the square root of the sum of the squares of the absolute values of the elements of the matrix.  If the determinant is not positive, a large value is returned. }
 {}
 \end{function}
 
 \begin{function}			%TestIfSO3
-{val = TestIfSO3(A)}
-{\item \verb~A~: A $3 \times 3$ matrix $A$.}
-{\item \verb~val~:  $1$ if $A$ is a rotation matrix (an element of $SO(3)$) and $0$ otherwise.  This function calls \verb~DistanceToSO3(A)~ and tests if the returned distance is smaller than a small value (which you should feel free to change to suit your purposes).}
+{judge = TestIfSO3(mat)}
+{\item \verb~mat~: A $3 \times 3$ matrix $mat$.}
+{\item \verb~judge~:  $1$ (True) if $mat$ is a rotation matrix (an element of $SO(3)$) and $0$ (False) otherwise.  This function calls \verb~DistanceToSO3(mat)~ and tests if the returned distance is smaller than a small value (which you should feel free to change to suit your purposes).}
 {}
 \end{function}
 
 \begin{function}			%ProjectToSO3
-{R = ProjectToSO3(A)}
-{\item \verb~A~: A $3 \times 3$ matrix $A$.}
-{\item \verb~R~:  The closest rotation matrix (element of $SO(3)$) to $A$.  This function is only appropriate for matrices $A$ that are ``close'' to $SO(3)$.  For example, $A$ could be the result of a long series of multiplications of rotation matrices, which has caused the result to drift slightly away from satisfying the conditions of $SO(3)$ (${\rm det}(A) = 1, A^\trans A = I$) due to roundoff errors.}
+{R = ProjectToSO3(mat)}
+{\item \verb~mat~: A $3 \times 3$ matrix $mat$.}
+{\item \verb~R~:  The closest rotation matrix (element of $SO(3)$) to $mat$.  This function is only appropriate for matrices $mat$ that are ``close'' to $SO(3)$.  For example, $mat$ could be the result of a long series of multiplications of rotation matrices, which has caused the result to drift slightly away from satisfying the conditions of $SO(3)$ (${\rm det}(mat) = 1, mat^\trans mat = I$) due to roundoff errors.}
 {}
 \end{function}
 
@@ -296,23 +296,23 @@ $K_d$ & {\tt Kd} & A scalar feedback derivative gain.\\
 \end{function}
 
 \begin{function}			%DistanceToSE3
-{d = DistanceToSE3(A)}
-{\item \verb~A~: A $4 \times 4$ matrix $A$.}
-{\item \verb~d~: A measure of the distance from $A$ to $SE(3)$, the space of transformation matrices.  Let $B$ be the top $3 \times 3$ submatrix of $A$, i.e., the portion of $A$ expected to represent a rotation matrix.  If ${\rm det}(B)>0$ (the determinant of $B$ should be $1$ if $B \in SO(3)$), the distance is calculated as $\|A^{\prime\trans} A^\prime -I\|_F$, where $A^\prime$ is equivalent to $A$ except the elements $a^\prime_{14}$, $a^\prime_{24}$, and $a^\prime_{34}$ are zero.  The Frobenius norm $\| \cdot \|_F$ of a matrix is the the square root of the sum of the squares of the absolute values of the elements of the matrix.  If the determinant of $B$ is not positive, a large value is returned. }
+{d = DistanceToSE3(mat)}
+{\item \verb~mat~: A $4 \times 4$ matrix $mat$.}
+{\item \verb~d~: A measure of the distance from $mat$ to $SE(3)$, the space of transformation matrices.  Let $matR$ be the top $3 \times 3$ submatrix of $mat$, i.e., the portion of $mat$ expected to represent a rotation matrix.  If ${\rm det}(matR)>0$ (the determinant of $matR$ should be $1$ if $matR \in SO(3)$), the distance is calculated as $\|mat^{\prime\trans} mat^\prime -I\|_F$, where $mat^\prime$ is equivalent to $mat$ except the elements in $mat^\prime$, which are $mat^\prime_{14}$, $mat^\prime_{24}$, and $mat^\prime_{34}$, are zero.  The Frobenius norm $\| \cdot \|_F$ of a matrix is the the square root of the sum of the squares of the absolute values of the elements of the matrix.  If the determinant of $matR$ is not positive, a large value is returned. }
 {}
 \end{function}
 
 \begin{function}			%TestIfSE3
-{val = TestIfSE3(A)}
-{\item \verb~A~: A $4 \times 4$ matrix $A$.}
-{\item \verb~val~:  $1$ if $A$ is a transformation matrix (an element of $SE(3)$) and $0$ otherwise.  This function calls \verb~DistanceToSE3(A)~ and tests if the returned distance is smaller than a small value (which you should feel free to change to suit your purposes).}
+{judge = TestIfSE3(mat)}
+{\item \verb~mat~: A $4 \times 4$ matrix $mat$.}
+{\item \verb~judge~:  $1$ if $mat$ is a transformation matrix (an element of $SE(3)$) and $0$ otherwise.  This function calls \verb~DistanceToSE3(mat)~ and tests if the returned distance is smaller than a small value (which you should feel free to change to suit your purposes).}
 {}
 \end{function}
 
 \begin{function}			%ProjectToSE3
-{T = ProjectToSE3(A)}
-{\item \verb~A~: A $4 \times 4$ matrix $A$.}
-{\item \verb~T~:  The closest transformation matrix (element of $SE(3)$) to $A$.  This function is only appropriate for matrices $A$ that are ``close'' to $SE(3)$.  For example, $A$ could be the result of a long series of multiplications of transformation matrices, which has caused the result to drift slightly away from satisfying the conditions of $SE(3)$ (top left $3\times 3$ submatrix is in $SO(3)$ and the bottom row is $[0 \; 0\; 0 \; 1]$) due to roundoff errors.}
+{T = ProjectToSE3(mat)}
+{\item \verb~mat~: A $4 \times 4$ matrix $mat$.}
+{\item \verb~T~:  The closest transformation matrix (element of $SE(3)$) to $mat$.  This function is only appropriate for matrices $mat$ that are ``close'' to $SE(3)$.  For example, $mat$ could be the result of a long series of multiplications of transformation matrices, which has caused the result to drift slightly away from satisfying the conditions of $SE(3)$ (top left $3\times 3$ submatrix is in $SO(3)$ and the bottom row is $[0 \; 0\; 0 \; 1]$) due to roundoff errors.}
 {}
 \end{function}
 
