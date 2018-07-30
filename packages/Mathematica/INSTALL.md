@@ -1,13 +1,14 @@
 # Mathematica Front-End Installation Instructions #
 
-If you'd like to be able to use this package inside of any notebook, regardless
-of the notebook's location on your filesystem, then you can use Mathematica's
-front end to install this package. Use the following steps:
+If you'd like to be able to use this package inside of any notebook, 
+regardless of the notebook's location on your filesystem, then you can use 
+Mathematica's front end to install this package. Use the following steps:
 
 1. Click `File -> Install...`
 2. Select `Package` for the _Type of Item to Install_
 3. Chose `From File...` for the _Source_
-4. Navigate to the `ModernRobotics.m` and select it as the source for the package
+4. Navigate to the `ModernRobotics.m` and select it as the source for the 
+   package
 5. The _Install Name_ should default to `ModernRobotics`; if it doesn't then
    fill in the install name to be `ModernRobotics`.
 6. Choose whether you want the package installed for a single user or for all
@@ -39,8 +40,8 @@ common operating systems:
 ## Manual Installation Instructions ##
 
 If you have any troubles with the front-end installation described above, you
-can try manually installing the package by copying the `ModernRobotics.m` file
-into the same directory mentioned for uninstalling.
+can try manually installing the package by copying the `ModernRobotics.m` 
+file into the same directory mentioned for uninstalling.
 
 
 # Using the Package Locally #
@@ -53,7 +54,8 @@ SetDirectory["<PATH-TO-DIRECTORY-CONTAINING-ModernRobotics.m>"]
 <<ModernRobotics`
 ```
 
-If the notebook and the package are located in the same directory you could use 
+If the notebook and the package are located in the same directory you could 
+use 
 
 ```
 SetDirectory[NotebookDirectory[]]

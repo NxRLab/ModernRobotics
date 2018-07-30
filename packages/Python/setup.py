@@ -12,11 +12,17 @@ setup(
     packages=['modern_robotics'],
     classifiers=[
         "Development Status :: 3 - Alpha",
-        "Topic :: Utilities",
-        "License :: OSI Approved :: BSD License",
+	"Intended Audience :: Education",
+	"Intended Audience :: Science/Research",
+        "License :: OSI Approved :: MIT License",
+	"Natural Language :: English",
+	"Programming Language :: Python :: 2",
+	"Programming Language :: Python :: 3",
+	"Topic :: Education",
+	"Topic :: Scientific/Engineering",
     ],
     install_requires=[
-        'numpy'
+        'numpy',
     ],
     platforms='Linux, Mac, Windows',
 )
