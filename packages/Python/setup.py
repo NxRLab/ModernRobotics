@@ -1,8 +1,10 @@
 from setuptools import setup
 
+exec(open('modern_robotics/__version__.py').read())
+
 setup(
     name = "modern_robotics",
-    version = "__version__",
+    version = __version__,
     author = "Huan Weng, Mikhail Todes, Jarvis Schultz, Bill Hunt",
     author_email = "huanweng@u.northwestern.edu",
     description = ("Modern Robotics: Mechanics, Planning, and Control: Code Library"),
