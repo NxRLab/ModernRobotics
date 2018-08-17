@@ -1,4 +1,8 @@
-# Mathematica Front-End Installation Instructions #
+# "ModernRobotics" Mathematica Package Instructions #
+
+This package is the code library for _Modern Robotics: Mechanics, Planning, 
+and Control_. [Here](../../doc/MRlib.pdf) is the introduction. For more 
+details please see the [website](http://modernrobotics.org/).
 
 If you'd like to be able to use this package inside of any notebook, 
 regardless of the notebook's location on your filesystem, then you can use 
