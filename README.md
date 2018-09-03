@@ -1,7 +1,13 @@
 # Modern Robotics:  Mechanics, Planning, and Control
 # Code Library
 
-This repository contains the code library accompanying _Modern Robotics:  Mechanics, Planning, and Control_. The functions are available in:
+This repository contains the code library accompanying [_Modern Robotics: 
+Mechanics, Planning, and Control_](http://modernrobotics.org) (Kevin Lynch 
+and Frank Park, Cambridge University Press 2017). The 
+[user manual](/doc/MRlib.pdf) is in the doc directory.
+
+The functions are available in:
+
 * Python
 * MATLAB
 * Mathematica

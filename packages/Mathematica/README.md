@@ -1,9 +1,5 @@
 # "ModernRobotics" Mathematica Package Instructions #
 
-This package is the code library for _Modern Robotics: Mechanics, Planning, 
-and Control_. [Here](../../doc/MRlib.pdf) is the introduction. For more 
-details please see the [website](http://modernrobotics.org/).
-
 ## Installing the Package ##
 
 ### Recommended Installation Instructions ###
@@ -16,10 +12,10 @@ Mathematica's front end to install this package. Use the following steps:
 2. Click `File -> Install...`
 3. Select `Package` for the _Type of Item to Install_
 4. Chose `From File...` for the _Source_
-5. Navigate to the `ModernRobotics.m` and select it as the source for the 
+5. Navigate to `ModernRobotics.m` and select it as the source for the 
    package
 6. The _Install Name_ should default to `ModernRobotics`; if it doesn't then
-   fill in the install name to be `ModernRobotics`.
+   fill in the install name to be `ModernRobotics`
 7. Choose whether you want the package installed for a single user or for all
    users (may require administrative privileges)
 8. Click `OK`
@@ -28,7 +24,7 @@ Mathematica's front end to install this package. Use the following steps:
 
 If you have any troubles with the front-end installation described above, try
 manually installing the package by copying the `ModernRobotics.m` file into 
-the following director.
+the following directory.
 
 ```sh
 $MATHPATH/Applications/ModernRobotics/

@@ -1,12 +1,9 @@
-# "mr" Matlab Code Library Instructions #
-
-This is the code library for _Modern Robotics: Mechanics, Planning, and 
-Control_. [Here](../../doc/MRlib.pdf) is the introduction. For more details 
-please see the [website](http://modernrobotics.org/).
+# "mr" MATLAB Code Library Instructions #
 
 ## Installing the Library ##
 
-This code library does not need installation.
+Copy the "mr" folder to a known location on your computer. We will call the
+path to this folder `$FOLDER_PATH/mr`.
 
 ## Importing the Library ##
 
@@ -16,8 +13,7 @@ To import the library, use `addpath` as
 addpath('$FOLDER_PATH/mr')
 ```
 
-where `$FOLDER_PATH` is the path to "mr" folder. This process is required for
-any program using this package.
+This process is required for any program using this package.
 
 ## Using the Package ##
 
@@ -40,7 +36,7 @@ invR = RotInv(R);
 You should get the the variable `invR` whose value is the same as the output
 shown in the function usage example.
 
-To check the function list and which chapter in the book do those functions 
+To check the function list and which chapter in the book those functions 
 belong to, use `help` as 
 
 ```

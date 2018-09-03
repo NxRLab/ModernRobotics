@@ -1,9 +1,5 @@
 # "modern_robotics" Python Package Instructions #
 
-This package is the code library for _Modern Robotics: Mechanics, Planning, 
-and Control_. [Here](../../doc/MRlib.pdf) is the introduction. For more 
-details please see the [website](http://modernrobotics.org/).
-
 ## Installing the Package ##
 
 ### Recommended Method ###
@@ -16,7 +12,7 @@ pip install modern_robotics
 ``` 
 
 If pip is not preinstalled, check 
-[here](https://pip.pypa.io/en/stable/installing/) for help of installing pip. 
+[here](https://pip.pypa.io/en/stable/installing/) for help installing pip. 
 
 ### Alternative Method ###
 
@@ -53,7 +49,7 @@ R = np.array([[0, 0, 1],
 invR = mr.RotInv(R)
 ```
 
-You should get the the variable `invR` whose value is the same as the output
+You should get the variable `invR` whose value is the same as the output 
 shown in the function usage example.
 
 ## Using the Package Locally ##
