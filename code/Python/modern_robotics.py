@@ -3,7 +3,7 @@
 Library of functions written to accompany the algorithms described in
 Modern Robotics: Mechanics, Planning, and Control.
 ***************************************************************************
-Author: Mikhail Todes, Huan Weng  
+Author: Mikhail Todes, Huan Weng, Bill Hunt
 Date: June 2018
 ***************************************************************************
 Language: Python
@@ -24,25 +24,33 @@ import matplotlib.pyplot as plt
 '''
 
 def NearZero(z):
-#Takes a scalar.
-#Checks if the scalar is small enough to be neglected.
-    '''
-Example Input:
-z = -1e-7
-Output:
-True
-    '''
+    """Determines whether a scalar is small enough to be treated as zero
+    
+    Takes a scalar; checks if the scalar is small enough to be neglected.
+    
+    Example Input:
+        z = -1e-7
+    Output:
+        True
+        
+    :param z: A scalar input to check
+    :returns: True if z is close to zero, false otherwise
+    """
     return abs(z) < 1e-6
    
 def Normalize(V):
-#Takes a vector.
-#Scales it to a unit vector.
-    '''
-Example Input: 
-V = np.array([1, 2, 3])
-Output:
-[0.2672612419124244, 0.5345224838248488, 0.8017837257372732]
-    '''
+    """Normalizes a vector
+    
+    Accepts a vector; returns the unit vector pointing in the same direction as the input.
+    
+    Example Input: 
+        V = np.array([1, 2, 3])
+    Output:
+        np.array([0.2672612419124244, 0.5345224838248488, 0.8017837257372732])
+    
+    :param z: A vector
+    :returns: A unit vector pointing in the same direction as z
+    """
     return V / np.linalg.norm(V)
 
 '''
@@ -50,75 +58,97 @@ Output:
 '''
 
 def RotInv(R):
-#Takes a 3x3 rotation matrix.
-#Returns the inverse (transpose).
-    '''
-Example Input: 
-R = np.array([[0, 0, 1],
-     	      [1, 0, 0],
-              [0, 1, 0]])
-Output:
-[[0, 1, 0], 
- [0, 0, 1],
- [1, 0, 0]]
-    '''
+    """Inverts a rotation matrix
+    
+    Accepts a rotation matrix; returns the inverse of that matrix.
+    
+    Example Input: 
+        R = np.array([[0, 0, 1],
+                      [1, 0, 0],
+                      [0, 1, 0]])
+    Output:
+        [[0, 1, 0], 
+         [0, 0, 1],
+         [1, 0, 0]]
+    
+    :param R: A rotation matrix
+    :returns: The inverse of R
+    """
     return np.array(R).T
 
 def VecToso3(omg):
-#Takes a 3-vector (angular velocity).
-#Returns the skew symmetric matrix in so3.
-    '''
-Example Input: 
-omg = np.array([1, 2, 3])
-Output:
-[[ 0, -3,  2],
- [ 3,  0, -1],
- [-2,  1,  0]]
-    '''
+    """Converts a 3-vector to an so3 representation
+    
+    Takes a 3-vector (angular velocity).
+    Returns the skew symmetric matrix in so3.
+    
+    Example Input: 
+        omg = np.array([1, 2, 3])
+    Output:
+        [[ 0, -3,  2],
+         [ 3,  0, -1],
+         [-2,  1,  0]]
+         
+    :param omg: A 3-vector
+    :returns: The skew symmetric representation of omg
+    """
     return np.array([[0,      -omg[2],  omg[1]], 
 	             [omg[2],       0, -omg[0]], 
 	             [-omg[1], omg[0],       0]])
 
 def so3ToVec(so3mat):
-#Takes a 3x3 skew-symmetric matrix (an element of so(3)).
-#Returns the corresponding vector (angular velocity).
-    '''
-Example Input: 
-so3mat = np.array([[ 0, -3,  2],
-          	   [ 3,  0, -1],
-                   [-2,  1,  0]])
-Output:
-[1, 2, 3]
-    '''
+    """Converts an so3 representation to a 3-vector
+            
+    Takes a 3x3 skew-symmetric matrix (an element of so(3)).
+    Returns the corresponding vector (angular velocity).
+    
+    Example Input: 
+        so3mat = np.array([[ 0, -3,  2],
+                           [ 3,  0, -1],
+                           [-2,  1,  0]])
+    Output:
+        [1, 2, 3]
+        
+    :param so3mat: A 3x3 skew-symmetric matrix
+    :returns: The 3-vector corresponding to so3mat
+    """
     return np.array([so3mat[2][1], so3mat[0][2], so3mat[1][0]])
 
 def AxisAng3(expc3):
-#Takes A 3-vector of exponential coordinates for rotation.
-#Returns unit rotation axis omghat and the corresponding rotation angle
-#theta.
-    '''
-Example Input: 
-expc3 = np.array([1, 2, 3])
-Output:
-(array([0.2672612419124244, 0.5345224838248488, 0.8017837257372732]),
- 3.7416573867739413) 
-    '''
+    """Converts a 3-vector of exponential coordinates for rotation into axis-angle form
+    
+    Takes A 3-vector of exponential coordinates for rotation.
+    Returns unit rotation axis omghat and the corresponding rotation angle theta.
+    
+    Example Input: 
+        expc3 = np.array([1, 2, 3])
+    Output:
+        (array([0.2672612419124244, 0.5345224838248488, 0.8017837257372732]), 3.7416573867739413)
+        
+    :param expc3: A 3-vector of exponential coordinates for rotation
+    :returns: A unit rotation axis and a rotation angle
+    """
     return (Normalize(expc3), np.linalg.norm(expc3))
 
 def MatrixExp3(so3mat):
-#Takes a so(3) representation of exponential coordinates.
-#Returns R in SO(3) that is achieved by rotating about omghat by theta from
-#an initial orientation R = I.
-    '''
-Example Input: 
-so3mat = np.array([[ 0, -3,  2],
-	           [ 3,  0, -1],
-                   [-2,  1,  0]])
-Output:
-[[-0.69492056,  0.71352099,  0.08929286],
- [-0.19200697, -0.30378504,  0.93319235],
- [ 0.69297817,  0.6313497 ,  0.34810748]]
-    '''
+    """Computes the matrix exponential of a matrix in so3
+    
+    Takes a so(3) representation of exponential coordinates.
+    Returns R in SO(3) that is achieved by rotating about omghat by theta from
+    an initial orientation R = I.
+    
+    Example Input:
+        so3mat = np.array([[ 0, -3,  2],
+                           [ 3,  0, -1],
+                           [-2,  1,  0]])
+    Output:
+        [[-0.69492056,  0.71352099,  0.08929286],
+         [-0.19200697, -0.30378504,  0.93319235],
+         [ 0.69297817,  0.6313497 ,  0.34810748]]
+         
+    :param so3mat: A 3x3 skew-symmetric matrix
+    :returns: The matrix exponential of so3mat
+    """
     omgtheta = so3ToVec(so3mat)
     if NearZero(np.linalg.norm(omgtheta)):
         return np.eye(3)
@@ -129,18 +159,23 @@ Output:
                + (1 - np.cos(theta)) * np.dot(omgmat, omgmat)
 
 def MatrixLog3(R):
-#Takes R (rotation matrix).
-#Returns the corresponding so(3) representation of exponential coordinates.
-    '''
-Example Input: 
-R = np.array([[0, 0, 1],
-              [1, 0, 0],
-              [0, 1, 0]])
-Output:
-[[          0, -1.20919958,  1.20919958],
- [ 1.20919958,           0, -1.20919958],
- [-1.20919958,  1.20919958,           0]]
-    '''
+    """Computes the matrix logarithm of a rotation matrix
+    
+    Takes R (rotation matrix).
+    Returns the corresponding so(3) representation of exponential coordinates.
+    
+    Example Input: 
+        R = np.array([[0, 0, 1],
+                      [1, 0, 0],
+                      [0, 1, 0]])
+    Output:
+        [[          0, -1.20919958,  1.20919958],
+         [ 1.20919958,           0, -1.20919958],
+         [-1.20919958,  1.20919958,           0]]
+    
+    :param R: A 3x3 rotation matrix
+    :returns: The matrix logarithm of R
+    """
     if NearZero(np.linalg.norm(R - np.eye(3))):
         return np.zeros((3, 3))
     elif NearZero(np.trace(R) + 1):
@@ -164,162 +199,210 @@ Output:
         return theta / 2.0 / np.sin(theta) * (R - np.array(R).T)
 
 def RpToTrans(R, p):
-#Takes rotation matrix R and position p. 
-#Returns corresponding homogeneous transformation matrix T in SE(3).
-    '''
-Example Input: 
-R = np.array([[1, 0,  0], 
-              [0, 0, -1], 
-              [0, 1,  0]])
-p = np.array([1, 2, 5])
-Output:
-[[1, 0,  0, 1],
- [0, 0, -1, 2],
- [0, 1,  0, 5],
- [0, 0,  0, 1]]
-    '''
+    """Converts a rotation matrix and a position vector into homogeneous tranformation matrix
+    
+    Takes rotation matrix R and position p. 
+    Returns corresponding homogeneous transformation matrix T in SE(3).
+        
+    Example Input: 
+        R = np.array([[1, 0,  0], 
+                      [0, 0, -1], 
+                      [0, 1,  0]])
+        p = np.array([1, 2, 5])
+    Output:
+        [[1, 0,  0, 1],
+         [0, 0, -1, 2],
+         [0, 1,  0, 5],
+         [0, 0,  0, 1]]
+         
+    :param R: A 3x3 rotation matrix
+    :param p: A 3-vector
+    :returns: A homogeneous transformation matrix corresponding to the inputs
+    """
     return np.r_[np.c_[R, p], [[0, 0, 0, 1]]]    
 
 def TransToRp(T):
-#Takes transformation matrix T in SE(3). 
-#Returns R: The corresponding rotation matrix,
-#        p: The corresponding position vector.
-    '''
-Example Input: 
-T = np.array([[1, 0,  0, 0],
-              [0, 0, -1, 0],
-              [0, 1,  0, 3],
-              [0, 0,  0, 1]])
-Output:
-(array([[1, 0,  0], 
-        [0, 0, -1], 
-        [0, 1,  0]]),  
-array([0, 0, 3]))
-    '''
+    """Converts a homogeneous transformation matrix into a rotation matrix and position vector
+
+    Takes transformation matrix T in SE(3). 
+    Returns R: The corresponding rotation matrix,
+            p: The corresponding position vector.
+            
+    Example Input: 
+        T = np.array([[1, 0,  0, 0],
+                      [0, 0, -1, 0],
+                      [0, 1,  0, 3],
+                      [0, 0,  0, 1]])
+    Output:
+        (array([[1, 0,  0], 
+                [0, 0, -1], 
+                [0, 1,  0]]),  
+         array([0, 0, 3]))
+             
+    :param T: A homogeneous transformation matrix
+    :returns: A rotation matrix and a position vector, corresponding to the input
+    """
     R = np.array([[T[0][0], T[0][1], T[0][2]],
                   [T[1][0], T[1][1], T[1][2]],
                   [T[2][0], T[2][1], T[2][2]]])
     return R, np.array([T[0][3], T[1][3], T[2][3]])
 
 def TransInv(T):
-#Takes a transformation matrix T. 
-#Returns its inverse.
-#Uses the structure of transformation matrices to avoid taking a matrix
-#inverse, for efficiency.
-    '''
-Example Input: 
-T = np.array([[1, 0,  0, 0],
-     	      [0, 0, -1, 0],
-              [0, 1,  0, 3],
-              [0, 0,  0, 1]])
-Output:
-[[1,  0, 0,  0],
- [0,  0, 1, -3],
- [0, -1, 0,  0],
- [0,  0, 0,  1]]
-    '''
+    """Inverts a homogeneous transformation matrix
+        
+    Takes a homogeneous transformation matrix T. 
+    Returns its inverse.
+    Uses the structure of transformation matrices to avoid taking a matrix
+    inverse, for efficiency.
+    
+    Example input:
+        T = np.array([[1, 0,  0, 0],
+                      [0, 0, -1, 0],
+                      [0, 1,  0, 3],
+                      [0, 0,  0, 1]])
+    Output:
+        [[1,  0, 0,  0],
+         [0,  0, 1, -3],
+         [0, -1, 0,  0],
+         [0,  0, 0,  1]]
+    
+    :param T: A homogeneous transformation matrix
+    :returns: The inverse of T
+    """
     R, p = TransToRp(T)
     Rt = np.array(R).T
     return np.r_[np.c_[Rt, -np.dot(Rt, p)], [[0, 0, 0, 1]]]
     
 def VecTose3(V):
-#Takes a 6-vector (representing a spatial velocity). 
-#Returns the corresponding 4x4 se(3) matrix.
-    '''
-Example Input: 
-V = np.array([1, 2, 3, 4, 5, 6])
-Output:
-[[ 0, -3,  2, 4], 
- [ 3,  0, -1, 5], 
- [-2,  1,  0, 6], 
- [ 0,  0,  0, 0]]
-    '''
+    """Converts a spatial velocity vector into a 4x4 matrix in se3
+    
+    Takes a 6-vector (representing a spatial velocity). 
+    Returns the corresponding 4x4 se(3) matrix.
+    
+    Example Input: 
+        V = np.array([1, 2, 3, 4, 5, 6])
+    Output:
+        [[ 0, -3,  2, 4], 
+         [ 3,  0, -1, 5], 
+         [-2,  1,  0, 6], 
+         [ 0,  0,  0, 0]]
+         
+    :param V: A 6-vector representing a spatial velocity
+    :returns: The 4x4 se3 representation of V
+    """
     return np.r_[np.c_[VecToso3([V[0], V[1], V[2]]), [V[3], V[4], V[5]]],
                  np.zeros((1, 4))]
 
 def se3ToVec(se3mat):
-#Takes se3mat a 4x4 se(3) matrix.
-#Returns the corresponding 6-vector (representing spatial velocity).
-    '''
-Example Input: 
-se3mat = np.array([[ 0, -3,  2, 4], 
-                   [ 3,  0, -1, 5], 
-                   [-2,  1,  0, 6], 
-                   [ 0,  0,  0, 0]])
-Output:
-[1, 2, 3, 4, 5, 6]
-    '''
+    """ Converts an se3 matrix into a spatial velocity vector
+    
+    Takes se3mat a 4x4 se(3) matrix.
+    Returns the corresponding 6-vector (representing spatial velocity).
+    
+    Example Input: 
+        se3mat = np.array([[ 0, -3,  2, 4], 
+                           [ 3,  0, -1, 5], 
+                           [-2,  1,  0, 6], 
+                           [ 0,  0,  0, 0]])
+    Output:
+        [1, 2, 3, 4, 5, 6]
+        
+    :param se3mat: A 4x4 matrix in se3
+    :returns: The spatial velocity 6-vector corresponding to se3mat
+    """
     return np.r_[[se3mat[2][1], se3mat[0][2], se3mat[1][0]],
                  [se3mat[0][3], se3mat[1][3], se3mat[2][3]]]
 
 def Adjoint(T):
-#Takes T a transformation matrix SE(3).
-#Returns the corresponding 6x6 adjoint representation [AdT].
-    '''
-Example Input: 
-T = np.array([[1, 0,  0, 0], 
-              [0, 0, -1, 0], 
-              [0, 1,  0, 3], 
-              [0, 0,  0, 1]])
-Output:
-[[1, 0,  0, 0, 0,  0],
- [0, 0, -1, 0, 0,  0],
- [0, 1,  0, 0, 0,  0],
- [0, 0,  3, 1, 0,  0],
- [3, 0,  0, 0, 0, -1],
- [0, 0,  0, 0, 1,  0]]
-    '''
+    """Computes the adjoint representation of a homogeneous transformation matrix
+    
+    Takes T, a homogeneous transformation matrix in SE(3).
+    Returns the corresponding 6x6 adjoint representation [AdT].
+    
+    Example Input: 
+        T = np.array([[1, 0,  0, 0], 
+                      [0, 0, -1, 0], 
+                      [0, 1,  0, 3], 
+                      [0, 0,  0, 1]])
+    Output:
+        [[1, 0,  0, 0, 0,  0],
+         [0, 0, -1, 0, 0,  0],
+         [0, 1,  0, 0, 0,  0],
+         [0, 0,  3, 1, 0,  0],
+         [3, 0,  0, 0, 0, -1],
+         [0, 0,  0, 0, 1,  0]]
+         
+    :param T: A homogeneous transformation matrix
+    :returns: The 6x6 adjoint representation of T
+    """
     R, p = TransToRp(T)
     return np.r_[np.c_[R, np.zeros((3, 3))],
                  np.c_[np.dot(VecToso3(p), R), R]]
 
 def ScrewToAxis(q, s, h):
-#Takes q: A point lying on the screw axis, 
-#      s: A unit vector in the direction of the screw axis,
-#      h: The pitch of the screw axis.
-#Returns the corresponding normalized screw axis.
-    '''
-Example Input: 
-q = np.array([3, 0, 0])
-s = np.array([0, 0, 1])
-h = 2
-Output:
-[0, 0, 1, 0, -3, 2]
-    '''
+    """Takes a parametric description of a scre axis and converts it to a normalized screw axis
+    
+    Takes q: A point lying on the screw axis, 
+          s: A unit vector in the direction of the screw axis,
+          h: The pitch of the screw axis.
+    Returns the corresponding normalized screw axis.
+        
+    Example Input: 
+        q = np.array([3, 0, 0])
+        s = np.array([0, 0, 1])
+        h = 2
+    Output:
+        [0, 0, 1, 0, -3, 2]
+    
+    :param q: A point lying on the screw axis
+    :param s: A unit vector in the direction of the screw axis
+    :param h: The pitch of the screw axis
+    :returns: A normalized screw axis described by the inputs
+    """
     return np.r_[s, np.cross(q, s) + np.dot(h, s)]
 
 def AxisAng6(expc6):
-#Takes a 6-vector of exponential coordinates for rigid-body motion S*theta.
-#Returns S: The corresponding normalized screw axis,
-#        theta: The distance traveled along/about S.
-    '''
-Example Input: 
-expc6 = np.array([1, 0, 0, 1, 2, 3])
-Output:
-([1.0, 0.0, 0.0, 1.0, 2.0, 3.0], 
-1.0)
-    '''
+    """Converts a 6-vector of exponenation coordinates into screw axis-angle form
+        
+    Takes a 6-vector of exponential coordinates for rigid-body motion S*theta.
+    Returns S: The corresponding normalized screw axis,
+            theta: The distance traveled along/about S.
+            
+    Example Input: 
+        expc6 = np.array([1, 0, 0, 1, 2, 3])
+    Output:
+        ([1.0, 0.0, 0.0, 1.0, 2.0, 3.0], 1.0)
+        
+    :param expc6: A 6-vector of exponential corrdinates for rigid-body motion
+    :returns: A normalized screw axis, and the distance theta travelled along that axis, corresponding to the input
+    """
     theta = np.linalg.norm([expc6[0], expc6[1], expc6[2]])
     if NearZero(theta):
         theta = np.linalg.norm([expc6[3], expc6[4], expc6[5]])
     return (np.array(expc6 / theta), theta)
 
 def MatrixExp6(se3mat):
-#Takes a se(3) representation of exponential coordinates.
-#Returns a T matrix SE(3) that is achieved by traveling along/about the
-#screw axis S for a distance theta from an initial configuration T = I.
-    '''
-Example Input: 
-se3mat = np.array([[0,          0,           0,          0],
-          	   [0,          0, -1.57079632, 2.35619449],
-                   [0, 1.57079632,           0, 2.35619449],
-                   [0,          0,           0,          0]])
-Output:
-[[1.0, 0.0,  0.0, 0.0],
- [0.0, 0.0, -1.0, 0.0],
- [0.0, 1.0,  0.0, 3.0],
- [  0,   0,    0,   1]]
-    '''  
+    """Computes the matrix exponential of an se3 representation of exponential coordinates
+    
+    Takes a se(3) representation of exponential coordinates.
+    Returns a T matrix SE(3) that is achieved by traveling along/about the
+    screw axis S for a distance theta from an initial configuration T = I.
+    
+    Example Input: 
+        se3mat = np.array([[0,          0,           0,          0],
+                           [0,          0, -1.57079632, 2.35619449],
+                           [0, 1.57079632,           0, 2.35619449],
+                           [0,          0,           0,          0]])
+    Output:
+        [[1.0, 0.0,  0.0, 0.0],
+         [0.0, 0.0, -1.0, 0.0],
+         [0.0, 1.0,  0.0, 3.0],
+         [  0,   0,    0,   1]]
+         
+    
+    :param se3mat: A matrix in se3
+    :returns: The matrix exponential of se3mat
+    """
     omgtheta = so3ToVec(np.array(se3mat)[0: 3: 1, 0: 3: 1])
     if NearZero(np.linalg.norm(omgtheta)):
         return np.r_[np.c_[np.eye(3),
@@ -339,17 +422,22 @@ Output:
                      [[0, 0, 0, 1]]]
 
 def MatrixLog6(T):
-#Takes a transformation matrix T in SE(3).
-#Returns the corresponding se(3) representation of exponential coordinates.
-    '''
-Example Input: 
-T = np.array([[1, 0, 0, 0], [0, 0, -1, 0], [0, 1, 0, 3], [0, 0, 0, 1]])
-Output:
-[[ 0.          0.          0.          0.        ]
- [ 0.          0.         -1.57079633  2.35619449]
- [ 0.          1.57079633  0.          2.35619449]
- [ 0.          0.          0.          0.        ]]
-    '''
+    """Computes the matrix logarithm of a homogeneous transformation matrix
+
+    Takes a transformation matrix T in SE(3).
+    Returns the corresponding se(3) representation of exponential coordinates.
+
+    Example Input: 
+        T = np.array([[1, 0, 0, 0], [0, 0, -1, 0], [0, 1, 0, 3], [0, 0, 0, 1]])
+    Output:
+        [[ 0.          0.          0.          0.        ]
+         [ 0.          0.         -1.57079633  2.35619449]
+         [ 0.          1.57079633  0.          2.35619449]
+         [ 0.          0.          0.          0.        ]]
+         
+    :param R: A matrix in SE3
+    :returns: The matrix logarithm of R
+    """
     R, p = TransToRp(T)
     if NearZero(np.linalg.norm(R - np.eye(3))):
         return np.r_[np.c_[np.zeros((3, 3)),
@@ -370,33 +458,194 @@ Output:
                                                               T[1][3], 
                                                               T[2][3]])], 
                      [[0, 0, 0, 0]]]
+                     
+                     
+def ProjectToSO3 (R):
+    """Returns a projection of R into SO3
+    
+    Projects a matrix R to the closest matrix in SO3
+    using singular-value decomposition (see
+    http://hades.mech.northwestern.edu/index.php/Modern_Robotics_Linear_Algebra_Review).
+    
+    Example Input: 
+    R = np.array([[ 0.675,  0.150,  0.720],
+                  [ 0.370,  0.771, -0.511],
+                  [-0.630,  0.619,  0.472]])
+    Output:
+        np.array([[ 0.67901136,  0.14894516,  0.71885945],
+                  [ 0.37320708,  0.77319584, -0.51272279],
+                  [-0.63218672,  0.61642804,  0.46942137]])
+        
+    :param R: A matrix near SO3 to project to SO3
+    :returns: The closest matrix to R that is in SO3
+    """
+    U,s,Vh = np.linalg.svd(R)
+        
+    result = np.dot(U,Vh)
+    
+    if np.linalg.det(result) < 0:
+        result[:,np.argmin(s)] = -result[:,np.argmin(s)]
+    
+    return result
+    
+    
+def ProjectToSE3 (T):
+    """Returns a projection of T into SE3
 
+    Projects a matrix T to the closest matrix
+    in SE3 using singular-value decomposition (see
+    http://hades.mech.northwestern.edu/index.php/Modern_Robotics_Linear_Algebra_Review).
+
+    Example Input: 
+    T = np.array([[ 0.675,  0.150,  0.720,  1.2],
+                  [ 0.370,  0.771, -0.511,  5.4],
+                  [-0.630,  0.619,  0.472,  3.6],
+                  [ 0.003,  0.002,  0.010,  0.9]])
+    Output:
+        np.array([[ 0.67901136,  0.14894516,  0.71885945,  1.2 ],
+                  [ 0.37320708,  0.77319584, -0.51272279,  5.4 ],
+                  [-0.63218672,  0.61642804,  0.46942137,  3.6 ],
+                  [ 0.        ,  0.        ,  0.        ,  1.  ]])
+                  
+    :param T: A 4x4 matrix to project to SE3
+    :returns: The closest matrix to T that is in SE3
+    """
+    
+    a=np.array(T)
+    
+    R = ProjectToSO3(a[:3,:3])
+    
+    return mr.RpToTrans(R,a[:3,3])
+    
+def DistanceToSO3 (R):
+    """Returns a quantity describing the distance of R from the SO3 manifold
+    
+    Computes the distance from R to the SO3 manifold using the following method:
+    
+    If det(R) <= 0, return a large number. If det(R) > 0, return norm(R^T.R - I).
+    
+    Example Input: 
+        np.array([[ 1.0,  0.0,   0.0  ],
+                  [ 0.0,  0.1,  -0.95 ],
+                  [ 0.0,  1.0,   0.1  ]])
+    Output:
+        0.08835
+        
+    :param R: A 3x3 matrix
+    :returns: A quantity describing the distance of R from the SO3 manifold
+    """
+    if np.linalg.det(R) > 0:
+        return np.linalg.norm(np.dot(np.transpose(R),np.array(R)) - np.identity(3))
+    else:
+        return 1000000000.
+    
+def DistanceToSE3 (T):
+    """Returns a quantity describing the distance of T from the SE3 manifold
+    
+    Computes the distance from T to the SO3 manifold using the following method:
+    
+        Compute the determinant of R, the top 3x3 submatrix of T. If det(R) <= 0, return a large number.
+        If det(R) > 0, replace the top 3x3 submatrix of T with R^T.R, and set the first three entries of
+        the fourth column of T to zero. Then return norm(T - I).
+    
+    Example Input: 
+        np.array([[ 1.0,  0.0,   0.0,   1.2 ],
+                  [ 0.0,  0.1,  -0.95,  1.5 ],
+                  [ 0.0,  1.0,   0.1,  -0.9 ],
+                  [ 0.0,  0.0,   0.1,   0.98 ]])
+    Output:
+        0.134931
+        
+    :param R: A 4x4 matrix
+    :returns: A quantity describing the distance of R from the SO3 manifold
+    """
+    T = np.array(T)
+    if np.linalg.det(T[:3,:3]) > 0:
+        A = np.vstack([np.c_[np.dot(np.transpose(T[:3,:3]),T[:3,:3]),np.zeros((3,1))] , T[3,:]])
+        return np.linalg.norm(A - np.identity(4))
+        
+    else:
+        return 1000000000.
+    
+def TestIfSO3 (R):
+    """Returns true if R is close to or on the manifold SO3
+    
+    Computes the distance d from R to the SO3 manifold using the following method:
+    
+    If det(R) <= 0, d = a large number. If det(R) > 0, d = norm(R^T.R - I).
+    
+    if d is close to zero, return true. Otherwise, return false
+    
+    Example Input: 
+        np.array([[ 1.0,  0.0,   0.0  ],
+                  [ 0.0,  0.1,  -0.95 ],
+                  [ 0.0,  1.0,   0.1  ]])
+    Output:
+        False
+        
+    :param R: A 3x3 matrix
+    :returns: True if R is very close to or in SO3, false otherwise
+    """
+    return NearZero(DistanceToSO3(R))
+    
+        
+def TestIfSE3 (T):
+    """Returns true if T is close to or on the manifold SE3
+    
+    Computes the distance d from T to the SE3 manifold using the following method:
+    
+        Compute the determinant of R, the top 3x3 submatrix of T. If det(R) <= 0, d = a large number.
+        If det(R) > 0, replace the top 3x3 submatrix of T with R^T.R, and set the first three entries of
+        the fourth column of T to zero. Then d = norm(T - I).
+    
+    If d is close to zero, return true. Otherwise, return false.
+    
+    Example Input: 
+        np.array([[ 1.0,  0.0,   0.0,   1.2 ],
+                  [ 0.0,  0.1,  -0.95,  1.5 ],
+                  [ 0.0,  1.0,   0.1,  -0.9 ],
+                  [ 0.0,  0.0,   0.1,   0.98 ]])
+    Output:
+        False
+        
+    :param R: A 3x3 matrix
+    :returns: True if R is very close to or in SE3, false otherwise
+    """
+    return NearZero(DistanceToSE3(T))
+    
 '''
 *** CHAPTER 4: FORWARD KINEMATICS ***
 '''
 
 def FKinBody(M, Blist, thetalist):
-#Takes M: The home configuration (position and orientation) of the 
-#         end-effector,
-#      Blist: The joint screw axes in the end-effector frame when the 
-#             manipulator is at the home position, in the format of a
-#             matrix with axes as the columns,
-#      thetalist: A list of joint coordinates.
-#Returns T IN SE(3) representing the end-effector frame when the joints are
-#at the specified coordinates (i.t.o Body Frame).
-    '''
-Example Input: 
-M = np.array([[-1, 0, 0, 0], [0, 1, 0, 6], [0, 0, -1, 2], [0, 0, 0, 1]])
-Blist = np.array([[0, 0, -1, 2, 0,   0],
-                  [0, 0,  0, 0, 1,   0], 
-                  [0, 0,  1, 0, 0, 0.1]]).T
-thetalist = np.array([np.pi / 2.0, 3, np.pi])
-Output:
-[[ -1.14423775e-17   1.00000000e+00   0.00000000e+00  -5.00000000e+00],
- [  1.00000000e+00   1.14423775e-17   0.00000000e+00   4.00000000e+00],
- [              0.               0.              -1.       1.68584073],
- [              0.               0.               0.               1.]]
-    '''
+    """Computes forward kinematics in the body frame for an open chain robot
+    
+    Takes the home configuration (position and orientation) of the end-effector,
+    the joint screw axes in the end-effector frame when the manipulator is at the home position,
+    and a list of joint values.
+    Returns T in SE(3) representing the end-effector frame when the joints are
+    at the specified coordinates (i.t.o Body Frame).
+    
+    Example Input: 
+        M = np.array([[-1, 0, 0, 0], [0, 1, 0, 6], [0, 0, -1, 2], [0, 0, 0, 1]])
+        Blist = np.array([[0, 0, -1, 2, 0,   0],
+                          [0, 0,  0, 0, 1,   0], 
+                          [0, 0,  1, 0, 0, 0.1]]).T
+        thetalist = np.array([np.pi / 2.0, 3, np.pi])
+    Output:
+        [[ -1.14423775e-17   1.00000000e+00   0.00000000e+00  -5.00000000e+00],
+         [  1.00000000e+00   1.14423775e-17   0.00000000e+00   4.00000000e+00],
+         [              0.               0.              -1.       1.68584073],
+         [              0.               0.               0.               1.]]
+         
+    :param M: The home configuration (position and orientation) of the end-effector
+    :param Blist: The joint screw axes in the end-effector frame when the manipulator
+                  is at the home position, in the format of a matrix with axes as the columns
+    :param thetalist: A list of joint coordinates
+    
+    "returns: A homogeneous transformation matrix representing the end-effector frame
+              when the joints are at the specified coordinates (i.t.o Body Frame)
+    """
     T = np.array(M)
     for i in range(len(thetalist)):
         T = np.dot(T,MatrixExp6(VecTose3(np.array(Blist)[:, i] \
@@ -404,27 +653,34 @@ Output:
     return T
 
 def FKinSpace(M, Slist, thetalist):
-#Takes M: the home configuration (position and orientation) of the 
-#         end-effector,
-#      Slist: The joint screw axes in the space frame when the manipulator
-#             is at the home position, in the format of a matrix with axes
-#             as the columns,
-#      thetalist: A list of joint coordinates.
-#Returns T in SE(3) representing the end-effector frame when the joints are
-#at the specified coordinates (i.t.o Space Frame).
-    '''
-Example Input: 
-M = np.array([[-1, 0, 0, 0], [0, 1, 0, 6], [0, 0, -1, 2], [0, 0, 0, 1]])
-Slist = np.array([[0, 0,  1,  4, 0,    0],
-                  [0, 0,  0,  0, 1,    0],
-                  [0, 0, -1, -6, 0, -0.1]]).T
-thetalist = np.array([np.pi / 2.0, 3, np.pi])
-Output:
-[[ -1.14423775e-17   1.00000000e+00   0.00000000e+00  -5.00000000e+00],
- [  1.00000000e+00   1.14423775e-17   0.00000000e+00   4.00000000e+00],
- [              0.               0.              -1.       1.68584073],
- [              0.               0.               0.               1.]]
-    '''
+    """Computes forward kinematics in the space frame for an open chain robot
+    
+    Takes the home configuration (position and orientation) of the end-effector,
+    the joint screw axes in the space frame when the manipulator is at the home position,
+    and a list of joint values.
+    Returns T in SE(3) representing the end-effector frame when the joints are
+    at the specified coordinates (i.t.o Space Frame).
+    
+    Example Input: 
+        M = np.array([[-1, 0, 0, 0], [0, 1, 0, 6], [0, 0, -1, 2], [0, 0, 0, 1]])
+        Slist = np.array([[0, 0,  1,  4, 0,    0],
+                          [0, 0,  0,  0, 1,    0],
+                          [0, 0, -1, -6, 0, -0.1]]).T
+        thetalist = np.array([np.pi / 2.0, 3, np.pi])
+    Output:
+        [[ -1.14423775e-17   1.00000000e+00   0.00000000e+00  -5.00000000e+00],
+         [  1.00000000e+00   1.14423775e-17   0.00000000e+00   4.00000000e+00],
+         [              0.               0.              -1.       1.68584073],
+         [              0.               0.               0.               1.]]
+    
+    :param M: The home configuration (position and orientation) of the end-effector
+    :param Slist: The joint screw axes in the space frame when the manipulator is at
+                  the home position, in the format of a matrix with axes as the columns
+    :param thetalist: A list of joint coordinates
+    
+    :returns: A homogeneous transformation matrix representing the end-effector frame
+              when the joints are at the specified coordinates (i.t.o Space Frame).
+    """
     T = np.array(M)
     for i in range(len(thetalist)-1, -1, -1):
         T = np.dot(MatrixExp6(VecTose3(np.array(Slist)[:, i] \
@@ -436,26 +692,32 @@ Output:
 '''
 
 def JacobianBody(Blist, thetalist):
-#Takes Blist: The joint screw axes in the end-effector frame when the
-#             manipulator is at the home position, in the format of a
-#             matrix with axes as the columns,
-#      thetalist: A list of joint coordinates. 
-#Returns the corresponding body Jacobian (6xn real numbers).
-    '''
-Example Input: 
-Blist = np.array([[0, 0, 1,   0, 0.2, 0.2], 
-                  [1, 0, 0,   2,   0,   3], 
-                  [0, 1, 0,   0,   2,   1], 
-                  [1, 0, 0, 0.2, 0.3, 0.4]]).T
-thetalist = np.array([0.2, 1.1, 0.1, 1.2])
-Output:
-[[-0.04528405  0.99500417  0.          1. ]
- [ 0.74359313  0.09304865  0.36235775  0. ]
- [-0.66709716  0.03617541 -0.93203909  0. ]
- [ 2.32586047  1.66809     0.56410831  0.2]
- [-1.44321167  2.94561275  1.43306521  0.3]
- [-2.06639565  1.82881722 -1.58868628  0.4]]
-    '''
+    """Computes the body Jacobian for an open chain robot
+    
+    Takes the joint screw axes in the end-effector frame when the
+    manipulator is at the home position, and a list of joint value.
+    Returns the corresponding body Jacobian (6xn real numbers).
+    
+    Example Input: 
+        Blist = np.array([[0, 0, 1,   0, 0.2, 0.2], 
+                          [1, 0, 0,   2,   0,   3], 
+                          [0, 1, 0,   0,   2,   1], 
+                          [1, 0, 0, 0.2, 0.3, 0.4]]).T
+        thetalist = np.array([0.2, 1.1, 0.1, 1.2])
+    Output:
+        [[-0.04528405  0.99500417  0.          1. ]
+         [ 0.74359313  0.09304865  0.36235775  0. ]
+         [-0.66709716  0.03617541 -0.93203909  0. ]
+         [ 2.32586047  1.66809     0.56410831  0.2]
+         [-1.44321167  2.94561275  1.43306521  0.3]
+         [-2.06639565  1.82881722 -1.58868628  0.4]]
+         
+    :param Blist: The joint screw axes in the end-effector frame when the manipulator
+                  is at the home position, in the format of a matrix with axes as the columns
+    :param thetalist: A list of joint coordinates
+    
+    :returns: The body Jacobian corresponding to the inputs (6xn real numbers)
+    """
     Jb = np.array(Blist).copy()
     T = np.eye(4)
     for i in range(len(thetalist) - 2, -1, -1):
@@ -465,26 +727,32 @@ Output:
     return Jb
 
 def JacobianSpace(Slist, thetalist):
-#Takes Slist: The joint screw axes in the space frame when the manipulator
-#             is at the home position, in the format of a matrix with axes
-#             as the columns,
-#      thetalist: A list of joint coordinates.
-#Returns the corresponding space Jacobian (6xn real numbers).
-    '''
-Example Input: 
-Slist = np.array([[0, 0, 1,   0, 0.2, 0.2], 
-                  [1, 0, 0,   2,   0,   3], 
-                  [0, 1, 0,   0,   2,   1], 
-                  [1, 0, 0, 0.2, 0.3, 0.4]]).T
-thetalist = np.array([0.2, 1.1, 0.1, 1.2])
-Output:
-[[ 0.          0.98006658 -0.09011564  0.95749426]
- [ 0.          0.19866933  0.4445544   0.28487557]
- [ 1.          0.          0.89120736 -0.04528405]
- [ 0.          1.95218638 -2.21635216 -0.51161537]
- [ 0.2         0.43654132 -2.43712573  2.77535713]
- [ 0.2         2.96026613  3.23573065  2.22512443]]
-    '''
+    """Computes the space Jacobian for an open chain robot
+    
+    Takes the joint screw axes in the space frame when the manipulator
+    is at the home position, and a list of joint values.
+    Returns the corresponding space Jacobian (6xn real numbers).
+    
+    Example Input: 
+        Slist = np.array([[0, 0, 1,   0, 0.2, 0.2], 
+                          [1, 0, 0,   2,   0,   3], 
+                          [0, 1, 0,   0,   2,   1], 
+                          [1, 0, 0, 0.2, 0.3, 0.4]]).T
+        
+    Output:
+        [[ 0.          0.98006658 -0.09011564  0.95749426]
+         [ 0.          0.19866933  0.4445544   0.28487557]
+         [ 1.          0.          0.89120736 -0.04528405]
+         [ 0.          1.95218638 -2.21635216 -0.51161537]
+         [ 0.2         0.43654132 -2.43712573  2.77535713]
+         [ 0.2         2.96026613  3.23573065  2.22512443]]
+         
+    :param Slist: The joint screw axes in the space frame when the manipulator
+                  is at the home position, in the format of a matrix with axes as the columns
+    :param thetalist: A list of joint coordinates
+    
+    :returns: The space Jacobian corresponding to the inputs (6xn real numbers)
+    """
     Js = np.array(Slist).copy()
     T = np.eye(4)
     for i in range(1, len(thetalist)):
