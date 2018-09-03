@@ -1,4 +1,4 @@
-function  [R, p] = TransToRp(T)
+function [R, p] = TransToRp(T)
 % *** CHAPTER 3: RIGID-BODY MOTIONS ***
 % Takes the transformation matrix T in SE(3) 
 % Returns R: the corresponding rotation matrix

@@ -1,5 +1,3 @@
-
-
 function AdT = Adjoint(T)
 % *** CHAPTER 3: RIGID-BODY MOTIONS ***
 % Takes T a transformation matrix SE3. 
