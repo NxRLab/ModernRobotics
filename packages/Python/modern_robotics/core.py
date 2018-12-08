@@ -401,7 +401,7 @@ def MatrixLog6(T):
         elif acosinput < -1:
             acosinput = -1
         theta = np.arccos(acosinput)
-        omgmat = MatrixLog3(R)
+        omgmat = np.array(MatrixLog3(R), dtype=np.float64)
         return np.r_[np.c_[omgmat,
                            np.dot(np.eye(3) - omgmat / 2.0 \
                            + (1.0 / theta - 1.0 / np.tan(theta / 2.0) / 2) \
