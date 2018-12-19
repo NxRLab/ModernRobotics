@@ -178,7 +178,10 @@ def MatrixLog3(R):
         elif acosinput < -1:
             acosinput = -1
         theta = np.arccos(acosinput)
-        return theta / 2.0 / np.sin(theta) * (R - np.array(R).T)
+        if theta == 0:
+            return (R - np.array(R).T)/2
+        else:
+            return theta / 2.0 / np.sin(theta) * (R - np.array(R).T)
 
 def RpToTrans(R, p):
     """Converts a rotation matrix and a position vector into homogeneous
