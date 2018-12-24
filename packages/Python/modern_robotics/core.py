@@ -173,8 +173,8 @@ def MatrixLog3(R):
         return VecToso3(np.pi * omg)
     else:
         acosinput = (np.trace(R) - 1) / 2.0
-        if acosinput > 1:
-            acosinput = 1
+        if acosinput >= 1:
+            acosinput = 0.99999
         elif acosinput < -1:
             acosinput = -1
         theta = np.arccos(acosinput)
@@ -392,25 +392,20 @@ def MatrixLog6(T):
                   [0,          0,           0,           0]])
     """
     R, p = TransToRp(T)
-    if NearZero(np.linalg.norm(R - np.eye(3))):
-        return np.r_[np.c_[np.zeros((3, 3)),
-                           [T[0][3], T[1][3], T[2][3]]],
-                     [[0, 0, 0, 0]]]
-    else:
-        acosinput = (np.trace(R) - 1) / 2.0
-        if acosinput > 1:
-            acosinput = 1
-        elif acosinput < -1:
-            acosinput = -1
-        theta = np.arccos(acosinput)
-        omgmat = MatrixLog3(R)
-        return np.r_[np.c_[omgmat,
-                           np.dot(np.eye(3) - omgmat / 2.0 \
-                           + (1.0 / theta - 1.0 / np.tan(theta / 2.0) / 2) \
-                             * np.dot(omgmat,omgmat) / theta,[T[0][3],
-                                                              T[1][3],
-                                                              T[2][3]])],
-                     [[0, 0, 0, 0]]]
+    acosinput = (np.trace(R) - 1) / 2.0
+    if acosinput >= 1:
+        acosinput = 0.99999
+    elif acosinput < -1:
+        acosinput = -1
+    theta = np.arccos(acosinput)
+    omgmat = np.array(MatrixLog3(R), dtype=np.float64)
+    return np.r_[np.c_[omgmat,
+                       np.dot(np.eye(3) - omgmat / 2.0 \
+                       + (1.0 / theta - 1.0 / np.tan(theta / 2.0) / 2) \
+                         * np.dot(omgmat,omgmat) / theta,[T[0][3],
+                                                          T[1][3],
+                                                          T[2][3]])],
+                 [[0, 0, 0, 0]]]
 
 
 def ProjectToSO3(mat):
