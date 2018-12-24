@@ -403,7 +403,6 @@ def MatrixLog6(T):
                                                                T[2][3]])],
                      [[0, 0, 0, 0]]]
 
-
 def ProjectToSO3(mat):
     """Returns a projection of mat into SO(3)
 
