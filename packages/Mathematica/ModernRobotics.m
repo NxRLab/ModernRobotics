@@ -11,7 +11,7 @@
 (* :Author: Huan Weng, Jarvis Schultz, Mikhail Todes*)
 (* :Contact: huanweng@u.northwestern.edu*)
 (* :Summary: This package is the code library accompanying the book. *)
-(* :Package Version: 1.0.1 *)
+(* :Package Version: 1.1.0*)
 (* :Mathematica Version: 11.3 *)
 (* Tested in Mathematica 11.3 *)
 
