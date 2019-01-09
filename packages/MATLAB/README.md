@@ -49,7 +49,7 @@ Author: Huan Weng, Bill Hunt, Mikhail Todes, Jarvis Schultz
 
 Contact: huanweng@u.northwestern.edu
 
-Package Version: 1.0.1
+Package Version: 1.1.0
 
 Matlab Version: R2017b
 

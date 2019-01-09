@@ -11,7 +11,7 @@
 (* :Author: Huan Weng, Jarvis Schultz, Mikhail Todes*)
 (* :Contact: huanweng@u.northwestern.edu*)
 (* :Summary: This package is the code library accompanying the book. *)
-(* :Package Version: 1.0.1 *)
+(* :Package Version: 1.1.0*)
 (* :Mathematica Version: 11.3 *)
 (* Tested in Mathematica 11.3 *)
 
@@ -53,7 +53,7 @@ Example:
 		invR = RotInv[{{0,0,1},{1,0,0},{0,1,0}}]
 	Output: 
 		{{0,1,0},{0,0,1},{1,0,0}}"
-	
+
 
 VecToso3::usage=
 "VecToso3[omg]:
@@ -300,7 +300,7 @@ Returns the corresponding se(3) representation of exponential coordinates.
 
 Example:
 	Input: 
-		se3mat = MatrixLog6[{{1,0,0,0},{0,0,-1,0},{0,1,0,3},{0,0,0,1}}]
+		se3mat = MatrixLog6[{{1,0,0,0},{0,0,-1,0},{0,1,0,3},{0,0,0,1}}]//N
 	Output: 
 		{{0,0,0,0},{0,0,-1.5708,2.35619},{0,1.5708,0,2.35619},{0,0,0,0}}"
 
@@ -1289,10 +1289,11 @@ MatrixExp3[so3mat_]:=Module[
 
 MatrixLog3[R_]:=Module[
 	{acosinput,theta,omgmat},
+	acosinput=(Tr[R]-1)/2;
 	Which[
-		NearZero[Norm[R-IdentityMatrix[3]]],
+		acosinput>=1,
 		Return[ConstantArray[0,{3,3}]],
-		NearZero[Tr[R]+1],
+		acosinput<=-1,
 		Which[
 			Not[NearZero[R[[3,3]]+1]],
 			Return[VecToso3[
@@ -1311,11 +1312,9 @@ MatrixLog3[R_]:=Module[
 			]]
 		],
 		True,
-		acosinput=(Tr[R]-1)/2;
-		Which[acosinput>1,acosinput=1,acosinput<-1,acosinput=-1];
 		theta=ArcCos[acosinput];
 		omgmat=(R-R\[Transpose])/(2*Sin[theta]);
-		Return[theta*omgmat]
+		Return[theta*omgmat]					
 	]
 ]
 
@@ -1408,20 +1407,18 @@ MatrixExp6[se3mat_]:=Module[
 MatrixLog6[T_]:=Module[
 	{R,p,acosinput,theta,omgmat},
 	{R,p}=TransToRp[T];
+	omgmat=MatrixLog3[R];
 	If[
-		NearZero[Norm[R-IdentityMatrix[3]]],
+		omgmat==ConstantArray[0,{3,3}],
 		ArrayFlatten[
 			{{ConstantArray[0,{3,3}],{T[[1;;3,4]]}\[Transpose]},{0,0}}
 		],
-		acosinput=(Tr[R]-1)/2;
-		Which[acosinput>1,acosinput=1,acosinput<-1,acosinput=-1];
-		theta=ArcCos[acosinput];
-		omgmat=MatrixLog3[R];
+		theta=ArcCos[(Tr[R]-1)/2];			
 		Return[ArrayFlatten[{
 			{omgmat,(IdentityMatrix[3]-omgmat/2+
 					 (1/theta-Cot[theta/2]/2)*omgmat.omgmat/theta).p},
 			{0,0}
-		}]]
+		}]]	
 	]
 ]
 

@@ -6,7 +6,7 @@ Code Library
 ***************************************************************************
 Author: Huan Weng, Bill Hunt, Jarvis Schultz, Mikhail Todes,
 Email: huanweng@u.northwestern.edu
-Date: July 2018
+Date: January 2018
 ***************************************************************************
 Language: Python
 Also available in: MATLAB, Mathematica
@@ -158,9 +158,10 @@ def MatrixLog3(R):
                   [ 1.20919958,           0, -1.20919958],
                   [-1.20919958,  1.20919958,           0]])
     """
-    if NearZero(np.linalg.norm(R - np.eye(3))):
+    acosinput = (np.trace(R) - 1) / 2.0
+    if acosinput >= 1:
         return np.zeros((3, 3))
-    elif NearZero(np.trace(R) + 1):
+    elif acosinput <= -1:
         if not NearZero(1 + R[2][2]):
             omg = (1.0 / np.sqrt(2 * (1 + R[2][2]))) \
                   * np.array([R[0][2], R[1][2], 1 + R[2][2]])
@@ -172,11 +173,6 @@ def MatrixLog3(R):
                   * np.array([1 + R[0][0], R[1][0], R[2][0]])
         return VecToso3(np.pi * omg)
     else:
-        acosinput = (np.trace(R) - 1) / 2.0
-        if acosinput > 1:
-            acosinput = 1
-        elif acosinput < -1:
-            acosinput = -1
         theta = np.arccos(acosinput)
         return theta / 2.0 / np.sin(theta) * (R - np.array(R).T)
 
@@ -392,26 +388,20 @@ def MatrixLog6(T):
                   [0,          0,           0,           0]])
     """
     R, p = TransToRp(T)
-    if NearZero(np.linalg.norm(R - np.eye(3))):
+    omgmat = MatrixLog3(R)
+    if np.array_equal(omgmat, np.zeros((3, 3))):
         return np.r_[np.c_[np.zeros((3, 3)),
                            [T[0][3], T[1][3], T[2][3]]],
                      [[0, 0, 0, 0]]]
     else:
-        acosinput = (np.trace(R) - 1) / 2.0
-        if acosinput > 1:
-            acosinput = 1
-        elif acosinput < -1:
-            acosinput = -1
-        theta = np.arccos(acosinput)
-        omgmat = MatrixLog3(R)
+        theta = np.arccos((np.trace(R) - 1) / 2.0)
         return np.r_[np.c_[omgmat,
                            np.dot(np.eye(3) - omgmat / 2.0 \
                            + (1.0 / theta - 1.0 / np.tan(theta / 2.0) / 2) \
-                             * np.dot(omgmat,omgmat) / theta,[T[0][3],
-                                                              T[1][3],
-                                                              T[2][3]])],
+                              * np.dot(omgmat,omgmat) / theta,[T[0][3],
+                                                               T[1][3],
+                                                               T[2][3]])],
                      [[0, 0, 0, 0]]]
-
 
 def ProjectToSO3(mat):
     """Returns a projection of mat into SO(3)
