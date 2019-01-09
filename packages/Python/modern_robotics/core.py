@@ -6,7 +6,7 @@ Code Library
 ***************************************************************************
 Author: Huan Weng, Bill Hunt, Jarvis Schultz, Mikhail Todes,
 Email: huanweng@u.northwestern.edu
-Date: July 2018
+Date: January 2018
 ***************************************************************************
 Language: Python
 Also available in: MATLAB, Mathematica
