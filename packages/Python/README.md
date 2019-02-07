@@ -1,5 +1,9 @@
 # "modern_robotics" Python Package Instructions #
 
+## Dependency Requirement
+
+`numpy` should be preinstalled.
+
 ## Installing the Package ##
 
 ### Recommended Method ###

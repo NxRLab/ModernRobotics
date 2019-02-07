@@ -531,7 +531,7 @@ def TestIfSO3(mat):
 def TestIfSE3(mat):
     """Returns true if mat is close to or on the manifold SE(3)
 
-    :param mat: A 3x3 matrix
+    :param mat: A 4x4 matrix
     :return: True if mat is very close to or in SE(3), false otherwise
     Computes the distance d from mat to the SE(3) manifold using the
     following method:
