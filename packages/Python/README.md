@@ -56,6 +56,17 @@ invR = mr.RotInv(R)
 You should get the variable `invR` whose value is the same as the output 
 shown in the function usage example.
 
+Your complete first test code that will return invR could be as follows:
+```
+import modern_robotics as mr
+import numpy as np
+R = np.array([[0, 0, 1],
+              [1, 0, 0],
+              [0, 1, 0]])
+invR = mr.RotInv(R)
+print invR
+```
+
 ## Using the Package Locally ##
 
 It is possible to use the package locally without installation. Download and
