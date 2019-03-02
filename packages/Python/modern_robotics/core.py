@@ -257,7 +257,7 @@ def VecTose3(V):
                   [ 0,  0,  0, 0]])
     """
     return np.r_[np.c_[VecToso3([V[0], V[1], V[2]]), [V[3], V[4], V[5]]],
-                 np.zeros((1, 4))]
+                 np.zeros((1, 4), dtype=np.float32)]
 
 def se3ToVec(se3mat):
     """ Converts an se3 matrix into a spatial velocity vector
