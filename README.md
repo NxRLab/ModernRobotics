@@ -19,4 +19,5 @@ The primary purpose of the provided software is to be easy to read and education
 Some unofficial versions in other languages are being developed:
 * [C++ version] (https://github.com/Le0nX/ModernRoboticsCpp)
 * [Julia version] (https://github.com/ferrolho/ModernRoboticsBook.jl)
+
 Any contribution is welcomed but the maintenance team for this library here doesn't vouch for the reliability of those projects.
