@@ -16,4 +16,7 @@ Each function has a commented section above it explaining the inputs required fo
 
 The primary purpose of the provided software is to be easy to read and educational, reinforcing the concepts in the book. The code is optimized neither for efficiency nor robustness.
 
-An unofficial C++ version is developing in [this repository](https://github.com/Le0nX/ModernRoboticsCpp). Any contribution is welcomed but the maintenance team for this library here doesn't vouch for the reliability of that project.
+Some unofficial versions in other languages are being developed:
+* [C++ version] (https://github.com/Le0nX/ModernRoboticsCpp)
+* [Julia version] (https://github.com/ferrolho/ModernRoboticsBook.jl)
+Any contribution is welcomed but the maintenance team for this library here doesn't vouch for the reliability of those projects.
