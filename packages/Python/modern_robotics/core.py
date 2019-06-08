@@ -37,7 +37,30 @@ def NearZero(z):
         True
     """
     return abs(z) < 1e-6
+	
+def RotCheck(R):
+    """Find values more than 1 in rotation matrix and make it equal 1
+		Such values may arise from computational errors
+    :param R: A rotation matrix
+    :return: A corect R
 
+    Example Input:
+        R = np.array([[0, 0, 1.000000002],
+                      [1, 0, 0],
+                      [0, 1, 0]])
+    Output:
+        np.array([[0, 0, 1.],
+                      [1, 0, 0],
+                      [0, 1, 0]])
+    """
+	for i in range(3):
+        for k in range(3):
+            if R[i,k] > 1:
+                R[i,k] = 1
+            if R[i,k] < -1:
+                R[i,k] = -1
+    return R
+	
 def Normalize(V):
     """Normalizes a vector
 
@@ -150,7 +173,7 @@ def MatrixLog3(R):
     :return: The matrix logarithm of R
 
     Example Input:
-        R = np.array([[0, 0, 1],
+        R = np.array([[0, 0, 1.00000002],
                       [1, 0, 0],
                       [0, 1, 0]])
     Output:
@@ -158,6 +181,7 @@ def MatrixLog3(R):
                   [ 1.20919958,           0, -1.20919958],
                   [-1.20919958,  1.20919958,           0]])
     """
+	R = RotCheck(R)
     acosinput = (np.trace(R) - 1) / 2.0
     if acosinput >= 1:
         return np.zeros((3, 3))
