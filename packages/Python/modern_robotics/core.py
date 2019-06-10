@@ -158,6 +158,7 @@ def MatrixLog3(R):
                   [ 1.20919958,           0, -1.20919958],
                   [-1.20919958,  1.20919958,           0]])
     """
+	R = ProjectToSO3(R)
     acosinput = (np.trace(R) - 1) / 2.0
     if acosinput >= 1:
         return np.zeros((3, 3))
