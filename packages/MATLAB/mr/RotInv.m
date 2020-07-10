@@ -14,5 +14,5 @@ function invR = RotInv(R)
 %     0     0     1
 %     1     0     0
 
-invR = R';
+invR = transpose(R);
 end
