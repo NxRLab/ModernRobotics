@@ -1,0 +1,26 @@
+[0.405s] DEBUG:colcon:Command line arguments: ['/usr/bin/colcon', 'list', '-p', '--base-paths', '/home/daniel/ModernRobotics/codes']
+[0.405s] DEBUG:colcon:Parsed command line arguments: Namespace(base_paths=['/home/daniel/ModernRobotics/codes'], build_base='build', ignore_user_meta=False, log_base=None, log_level=None, main=<bound method ListVerb.main of <colcon_package_information.verb.list.ListVerb object at 0x7f4ea59fb940>>, metas=['./colcon.meta'], names_only=False, packages_above=None, packages_above_and_dependencies=None, packages_above_depth=None, packages_end=None, packages_ignore=None, packages_ignore_regex=None, packages_select=None, packages_select_build_failed=False, packages_select_by_dep=None, packages_select_regex=None, packages_select_test_failures=False, packages_skip=None, packages_skip_build_finished=False, packages_skip_by_dep=None, packages_skip_regex=None, packages_skip_test_passed=False, packages_skip_up_to=None, packages_start=None, packages_up_to=None, packages_up_to_regex=None, paths=None, paths_only=True, topological_graph=False, topological_graph_density=False, topological_graph_dot=False, topological_graph_dot_cluster=False, topological_graph_dot_include_skipped=False, topological_graph_legend=False, topological_order=False, verb_extension=<colcon_package_information.verb.list.ListVerb object at 0x7f4ea59fb940>, verb_name='list', verb_parser=<colcon_defaults.argument_parser.defaults.DefaultArgumentsDecorator object at 0x7f4ea58bc1f0>)
+[0.508s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) check parameters
+[0.509s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) check parameters
+[0.509s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) check parameters
+[0.510s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) check parameters
+[0.510s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) discover
+[0.511s] INFO:colcon.colcon_core.package_discovery:Crawling recursively for packages in '/home/daniel/ModernRobotics/codes'
+[0.512s] Level 1:colcon.colcon_core.package_identification:_identify(/home/daniel/ModernRobotics/codes) by extensions ['ignore', 'ignore_ament_install']
+[0.512s] Level 1:colcon.colcon_core.package_identification:_identify(/home/daniel/ModernRobotics/codes) by extension 'ignore'
+[0.513s] Level 1:colcon.colcon_core.package_identification:_identify(/home/daniel/ModernRobotics/codes) by extension 'ignore_ament_install'
+[0.514s] Level 1:colcon.colcon_core.package_identification:_identify(/home/daniel/ModernRobotics/codes) by extensions ['colcon_pkg']
+[0.514s] Level 1:colcon.colcon_core.package_identification:_identify(/home/daniel/ModernRobotics/codes) by extension 'colcon_pkg'
+[0.515s] Level 1:colcon.colcon_core.package_identification:_identify(/home/daniel/ModernRobotics/codes) by extensions ['colcon_meta']
+[0.515s] Level 1:colcon.colcon_core.package_identification:_identify(/home/daniel/ModernRobotics/codes) by extension 'colcon_meta'
+[0.516s] Level 1:colcon.colcon_core.package_identification:_identify(/home/daniel/ModernRobotics/codes) by extensions ['ros']
+[0.517s] Level 1:colcon.colcon_core.package_identification:_identify(/home/daniel/ModernRobotics/codes) by extension 'ros'
+[0.545s] Level 1:colcon.colcon_core.package_identification:_identify(/home/daniel/ModernRobotics/codes) by extensions ['cmake', 'python']
+[0.546s] Level 1:colcon.colcon_core.package_identification:_identify(/home/daniel/ModernRobotics/codes) by extension 'cmake'
+[0.547s] Level 1:colcon.colcon_core.package_identification:_identify(/home/daniel/ModernRobotics/codes) by extension 'python'
+[0.547s] Level 1:colcon.colcon_core.package_identification:_identify(/home/daniel/ModernRobotics/codes) by extensions ['python_setup_py']
+[0.548s] Level 1:colcon.colcon_core.package_identification:_identify(/home/daniel/ModernRobotics/codes) by extension 'python_setup_py'
+[0.549s] Level 1:colcon.colcon_core.package_identification:_identify(/home/daniel/ModernRobotics/codes/log) by extensions ['ignore', 'ignore_ament_install']
+[0.549s] Level 1:colcon.colcon_core.package_identification:_identify(/home/daniel/ModernRobotics/codes/log) by extension 'ignore'
+[0.550s] Level 1:colcon.colcon_core.package_identification:_identify(/home/daniel/ModernRobotics/codes/log) ignored
+[0.551s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) using defaults
