@@ -19,7 +19,7 @@ def FromXYZRPWToArray(xyzrpw):
     return np.array([[cb * cc, cc * sa * sb - ca * sc, sa * sc + ca * cc * sb, x], 
                     [cb * sc, ca * cc + sa * sb * sc, ca * sb * sc - cc * sa, y], 
                     [-sb, cb * sa, ca * cb, z], 
-                    [0., 0., 0., 1.]]);
+                    [0., 0., 0., 1.]])
 
 def FromURToArray(xyzwpr):
     if len(xyzwpr) < 6:
@@ -36,7 +36,7 @@ def FromURToArray(xyzwpr):
     return np.array([[ux * ux + c * (1 - ux * ux), ux * uy * (1 - c) - uz * s, ux * uz * (1 - c) + uy * s, x],
                 [ux * uy * (1 - c) + uz * s, uy * uy + (1 - uy * uy) * c, uy * uz * (1 - c) - ux * s, y],
                 [ux * uz * (1 - c) - uy * s, uy * uz * (1 - c) + ux * s, uz * uz + (1 - uz * uz) * c, z],
-                [0., 0., 0., 1.]]);
+                [0., 0., 0., 1.]])
 # Connect to the RoboDK API
 RDK = Robolink()
 print("Connection test: \n")
@@ -79,11 +79,14 @@ input('continue: [y/n]')
 target = robot.Pose()             # retrieve the current target as a pose (position of the active tool with respect to the active reference frame)
 #print(target)
 xyzuvw = Pose_2_UR(target)        # Convert the 4x4 pose matrix to XYZUVW position and orientation angles (mm and rad)
+print("\nxyzuvw:")
 print(xyzuvw)
+print("\nArray(xyzuvw:)")
 print(FromURToArray(xyzuvw))
 x,y,z,u,v,w = xyzuvw                # Calculate a new pose based on the previous pose
 xyzuvw2 = [x,y+174.5,z*1.2,u,v,w]
 target2 = UR_2_Pose(xyzuvw2)      # Convert the XYZABC array to a pose (4x4 matrix)
+print("\nxyzuvw2:")
 print(target2)
 robot.MoveJ(target2)                # Make a linear move to the calculated position
 
