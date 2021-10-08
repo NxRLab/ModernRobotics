@@ -1,4 +1,4 @@
-function param = KUKA_Model()
+function param = kukar820_model()
 
     n = 7;
 

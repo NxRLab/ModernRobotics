@@ -29,7 +29,7 @@ colorAxis = [0,0,0]/255;
 
 xBnd = [-1,1] * 2.5;
 yBnd = [-1,1] * 2.5;
-zBnd = [-1,1] * 1.4;
+zBnd = [0,1] * 2;
 
 % Plot the ground:
 % plot(xBnd,[0,0],'LineWidth',6,'Color',colorGround);
