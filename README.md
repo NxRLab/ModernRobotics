@@ -29,4 +29,4 @@ Any contribution is welcomed but the maintenance team for this library here does
 Basic plotting/animation functionality for Modern Robotics Package (MatLab)
 2D example
 
-![](2drobot.gif)
+![](2drobot.gif = 250x250)
