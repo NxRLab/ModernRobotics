@@ -1,9 +1,9 @@
 # Modern Robotics:  Mechanics, Planning, and Control
 # Code Library
 
-This repository contains the code library accompanying [_Modern Robotics: 
-Mechanics, Planning, and Control_](http://modernrobotics.org) (Kevin Lynch 
-and Frank Park, Cambridge University Press 2017). The 
+This repository contains the code library accompanying [_Modern Robotics:
+Mechanics, Planning, and Control_](http://modernrobotics.org) (Kevin Lynch
+and Frank Park, Cambridge University Press 2017). The
 [user manual](/doc/MRlib.pdf) is in the doc directory.
 
 The functions are available in:
@@ -28,5 +28,5 @@ Any contribution is welcomed but the maintenance team for this library here does
 
 Basic plotting/animation functionality for Modern Robotics Package (MatLab)
 2D example
-
-![](2drobot.gif)
+<img src="2drobot.gif" width="48">
+<!-- ![](2drobot.gif) -->
