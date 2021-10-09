@@ -26,7 +26,18 @@ Some libraries built on ours:
 
 Any contribution is welcomed but the maintenance team for this library here doesn't vouch for the reliability of those projects.
 
+### Plotting
+Currently limited to only MATLAB
+#### Basic Plotting
 Basic plotting/animation functionality for Modern Robotics Package (MatLab)
 2D example
-<img src="2drobot.gif" width="48">
-<!-- ![](2drobot.gif) -->
+<p align="center">
+<img src="2drobot.gif" width="200" height="160">
+<br></br>
+<img src="3drobot.gif" width="200" height="160">
+<figcaption align = "center"><b>Fig.1 - Left: 2D robot, Right - Spatial Robot</b></figcaption>
+</p>
+
+In order to run above examples, use the template in ```main_2drobot.m``` and ```main_3drobot.m```
+
+#### Multi Robot Plotting
