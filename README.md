@@ -22,6 +22,7 @@ Some unofficial versions in other languages are being developed:
 * [Nim version](https://github.com/Nimbotics/ModernRoboticsNim)
 
 Some libraries built on ours:
+* [KinematicsFromDescriptionTool](https://github.com/Interbotix/kinematics_from_description), which calculates the kinematics input parameters from a robot's URDF or robot_description parameter using ROS and Python3.
 * [tf_rbdl](https://github.com/junhyeokahn/tf_rbdl#tf_rbdl), which refactors the Python version using the package `tensorflow`.
 
 Any contribution is welcomed but the maintenance team for this library here doesn't vouch for the reliability of those projects.
