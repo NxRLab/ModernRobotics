@@ -316,7 +316,12 @@ def ScrewToAxis(q, s, h):
     Output:
         np.array([0, 0, 1, 0, -3, 2])
     """
-    return np.r_[s, np.cross(q, s) + np.dot(h, s)]
+
+    if np.linalg.norm(s) != 0: 
+      return np.r_[s, np.cross(q, s) + np.dot(h, s)]
+
+    if np.linalg.norm(s) == 0:
+      return np.r_[[0,0,0],q]  
 
 def AxisAng6(expc6):
     """Converts a 6-vector of exponential coordinates into screw axis-angle
