@@ -129,6 +129,40 @@ def aMatrix( kesi, q ):
 
     return aM
 
+def aMatrixST( kesi ):
+
+    w=kesi[0:3]
+    v=kesi[3:6]
+    bW=np.zeros((6,6))
+    bW[0:3,0:3]=mr.VecToso3(w)
+    bW[3:6,0:3]=mr.VecToso3(v)
+    bW[3:6,3:6]=mr.VecToso3(w)
+    t=np.linalg.norm(w)
+
+    if t==0:
+
+        aM = np.eye(6)
+
+    else:
+
+        a0 = np.eye(6)
+
+        a10 = ( ( 4 - t * np.sin(t) - 4 * np.cos(t) ) / 2 / t**2 )
+        a11 = np.dot(a10,bW) 
+
+        a20 = ( ( 4 * t - 5 * np.sin(t) + t * np.cos(t) ) / 2 / t**3 )
+        a21 = np.dot(np.dot(a20,bW),bW)
+
+        a30 = ((2-t*np.sin(t)-2*np.cos(t))/2/t**4)
+        a31 = np.dot(np.dot(np.dot(a30,bW),bW),bW)
+
+        a40 = ((2*t-3*np.sin(t)+t*np.cos(t))/2/t**5)
+        a41 = np.dot(np.dot(np.dot(np.dot(a40,bW),bW),bW),bW)
+
+        aM = a0 + a11 + a21 + a31 + a41
+
+    return aM
+
 
 def dexp( kesi, theta ):
 
