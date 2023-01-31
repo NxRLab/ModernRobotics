@@ -23,6 +23,6 @@ function R = ProjectToSO3(mat)
 R = U * V';
 if det(R) < 0
     % In this case the result may be far from mat.
-    R = [R(:, 1: 2); -R(:, 3)];
+    R = [R(:, 1: 2), -R(:, 3)];
 end
 end

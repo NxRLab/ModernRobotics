@@ -426,7 +426,7 @@ def ProjectToSO3(mat):
     R = np.dot(U, Vh)
     if np.linalg.det(R) < 0:
     # In this case the result may be far from mat.
-        R[:, s[2, 2]] = -R[:, s[2, 2]]
+        R[:, 2] = -R[:, 2]
     return R
 
 def ProjectToSE3(mat):
