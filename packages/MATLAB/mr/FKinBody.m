@@ -23,7 +23,7 @@ function T = FKinBody(M, Blist, thetalist)
 %         0         0         0    1.0000
 
 T = M;
-for i = 1: size(thetalist)
+for i = 1: length(thetalist)
     T = T * MatrixExp6(VecTose3(Blist(:, i) * thetalist(i)));
 end
 end
