@@ -42,3 +42,32 @@ setup(
     ],
     platforms='Linux, Mac, Windows',
 )
+
+setup(
+    name="mr_pytorch",
+    version=__version__,
+    author = "Ayush Gaggar",
+    author_email = "agaggar@u.northwestern.edu",
+    description = ("PyTorch version of Modern Robotics Code, useful for batched, learning, and differentiable applications"),
+    license = "MIT",
+    long_description = long_description,
+    long_description_content_type='text/markdown',
+    keywords = "kinematics robotics dynamics",
+    url = "http://modernrobotics.org/",
+    packages=['mr_pytorch'],
+    classifiers=[
+        "Development Status :: 3 - Alpha",
+        "Intended Audience :: Education",
+        "Intended Audience :: Science/Research",
+        "License :: OSI Approved :: MIT License",
+        "Natural Language :: English",
+        "Programming Language :: Python :: 2",
+        "Programming Language :: Python :: 3",
+        "Topic :: Education",
+        "Topic :: Scientific/Engineering",
+    ],
+    install_requires=[
+        'numpy',
+    ],
+    platforms='Linux, Mac, Windows',
+)
