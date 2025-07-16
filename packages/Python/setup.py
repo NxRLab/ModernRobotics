@@ -17,7 +17,7 @@ For more information, including a user manual, see the [project's GitHub page](h
 setup(
     name = "modern_robotics",
     version = __version__,
-    author = "Huan Weng, Mikhail Todes, Jarvis Schultz, Bill Hunt",
+    author = "Huan Weng, Mikhail Todes, Jarvis Schultz, Bill Hunt, Ayush Gaggar",
     author_email = "huanweng@u.northwestern.edu",
     description = ("Modern Robotics: Mechanics, Planning, and Control: Code Library"),
     license = "MIT",
@@ -26,35 +26,6 @@ setup(
     keywords = "kinematics robotics dynamics",
     url = "http://modernrobotics.org/",
     packages=['modern_robotics'],
-    classifiers=[
-        "Development Status :: 3 - Alpha",
-        "Intended Audience :: Education",
-        "Intended Audience :: Science/Research",
-        "License :: OSI Approved :: MIT License",
-        "Natural Language :: English",
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 3",
-        "Topic :: Education",
-        "Topic :: Scientific/Engineering",
-    ],
-    install_requires=[
-        'numpy',
-    ],
-    platforms='Linux, Mac, Windows',
-)
-
-setup(
-    name="mr_pytorch",
-    version=__version__,
-    author = "Ayush Gaggar",
-    author_email = "agaggar@u.northwestern.edu",
-    description = ("PyTorch version of Modern Robotics Code, useful for batched, learning, and differentiable applications"),
-    license = "MIT",
-    long_description = long_description,
-    long_description_content_type='text/markdown',
-    keywords = "kinematics robotics dynamics",
-    url = "http://modernrobotics.org/",
-    packages=['mr_pytorch'],
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Education",
