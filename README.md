@@ -20,6 +20,7 @@ Some unofficial versions in other languages are being developed:
 * [C++ version](https://github.com/Le0nX/ModernRoboticsCpp)
 * [Julia version](https://github.com/ferrolho/ModernRoboticsBook.jl)
 * [Nim version](https://github.com/Nimbotics/ModernRoboticsNim)
+* [Python version using PyTorch](https://github.com/Agaggar/PyTorch_MR/tree/master/packages/Python/modern_robotics/pytorch_mr)
 * [Rust version](https://crates.io/crates/modern_robotics_rust)
 
 Some libraries built on ours:
