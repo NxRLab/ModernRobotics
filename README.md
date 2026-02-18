@@ -20,6 +20,7 @@ Some unofficial versions in other languages are being developed:
 * [C++ version](https://github.com/Le0nX/ModernRoboticsCpp)
 * [Julia version](https://github.com/ferrolho/ModernRoboticsBook.jl)
 * [Nim version](https://github.com/Nimbotics/ModernRoboticsNim)
+* [Rust version](https://crates.io/crates/modern_robotics_rust)
 
 Some libraries built on ours:
 * [KinematicsFromDescriptionTool](https://github.com/Interbotix/kinematics_from_description), which calculates the kinematics input parameters from a robot's URDF or robot_description parameter using ROS and Python3.
