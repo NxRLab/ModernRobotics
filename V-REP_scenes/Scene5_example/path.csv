@@ -1,0 +1,4 @@
+# path.csv file for V-REP kilobot motion planning scene.
+# All lines beginning with a # are treated as a comment and ignored.
+# Below is a solution path represented as a sequence of nodes of the graph.
+1,3,4,7,10,12
