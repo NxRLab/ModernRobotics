@@ -1,9 +1,9 @@
 # Modern Robotics:  Mechanics, Planning, and Control
 # Code Library
 
-This repository contains the code library accompanying [_Modern Robotics: 
-Mechanics, Planning, and Control_](http://modernrobotics.org) (Kevin Lynch 
-and Frank Park, Cambridge University Press 2017). The 
+This repository contains the code library accompanying [_Modern Robotics:
+Mechanics, Planning, and Control_](http://modernrobotics.org) (Kevin Lynch
+and Frank Park, Cambridge University Press 2017). The
 [user manual](/doc/MRlib.pdf) is in the doc directory.
 
 The functions are available in:
@@ -29,3 +29,19 @@ Some libraries built on ours:
 * [tf_rbdl](https://github.com/junhyeokahn/tf_rbdl#tf_rbdl), which refactors the Python version using the package `tensorflow`.
 
 Any contribution is welcomed but the maintenance team for this library here doesn't vouch for the reliability of those projects.
+
+### Plotting
+Currently limited to only MATLAB
+#### Basic Plotting
+Basic plotting/animation functionality for Modern Robotics Package (MatLab)
+2D example
+<p align="center">
+<img src="2drobot.gif" width="200" height="160">
+<br></br>
+<img src="3drobot.gif" width="200" height="160">
+<figcaption align = "center"><b>Fig.1 - Left: 2D robot, Right - Spatial Robot</b></figcaption>
+</p>
+
+In order to run above examples, use the template in ```main_2drobot.m``` and ```main_3drobot.m```
+
+#### Multi Robot Plotting
